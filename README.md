@@ -2,7 +2,7 @@
 
 ## Com començar
 
-1. **Instal·la l’APK** al teu mòbil i obre l’aplicació (application.apk).
+1. **Instal·la l’APK** que està al drive de PTIN-A4(application.apk) al teu mòbil i obre l’aplicació .
 2. Al teu ordinador, obre un terminal i executa:
 
    ```bash
@@ -16,7 +16,7 @@
 
 ---
 
-1. Aixo son les instruccions de expo que també necessitareu seguir:
+Aixo son les instruccions de expo que també necessitareu seguir:
 
 ---
 
