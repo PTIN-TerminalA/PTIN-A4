@@ -4,21 +4,23 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { router, useRootNavigationState } from "expo-router";
 
 const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
+export function register() {
+  router.replace("/(auth)/register");
+}
 
 export default function HomeScreen() {
-  const router = useRouter();
-  const navigation = useNavigation();
+  const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
-    if (navigation. && !isLoggedIn) {
-      router.replace("/login");
+    if (!isLoggedIn && rootNavigationState?.key) {
+      // no crec que sigui el millor approach
+      register();
     }
-  }, [navigation.isReady]);
+  }, [rootNavigationState?.key]);
 
   return (
     <ParallaxScrollView
