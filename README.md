@@ -1,5 +1,25 @@
 # Front app FlySy feta amb EXPO 👋
-Configs de expo:
+
+## Com començar
+
+1. **Instal·la l’APK** al teu mòbil i obre l’aplicació (application.apk).
+2. Al teu ordinador, obre un terminal i executa:
+
+   ```bash
+   npx expo start
+   ```
+
+3. Escaneja el codi QR amb l’app (o obre el link que et dona Expo).
+
+4. Un cop connectat, ja pots començar a fer proves.
+   Cada vegada que guardis canvis al codi, l’app s’actualitzarà automàticament.
+
+---
+
+1. Aixo son les instruccions de expo que també necessitareu seguir:
+
+---
+
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
