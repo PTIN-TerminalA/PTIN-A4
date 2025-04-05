@@ -1,11 +1,15 @@
-import { Button, StyleSheet, TextInput } from "react-native";
+import { Button, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
+import { ThemedTextInput } from "@/components/ThemedTextInput";
 
 export function homepage() {
   router.replace("/(tabs)/profile");
+}
+export function login() {
+  router.replace("/(auth)/login");
 }
 
 export default function RegisterScreen() {
@@ -20,21 +24,18 @@ export default function RegisterScreen() {
       <ThemedText style= {{textAlign:'center', paddingBottom: 10,borderEndStartRadius:10}}>
         Introdueix el teu correu electronic i crea una contrasenya per registrar-te
       </ThemedText>
-      <TextInput 
-        style={styles.input} 
+      <ThemedTextInput 
         placeholder="email@domain.com" 
         autoCorrect={false} 
         autoCapitalize="none"
       />
-      <TextInput 
-        style={styles.input} 
+      <ThemedTextInput
         placeholder="Contrasenya" 
         secureTextEntry 
         autoCorrect={false}
         autoCapitalize="none"
       />
-      <TextInput 
-        style={styles.input} 
+      <ThemedTextInput 
         placeholder="Repeteix Contrasenya" 
         secureTextEntry 
         autoCorrect={false}
@@ -52,6 +53,11 @@ export default function RegisterScreen() {
         En registrar-te, acceptes les nostres Condicions 
         del servei i la politica de privadesa
       </ThemedText>
+      <TouchableOpacity onPress={login}>
+        <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
+          Iniciar Sessió
+        </ThemedText>
+      </TouchableOpacity>
     </ThemedSafeAreaView>
   );
 }
@@ -74,5 +80,6 @@ const styles = StyleSheet.create({
     margin: 20,
     padding: 10,
     borderWidth: 1
+
   },
 });

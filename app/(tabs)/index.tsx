@@ -8,8 +8,8 @@ import React, { useEffect } from "react";
 import { router, useRootNavigationState } from "expo-router";
 
 const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
-export function register() {
-  router.replace("/(auth)/register");
+export function login() {
+  router.replace("/(auth)/login");
 }
 
 export default function HomeScreen() {
@@ -18,7 +18,7 @@ export default function HomeScreen() {
   useEffect(() => {
     if (!isLoggedIn && rootNavigationState?.key) {
       // no crec que sigui el millor approach
-      register();
+      login();
     }
   }, [rootNavigationState?.key]);
 
