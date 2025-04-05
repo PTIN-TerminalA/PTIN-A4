@@ -1,21 +1,24 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { useAuth } from '@/hooks/useAuth'; // Hook de autenticación
 import { useRouter } from 'expo-router';
+import { ThemedText } from '@/components/ThemedText';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth(); // Obtiene los datos del usuario autenticado
   const router = useRouter();
+  const colorScheme = useColorScheme(); // 'light' o 'dark'
+  const backgroundColor = colorScheme === 'dark' ? '#121212' : '#fff';
 
   return (
-    <View style={styles.container}>
-      {/* Sección superior con fondo degradado */}
+    <View style={[styles.container, {backgroundColor}]}>
+      {/* Sección superior */}
       <View style={styles.header}>
         <Image 
           source={user?.avatar ? { uri: user.avatar } : require('@/assets/images/Icons/user.png') } 
           style={styles.avatar} 
         />
-        <Text style={styles.name}>{user?.name || "Nom"}</Text>
-        <Text style={styles.email}>{user?.email || "email@gmail.com"}</Text>
+        <ThemedText style={{color: '#fff'}} type="subtitle">{user?.name || "Nom"}</ThemedText>
+        <ThemedText style={{color: '#fff'}} type="default">{user?.email || "email@gmail.com"}</ThemedText>
       </View>
 
       {/* Botón Editar Perfil */}
@@ -49,15 +52,6 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
     marginBottom: 10,
     resizeMode: 'cover'
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  email: {
-    fontSize: 16,
-    color: '#8ECAE6',
   },
   editButton: {
     backgroundColor: '#219EBC',
