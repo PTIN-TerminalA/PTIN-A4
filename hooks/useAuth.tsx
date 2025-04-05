@@ -1,9 +1,14 @@
+import { router } from 'expo-router';
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 
 interface User {
   name: string;
   email: string;
   avatar: string;
+}
+
+export function login() {
+  router.replace("/(auth)/login");
 }
 
 interface AuthContextType {
@@ -30,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     console.log("Usuario cerró sesión");
+    login();
   };
 
   return (
