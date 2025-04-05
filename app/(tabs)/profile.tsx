@@ -23,12 +23,12 @@ export default function ProfileScreen() {
 
       {/* Botón Editar Perfil */}
       <TouchableOpacity style={styles.editButton} onPress={() => alert('Edita el perfil')}>
-        <Text style={styles.editButtonText}>Edita el perfil</Text>
+        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Edita el perfil</ThemedText>
       </TouchableOpacity>
 
       {/* Botón de Cerrar Sesión */}
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-        <Text style={styles.logoutButtonText}>Log Out</Text>
+        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Log Out</ThemedText>
       </TouchableOpacity>
     </View>
   );
@@ -62,11 +62,6 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
   },
-  editButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   logoutButton: {
     backgroundColor: '#023047',
     padding: 12,
@@ -75,10 +70,5 @@ const styles = StyleSheet.create({
     marginTop: 15,
     width: '80%',
     alignItems: 'center',
-  },
-  logoutButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
