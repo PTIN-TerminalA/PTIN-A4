@@ -41,10 +41,6 @@ export default function HomeScreen() {
         }}
         title="Iniciar Sessió"
       />
-      <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
-        En fer clic a iniciar sessió, acceptes les nostres Condicions 
-        del servei i la politica de privadesa
-      </ThemedText>
       <TouchableOpacity onPress={register}>
         <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
           Crear un compte
