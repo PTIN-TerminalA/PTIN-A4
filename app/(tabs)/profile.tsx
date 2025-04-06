@@ -22,8 +22,8 @@ export default function ProfileScreen() {
       </View>
 
       {/* Botón Editar Perfil */}
-      <TouchableOpacity style={styles.editButton} onPress={() => alert('Edita el perfil')}>
-        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Edita el perfil</ThemedText>
+      <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-password")}>
+        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar contrasenya</ThemedText>
       </TouchableOpacity>
 
       {/* Botón de Cerrar Sesión */}
