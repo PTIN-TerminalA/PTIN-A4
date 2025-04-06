@@ -26,6 +26,11 @@ export default function ProfileScreen() {
         <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar contrasenya</ThemedText>
       </TouchableOpacity>
 
+      {/* Botó Actualitzar Nom */}
+      <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-name")}>
+        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar nom</ThemedText>
+      </TouchableOpacity>
+
       {/* Botón de Cerrar Sesión */}
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
         <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Log Out</ThemedText>
