@@ -7,7 +7,8 @@ import { ThemedView } from "@/components/ThemedView";
 import React, { useEffect } from "react";
 import { router, useRootNavigationState } from "expo-router";
 
-const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
+// const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
+const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile 
 export function login() {
   router.replace("/(auth)/login");
 }
