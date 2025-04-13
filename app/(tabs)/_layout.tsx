@@ -18,6 +18,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
+        tabBarShowLabel: false,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
@@ -30,18 +31,36 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Map",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
+            <Image source={require('../../assets/images/Icons/mapa.png')} style={{ width: 24, height: 24, tintColor: color }} />
           ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Explore",
+          title: "Shopping",
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
+            <Image source={require('../../assets/images/Icons/shopping.png')} style={{ width: 24, height: 24, tintColor: color }} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="flights"
+        options={{
+          title: "Flights",
+          tabBarIcon: ({ color }) => (
+            <Image source={require('../../assets/images/Icons/scanner.png')} style={{ width: 24, height: 24, tintColor: color }} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: "Chat",
+          tabBarIcon: ({ color }) => (
+            <Image source={require('../../assets/images/Icons/chatting.png')} style={{ width: 24, height: 24, tintColor: color }} />
           ),
         }}
       />
@@ -52,6 +71,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <Image source={require('../../assets/images/Icons/user.png')} style={{ width: 24, height: 24, tintColor: color }} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="edit-name"
+        options={{
+          //Not showing edit-name page until we need it
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="edit-password"
+        options={{
+          //Not showing edit-password page until we need it
+          href: null,
         }}
       />
     </Tabs>

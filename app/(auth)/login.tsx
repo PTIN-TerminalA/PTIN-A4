@@ -5,7 +5,7 @@ import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 
 export function homepage() {
-  router.replace("/(tabs)/profile");
+  router.replace("/(tabs)");
 }
 export function register() {
   router.replace("/(auth)/register");
