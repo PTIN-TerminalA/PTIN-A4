@@ -50,13 +50,15 @@ function MainLayout() {
 
   return (
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack
+          screenOptions={{headerShown: false}}
+        >
           {user ? (
             // Si el usuario está autenticado, mostrar la navegación con Tabs
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" />
           ) : (
             // Si el usuario NO ha iniciado sesión, mostrar la autenticación
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" />
           )}
           <Stack.Screen name="+not-found" />
         </Stack>

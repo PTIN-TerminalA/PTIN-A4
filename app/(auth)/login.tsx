@@ -1,8 +1,10 @@
-import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, Pressable } from "react-native";
 import { ThemedText } from '@/components/ThemedText';
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
+import {View, Image} from "react-native";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
+import {Colors} from "@/constants/Colors"
 
 export function homepage() {
   router.replace("/(tabs)");
@@ -12,40 +14,121 @@ export function register() {
 }
 export default function HomeScreen() {
   return (
-    <ThemedSafeAreaView style= {{ flex: 1, backgroundColor: "light", padding: 60}}>
-      <ThemedText type="title" style= {{paddingTop: 60,paddingBottom:80}}> 
-        Benvingut a Flysy!
+    <ThemedSafeAreaView style= {{ flex: 1, backgroundColor: "light", paddingTop: '15%'}}>
+      <ThemedText type="bold" style= {{paddingTop: 70, paddingBottom:40, textAlign:"center", fontSize: 32, lineHeight: 32}}> 
+        Flysy
       </ThemedText>
-      <ThemedText style= {{textAlign:'center', fontWeight:'bold', fontSize:16, paddingBottom: 10,borderEndStartRadius:10}}>
+      <ThemedText type="bold" style= {{textAlign:'center', fontSize:16, paddingBottom: 7, borderEndStartRadius:10}}>
         Iniciar sessió
       </ThemedText>
-      <ThemedText style= {{ textAlign:'center', paddingBottom: 10,borderEndStartRadius:10}}>
+      <ThemedText style= {{ textAlign:'center', paddingBottom: 10,borderEndStartRadius:10, paddingLeft: '10%', paddingRight: '10%'}}>
         Introdueix el teu correu electronic i contrasenya per iniciar sessió
       </ThemedText>
+      {/* CAPSA CORREU */}
       <ThemedTextInput
+        style= {style.box}
         placeholder="email@domain.com" 
+        placeholderTextColor={'lightgray'} 
         autoCorrect={false} 
         autoCapitalize="none"
       />
+      {/* CAPSA CONSTRASENYA */}
       <ThemedTextInput 
-        placeholder="Contrasenya" 
+        style= {style.box}
+        placeholder="Contrasenya"
+        placeholderTextColor={'lightgray'} 
         secureTextEntry 
         autoCorrect={false}
         autoCapitalize="none"
       />
-      <Button
-        nextFocusDown={40}
+      {/* BOTÓ INICI SESSIÓ */}
+      <Pressable
         onPress={() => {
             console.log('Registre Completat!');
             homepage();
         }}
-        title="Iniciar Sessió"
+        style={{
+          margin: 10,
+          backgroundColor: Colors.primari, 
+          borderRadius: 10, 
+          height: '6%',
+          width: '90%',  
+          marginLeft: '5%', 
+          justifyContent: 'center'
+        }}
+      >
+        <ThemedText type="bold" style={{textAlign:'center', fontSize:18}}>
+          Iniciar sessió
+        </ThemedText>
+      </Pressable>
+      {/* HR (LÍNIA HORITZONTAL)*/}
+      <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 15, marginHorizontal: '5%'}}>
+        <View style={{flex: 1, height: 1, backgroundColor: 'lightgrey'}} />
+        <ThemedText style={{paddingHorizontal: 10, color: 'grey', fontSize: 16}}>o</ThemedText>
+        <View style={{flex: 1, height: 1, backgroundColor: 'lightgrey'}} />
+      </View>
+
+      {/* BOTÓ CONTINUA AMB GOOGLE */}
+      <Pressable
+        onPress={register}
+        style={{
+          margin: 10,
+          backgroundColor: 'lightgrey', 
+          borderRadius: 10, 
+          height: '6%',
+          width: '90%',  
+          marginLeft: '5%', 
+          justifyContent: 'center'
+        }}
+      >
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+        <Image 
+          source={require('../../assets/images/Icons/google.png')} 
+          style={{width: 24, height: 24, marginRight: 10}}
+        />
+        <ThemedText type="bold" style={{fontSize:18}}>
+          Continua amb Google
+        </ThemedText>
+      </View>
+      </Pressable>
+      {/* BOTÓ CONTINUA AMB APPLE */}
+      <Pressable
+        onPress={register}
+        style={{
+          margin: 10,
+          backgroundColor: 'lightgrey', 
+          borderRadius: 10, 
+          height: '6%',
+          width: '90%',  
+          marginLeft: '5%', 
+          justifyContent: 'center'
+        }}
+      >
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+      <Image 
+        source={require('../../assets/images/Icons/apple.png')} 
+        style={{width: 24, height: 24, marginRight: 10}}
       />
+      <ThemedText type="bold" style={{textAlign:'center', fontSize:18}}>
+        Continua amb Apple
+      </ThemedText>
+      </View>
+      </Pressable>
+      <ThemedText style= {{ textAlign:'center', paddingBottom: 10,borderEndStartRadius:10, marginLeft: '5%', marginRight: '5%', fontSize: 13, color: 'grey'}}>
+        En fer clic a iniciar sessió acceptes les nostres{' '}
+        <ThemedText type="bold" style={{color: 'grey'}}>Condicions del servei</ThemedText>{' '} 
+        i la{' '}
+        <ThemedText type="bold" style={{color: 'grey'}}>Política de privadesa</ThemedText>
+      </ThemedText>
+      {/* BOTÓ CREA UN COMPTE */}
       <TouchableOpacity onPress={register}>
-        <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
-          Crear un compte
+        <ThemedText type="bold" style={{textAlign:'center', fontSize:16, marginTop:15}}>
+          Crea un compte
         </ThemedText>
       </TouchableOpacity>
+
+
+
     </ThemedSafeAreaView>
     
   );
@@ -63,11 +146,14 @@ const style = StyleSheet.create({
     borderWidth: 1
   },
   box:{
-    height: 40,
-    backgroundColor: 'lightgray',
-    textAlign: 'center',
+    height: '6%',
+    width: '90%',
+    textAlign: 'left',
     textAlignVertical: 'center',
-    margin: 5
+    margin: 10,
+    marginLeft: '5%', 
+    paddingLeft: '5%',
+    borderRadius: 10
   }
 
 });
