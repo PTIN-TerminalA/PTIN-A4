@@ -1,79 +1,22 @@
 import {View, Image, StyleSheet, TouchableOpacity, useColorScheme, ScrollView} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, Link} from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useState } from 'react';
 import {Colors} from '@/constants/Colors'
+import { BoardingPasses } from '@/app/flightInfo/boardingPassesInfoTest'
 
 export default function FlightsScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const buttonColor = isDarkMode ? Colors.secundari : Colors.primari;
-  const boxColor = isDarkMode ? '#222222' : '#E3E3E3';
+  const boxColor = isDarkMode ? '#333333' : '#D0D0D0';
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
   const buttonIcon = isDarkMode ? require('@/assets/images/Icons/scanner_DarkMode.png') : require('@/assets/images/Icons/scanner_LightMode.png');
   const [isScrolling, setIsScrolling] = useState(false);
   {/* Prova de boarding passes*/}
-  const tickets = [
-    {
-      id: '1',
-      airline: 'Ryan Air',
-      origin: 'BCN',
-      destination: 'MAD',
-      image: {uri: 'https://play-lh.googleusercontent.com/UlvFF-Zo2h6_8RdoMh9xWbAcaqSrsIU_yhQPOcH5rbTQ7Av9EvfWFTrAen1EX4X-JxA_'},
-    },
-    {
-      id: '2',
-      airline: 'Ryan Air',
-      origin: 'MAD',
-      destination: 'BCN',
-      image: {uri: 'https://play-lh.googleusercontent.com/UlvFF-Zo2h6_8RdoMh9xWbAcaqSrsIU_yhQPOcH5rbTQ7Av9EvfWFTrAen1EX4X-JxA_'},
-    },
-    {
-      id: '3',
-      airline: 'Iberia',
-      origin: 'GRX',
-      destination: 'MAD',
-      image: {uri: 'https://play-lh.googleusercontent.com/bn9i62M-CaGiVYlglz5uoDKa_uhWCRKux4_NrVqQ5R70C79v7sR88FETqlGxulDbvdk'},
-    },
-    {
-      id: '4',
-      airline: 'Iberia',
-      origin: 'MAD',
-      destination: 'GRX',
-      image: {uri: 'https://play-lh.googleusercontent.com/bn9i62M-CaGiVYlglz5uoDKa_uhWCRKux4_NrVqQ5R70C79v7sR88FETqlGxulDbvdk'},
-    },
-    {
-      id: '5',
-      airline: 'Air China',
-      origin: 'BCN',
-      destination: 'HKG',
-      image: {uri: 'https://play-lh.googleusercontent.com/kdbH6FdwVCbmTEJFSO_pjHQzQ0LWDM1cYE-tmv8ZPV37adZY0y9ktTyYlah4X5hgxXY'},
-    },
-    {
-      id: '6',
-      airline: 'Air China',
-      origin: 'HKG',
-      destination: 'BCN',
-      image: {uri: 'https://play-lh.googleusercontent.com/kdbH6FdwVCbmTEJFSO_pjHQzQ0LWDM1cYE-tmv8ZPV37adZY0y9ktTyYlah4X5hgxXY'},
-    },
-    {
-      id: '7',
-      airline: 'Vueling',
-      origin: 'BCN',
-      destination: 'ALC',
-      image: {uri: 'https://play-lh.googleusercontent.com/PUEfpx0TaaLM52ZjX70d2_HZUUvN1RJ6VwtAejTwxPIat_GMuVuGShKx2JGG38_yi7c=w600-h300-pc0xffffff-pd'},
-    },
-    {
-      id: '8',
-      airline: 'Vueling',
-      origin: 'ALC',
-      destination: 'BCN',
-      image: {uri: 'https://play-lh.googleusercontent.com/PUEfpx0TaaLM52ZjX70d2_HZUUvN1RJ6VwtAejTwxPIat_GMuVuGShKx2JGG38_yi7c=w600-h300-pc0xffffff-pd'},
-    },
 
-  ]
 
   const handlerScannerPress = () => {
     {/* TODO */}
@@ -87,33 +30,39 @@ export default function FlightsScreen() {
     setIsScrolling(false)
   }
 
-  const handlerBoardingPassPress = () => {
+  const handlerBoardingPassPress = (id: string) => {
     if (!isScrolling) {
       console.log('ticket d\'embarcament seleccionat')
       {/* TODO */}
+      router.push({
+        pathname: '/flightInfo',
+        params: {id},
+      })
     }
   }
 
   return (
     <SafeAreaView style={[styles.container]}>
-      <ScrollView style={styles.scrollContent} onScrollBeginDrag={handleScrollBegin} onScrollEndDrag={handleScrollEnd}
+      <ScrollView onScrollBeginDrag={handleScrollBegin} onScrollEndDrag={handleScrollEnd}
         onMomentumScrollBegin={handleScrollBegin} onMomentumScrollEnd={handleScrollEnd} scrollEventThrottle={16}
       >
+        <View style={{height: 15}}></View>
         {/* 
           Renderitzat del historial de tickets. Si la posició del contenidor es parella,
           es renderitzarà amb el fons tranparent. En canvi, si es imparella, es renderitzarà
           amb el fons de color primari o secundari (depenent de si es light o dark theme)
         */}
-        {tickets.map(( ticket, index )=> (
-          <TouchableOpacity onPress={handlerBoardingPassPress} 
-            key={ticket.id} 
-            style={[styles.flightBox, {backgroundColor: index % 2 == 0 ? 'transparent' : boxColor}, {borderColor: boxColor}]}>
-            <Image source={ticket.image} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>
-            <View style={styles.flightTextInfo}>
-              <ThemedText style={[{color: textColor}, {fontSize: 20}]} type="defaultSemiBold">{ticket.airline}</ThemedText>
-              <ThemedText style={{ color: textColor }} type="default">{ticket.origin} - {ticket.destination}</ThemedText>
-            </View>
-          </TouchableOpacity>
+        {BoardingPasses.map(( boardingPass, index )=> (
+          <Link style={styles.scrollContent} key={boardingPass.id} href={{pathname: '/flightInfo',params: {id: boardingPass.id}}}>
+            <TouchableOpacity onPress={() => handlerBoardingPassPress(boardingPass.id)}
+              style={[styles.flightBox, {backgroundColor: index % 2 == 0 ? 'transparent' : boxColor}, {borderColor: boxColor}]}>
+              <Image source={boardingPass.airlineImage} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>
+              <View style={styles.flightTextInfo}>
+                <ThemedText style={[{color: textColor}, {fontSize: 20}]} type="defaultSemiBold">{boardingPass.airline}</ThemedText>
+                <ThemedText style={{ color: textColor }} type="default">{boardingPass.route.origin} - {boardingPass.route.destination}</ThemedText>
+              </View>
+            </TouchableOpacity>
+          </Link>
         ))}
         {/* Marge extra per sota del ScrollView */}
         <View style={{height: 150}}></View>
@@ -132,10 +81,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    alignItems: 'center'
   },
 
   scrollContent: {
-    padding: 30,
+    padding: 15,
   },
 
   flightBox: {
