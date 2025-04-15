@@ -1,8 +1,7 @@
-import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, Pressable } from "react-native";
+import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, Pressable, useColorScheme, View, Image } from "react-native";
 import { ThemedText } from '@/components/ThemedText';
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
-import {View, Image} from "react-native";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import {Colors} from "@/constants/Colors"
 
@@ -15,7 +14,7 @@ export function register() {
 export default function HomeScreen() {
   return (
     <ThemedSafeAreaView style= {{ flex: 1, backgroundColor: "light", paddingTop: '15%'}}>
-      <ThemedText type="bold" style= {{paddingTop: 70, paddingBottom:40, textAlign:"center", fontSize: 32, lineHeight: 32}}> 
+      <ThemedText type="title" style= {{paddingTop: 70, paddingBottom:40, textAlign:"center", fontSize: 32, lineHeight: 32}}> 
         Flysy
       </ThemedText>
       <ThemedText type="bold" style= {{textAlign:'center', fontSize:16, paddingBottom: 7, borderEndStartRadius:10}}>
@@ -57,7 +56,7 @@ export default function HomeScreen() {
           justifyContent: 'center'
         }}
       >
-        <ThemedText type="bold" style={{textAlign:'center', fontSize:18}}>
+        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Iniciar sessió
         </ThemedText>
       </Pressable>
@@ -73,7 +72,7 @@ export default function HomeScreen() {
         onPress={register}
         style={{
           margin: 10,
-          backgroundColor: 'lightgrey', 
+          backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey',
           borderRadius: 10, 
           height: '6%',
           width: '90%',  
@@ -81,22 +80,22 @@ export default function HomeScreen() {
           justifyContent: 'center'
         }}
       >
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-        <Image 
-          source={require('../../assets/images/Icons/google.png')} 
-          style={{width: 24, height: 24, marginRight: 10}}
-        />
-        <ThemedText type="bold" style={{fontSize:18}}>
-          Continua amb Google
-        </ThemedText>
-      </View>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+          <Image 
+            source={require('../../assets/images/Icons/google.png')} 
+            style={{width: 24, height: 24, marginRight: 10}}
+          />
+          <ThemedText type="bold" style={{fontSize:16}}>
+            Continua amb Google
+          </ThemedText>
+        </View>
       </Pressable>
       {/* BOTÓ CONTINUA AMB APPLE */}
       <Pressable
         onPress={register}
         style={{
           margin: 10,
-          backgroundColor: 'lightgrey', 
+          backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey',
           borderRadius: 10, 
           height: '6%',
           width: '90%',  
@@ -104,15 +103,18 @@ export default function HomeScreen() {
           justifyContent: 'center'
         }}
       >
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-      <Image 
-        source={require('../../assets/images/Icons/apple.png')} 
-        style={{width: 24, height: 24, marginRight: 10}}
-      />
-      <ThemedText type="bold" style={{textAlign:'center', fontSize:18}}>
-        Continua amb Apple
-      </ThemedText>
-      </View>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+          <Image 
+            source={useColorScheme() === 'dark' 
+              ? require('../../assets/images/Icons/apple_white.png')
+              : require('../../assets/images/Icons/apple.png')
+            } 
+            style={{width: 20.22, height: 24, marginRight: 10}}
+          />
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
+            Continua amb Apple
+          </ThemedText>
+        </View>
       </Pressable>
       <ThemedText style= {{ textAlign:'center', paddingBottom: 10,borderEndStartRadius:10, marginLeft: '5%', marginRight: '5%', fontSize: 13, color: 'grey'}}>
         En fer clic a iniciar sessió acceptes les nostres{' '}
