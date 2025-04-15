@@ -1,13 +1,14 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
+import { Colors } from "@/constants/Colors"
+import { Styles } from "@/constants/Styles"
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme(); 
-  const backgroundColor = colorScheme === 'dark' ? '#121212' : '#fff';
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -24,9 +25,10 @@ export default function ProfileScreen() {
   }
 
   return (
-    <View style={[styles.container, {backgroundColor}]}>
+    
+    <ThemedView style={styles.container}> 
       <ThemedText style={{color: '#fff'}} type="subtitle">Actualitzar contrasenya</ThemedText>
-      <ThemedTextInput 
+      <ThemedTextInput style={Styles.textInput}
               placeholder="Anterior contrasenya" 
               secureTextEntry 
               value={currentPassword}
@@ -35,7 +37,7 @@ export default function ProfileScreen() {
               autoCapitalize="none"
       />
 
-      <ThemedTextInput 
+      <ThemedTextInput style={Styles.textInput}
               placeholder="Nova contrasenya" 
               secureTextEntry 
               value={newPassword}
@@ -47,25 +49,22 @@ export default function ProfileScreen() {
       <TouchableOpacity style={styles.confirmButton} onPress={handleChangePassword}>
         <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Canviar contrasenya</ThemedText>
       </TouchableOpacity>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     alignContent: 'center',
+    alignItems: 'center',
     justifyContent: 'space-evenly',
     padding: 20
   },
   confirmButton: {
-    backgroundColor: '#023047',
-    padding: 12,
-    borderRadius: 10,
-    alignSelf: 'center',
-    marginTop: 15,
-    width: '80%',
-    alignItems: 'center',
+      ...Styles.button,
+      backgroundColor: Colors.secundari,
+      marginTop: 20,
+      width: '80%',
   },
 });

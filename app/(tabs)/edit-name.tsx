@@ -1,15 +1,14 @@
 import { View, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
-import {Colors} from "@/constants/Colors"
-import {Styles} from "@/constants/Styles"
+import { Colors } from "@/constants/Colors"
+import { Styles } from "@/constants/Styles"
 
 export default function EditNameScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const backgroundColor = colorScheme === 'dark' ? '#121212' : '#fff';
 
   const [newName, setNewName] = useState('');
 
@@ -25,7 +24,7 @@ export default function EditNameScreen() {
   }
 
   return (
-    <View style={[styles.container, {backgroundColor}]}>
+    <ThemedView style={styles.container}>
       <ThemedText style={[{textAlign: 'center'}, {marginBottom: 20}]} type="subtitle">Actualitzar nom</ThemedText>
 
       <ThemedTextInput
@@ -37,11 +36,10 @@ export default function EditNameScreen() {
         style={Styles.textInput}
       />
 
-      <TouchableOpacity style={styles.confirmButton} 
-      onPress={handleChangeName}>
-        <ThemedText type="defaultSemiBold">Canviar nom</ThemedText>
+      <TouchableOpacity style={styles.confirmButton} onPress={handleChangeName}>
+        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Canviar nom</ThemedText>
       </TouchableOpacity>
-    </View>
+    </ThemedView>
   );
 }
 
