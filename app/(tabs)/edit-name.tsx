@@ -3,6 +3,8 @@ import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
+import {Colors} from "@/constants/Colors"
+import {Styles} from "@/constants/Styles"
 
 export default function EditNameScreen() {
   const router = useRouter();
@@ -24,7 +26,7 @@ export default function EditNameScreen() {
 
   return (
     <View style={[styles.container, {backgroundColor}]}>
-      <ThemedText style={{color: '#fff', textAlign: 'center'}} type="subtitle">Actualitzar nom</ThemedText>
+      <ThemedText style={[{textAlign: 'center'}, {marginBottom: 20}]} type="subtitle">Actualitzar nom</ThemedText>
 
       <ThemedTextInput
         placeholder="Nou nom"
@@ -32,11 +34,12 @@ export default function EditNameScreen() {
         onChangeText={setNewName}
         autoCorrect={false}
         autoCapitalize="words"
-        style={styles.input}
+        style={Styles.textInput}
       />
 
-      <TouchableOpacity style={styles.confirmButton} onPress={handleChangeName}>
-        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Canviar nom</ThemedText>
+      <TouchableOpacity style={styles.confirmButton} 
+      onPress={handleChangeName}>
+        <ThemedText type="defaultSemiBold">Canviar nom</ThemedText>
       </TouchableOpacity>
     </View>
   );
@@ -45,21 +48,15 @@ export default function EditNameScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20
   },
   confirmButton: {
-    backgroundColor: '#023047',
-    padding: 12,
-    borderRadius: 10,
+    ...Styles.button,
+    backgroundColor: Colors.secundari,
     marginTop: 20,
     width: '80%',
-    alignItems: 'center',
   },
-  input: {
-    width: '80%',
-    textAlign: 'center',
-  }
 });
+//[Styles.button, {backgroundColor: Colors.secundari}, {width: '80%'},{marginTop: 20}]}

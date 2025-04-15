@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import {Colors} from "@/constants/Colors"
+import {Styles} from "@/constants/Styles"
 
 export function homepage() {
   router.replace("/(tabs)");
@@ -25,7 +26,7 @@ export default function HomeScreen() {
       </ThemedText>
       {/* CAPSA CORREU */}
       <ThemedTextInput
-        style= {style.box}
+        style= {Styles.textInput}
         placeholder="email@domain.com" 
         placeholderTextColor={'lightgray'} 
         autoCorrect={false} 
@@ -33,7 +34,7 @@ export default function HomeScreen() {
       />
       {/* CAPSA CONSTRASENYA */}
       <ThemedTextInput 
-        style= {style.box}
+        style= {Styles.textInput}
         placeholder="Contrasenya"
         placeholderTextColor={'lightgray'} 
         secureTextEntry 
@@ -46,15 +47,7 @@ export default function HomeScreen() {
             console.log('Registre Completat!');
             homepage();
         }}
-        style={{
-          margin: 10,
-          backgroundColor: Colors.primari, 
-          borderRadius: 10, 
-          height: '6%',
-          width: '90%',  
-          marginLeft: '5%', 
-          justifyContent: 'center'
-        }}
+        style={[Styles.button, {backgroundColor: Colors.primari}]}
       >
         <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Iniciar sessió
@@ -70,15 +63,7 @@ export default function HomeScreen() {
       {/* BOTÓ CONTINUA AMB GOOGLE */}
       <Pressable
         onPress={register}
-        style={{
-          margin: 10,
-          backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey',
-          borderRadius: 10, 
-          height: '6%',
-          width: '90%',  
-          marginLeft: '5%', 
-          justifyContent: 'center'
-        }}
+        style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
       >
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image 
@@ -93,15 +78,7 @@ export default function HomeScreen() {
       {/* BOTÓ CONTINUA AMB APPLE */}
       <Pressable
         onPress={register}
-        style={{
-          margin: 10,
-          backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey',
-          borderRadius: 10, 
-          height: '6%',
-          width: '90%',  
-          marginLeft: '5%', 
-          justifyContent: 'center'
-        }}
+        style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
       >
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image 
@@ -128,9 +105,6 @@ export default function HomeScreen() {
           Crea un compte
         </ThemedText>
       </TouchableOpacity>
-
-
-
     </ThemedSafeAreaView>
     
   );
@@ -147,15 +121,4 @@ const style = StyleSheet.create({
     padding: 10,
     borderWidth: 1
   },
-  box:{
-    height: '6%',
-    width: '90%',
-    textAlign: 'left',
-    textAlignVertical: 'center',
-    margin: 10,
-    marginLeft: '5%', 
-    paddingLeft: '5%',
-    borderRadius: 10
-  }
-
 });
