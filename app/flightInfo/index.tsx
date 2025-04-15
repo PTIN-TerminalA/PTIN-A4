@@ -100,7 +100,7 @@ export default function FlightInfoScreen() {
                 <ThemedText type="defaultSemiBold">{boardingPass.route.destinationName}</ThemedText>
               </View>
               <View style={styles.innerBox}>
-                <ThemedText type="default">TEMPS DE D'ARRIBADA</ThemedText>
+                <ThemedText type="default">TEMPS D'ARRIBADA</ThemedText>
                 <ThemedText type="defaultSemiBold">{format(boardingPass.route.arrivalTime,"d-M-yyyy HH:mm")}</ThemedText>
               </View>
             </View>
