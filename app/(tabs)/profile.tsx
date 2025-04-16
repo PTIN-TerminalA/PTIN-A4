@@ -33,6 +33,11 @@ export default function ProfileScreen() {
         <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar nom</ThemedText>
       </TouchableOpacity>
 
+      {/* Botó Actualitzar Data de naixement */}
+      <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-birthdate")}>
+        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar data naixement</ThemedText>
+      </TouchableOpacity>
+
       {/* Botón de Cerrar Sesión */}
       <TouchableOpacity style={styles.logoutButton} onPress={logout}>
         <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Log Out</ThemedText>

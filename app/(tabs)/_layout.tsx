@@ -87,6 +87,13 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="edit-birthdate"
+        options={{
+          //Not showing edit-password page until we need it
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }
