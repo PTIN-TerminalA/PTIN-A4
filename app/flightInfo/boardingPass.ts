@@ -9,13 +9,13 @@ export interface AirlineImage {
 
 export interface FlightRoute {
   origin: string;
-  originName?: string;
+  originName: string;
   destination: string;
-  destinationName?: string;
+  destinationName: string;
   departureTime: Date | string;
   arrivalTime: Date | string;
-  terminal?: string;
-  gate?: string;
+  terminal: string;
+  gate: string;
 }
 
 export interface PassengerInfo {

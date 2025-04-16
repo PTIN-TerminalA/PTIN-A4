@@ -20,6 +20,12 @@ export default function FlightInfoScreen() {
   const boardingPass = BoardingPasses.find(p => p.id === id) as BoardingPass;
   const logo= require('@/assets/images/logo/logo.svg')
 
+  const formatFixedLength = (text: string, length: number) => {
+    const trimmed = text.length > length ? text.slice(0, length) : text;
+    return trimmed.padEnd(length, " "); // pads with spaces to reach desired length
+  };
+  
+  
   if (!boardingPass) {
     return (
       <View>
@@ -33,6 +39,7 @@ export default function FlightInfoScreen() {
         {/* Titol de la pantalla */}
         <Stack.Screen
           options={{
+            headerShown: true,
             headerTitle: () => <ThemedText style={{fontSize: 20}} type='bold'>Targeta d'embarcament</ThemedText>,
             headerTitleAlign: 'left'
           }}
@@ -59,7 +66,7 @@ export default function FlightInfoScreen() {
             <View style={styles.rowBox}>
               <View style={styles.innerBox}>
                 <ThemedText type="default">PASSATGER</ThemedText>
-                <ThemedText type="defaultSemiBold">{boardingPass.passenger.name}</ThemedText>
+                <ThemedText type="defaultSemiBold">{formatFixedLength(boardingPass.passenger.name,25)}</ThemedText>
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">NUM VOL</ThemedText>
@@ -87,7 +94,7 @@ export default function FlightInfoScreen() {
             <View style={styles.rowBox}>
               <View style={styles.innerBox}>
                 <ThemedText type="default">DESDE</ThemedText>
-                <ThemedText type="defaultSemiBold">{boardingPass.route.originName}</ThemedText>
+                <ThemedText type="defaultSemiBold">{formatFixedLength(boardingPass.route.originName,16)}</ThemedText>
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">TEMPS DE SORTIDA</ThemedText>
@@ -99,7 +106,7 @@ export default function FlightInfoScreen() {
             <View style={styles.rowBox}>
               <View style={styles.innerBox}>
                 <ThemedText type="default">FINS</ThemedText>
-                <ThemedText type="defaultSemiBold">{boardingPass.route.destinationName}</ThemedText>
+                <ThemedText type="defaultSemiBold">{formatFixedLength(boardingPass.route.destinationName,16)}</ThemedText>
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">TEMPS D'ARRIBADA</ThemedText>

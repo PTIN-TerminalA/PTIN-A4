@@ -35,7 +35,7 @@ export default function FlightsScreen() {
       console.log('ticket d\'embarcament seleccionat')
       {/* TODO */}
       router.push({
-        pathname: '/flightInfo',
+        pathname: '/flightInfo/flightInfo',
         params: {id},
       })
     }
@@ -43,7 +43,7 @@ export default function FlightsScreen() {
 
   return (
     <SafeAreaView style={[styles.container]}>
-      <ScrollView onScrollBeginDrag={handleScrollBegin} onScrollEndDrag={handleScrollEnd}
+      <ScrollView showsVerticalScrollIndicator={false} onScrollBeginDrag={handleScrollBegin} onScrollEndDrag={handleScrollEnd}
         onMomentumScrollBegin={handleScrollBegin} onMomentumScrollEnd={handleScrollEnd} scrollEventThrottle={16}
       >
         <View style={{height: 15}}></View>
@@ -53,7 +53,7 @@ export default function FlightsScreen() {
           amb el fons de color primari o secundari (depenent de si es light o dark theme)
         */}
         {BoardingPasses.map(( boardingPass, index )=> (
-          <Link style={styles.scrollContent} key={boardingPass.id} href={{pathname: '/flightInfo',params: {id: boardingPass.id}}}>
+          <Link style={styles.scrollContent} key={boardingPass.id} href={{pathname: '/flightInfo/flightInfo',params: {id: boardingPass.id}}}>
             <TouchableOpacity onPress={() => handlerBoardingPassPress(boardingPass.id)}
               style={[styles.flightBox, {backgroundColor: index % 2 == 0 ? 'transparent' : boxColor}, {borderColor: boxColor}]}>
               <Image source={boardingPass.airlineImage} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>
@@ -73,6 +73,7 @@ export default function FlightsScreen() {
         </Image>
       </TouchableOpacity>
     </SafeAreaView>
+
   );
 }
 
@@ -111,7 +112,6 @@ const styles = StyleSheet.create({
   scannIconButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
   },
 
   airlineImage: {
@@ -127,4 +127,5 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
   },
+
 });
