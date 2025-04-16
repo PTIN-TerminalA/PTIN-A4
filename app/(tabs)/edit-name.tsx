@@ -4,8 +4,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
-import { Colors } from "@/constants/Colors"
-import { Styles } from "@/constants/Styles"
+import { Colors } from "@/constants/Colors";
+import { Styles } from "@/constants/Styles";
 
 export default function EditNameScreen() {
   const router = useRouter();
@@ -33,7 +33,6 @@ export default function EditNameScreen() {
         onChangeText={setNewName}
         autoCorrect={false}
         autoCapitalize="words"
-        style={Styles.textInput}
       />
 
       <TouchableOpacity style={styles.confirmButton} onPress={handleChangeName}>

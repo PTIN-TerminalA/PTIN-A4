@@ -1,8 +1,10 @@
-import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, Pressable, useColorScheme, View, Image } from "react-native";
+import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, useColorScheme, View, Image } from "react-native";
 import { ThemedText } from '@/components/ThemedText';
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
+import { ThemedPressable } from "@/components/ThemedPressable";
+
 import {Colors} from "@/constants/Colors"
 import {Styles} from "@/constants/Styles"
 
@@ -26,7 +28,6 @@ export default function HomeScreen() {
       </ThemedText>
       {/* CAPSA CORREU */}
       <ThemedTextInput
-        style= {Styles.textInput}
         placeholder="email@domain.com" 
         placeholderTextColor={'lightgray'} 
         autoCorrect={false} 
@@ -34,7 +35,6 @@ export default function HomeScreen() {
       />
       {/* CAPSA CONSTRASENYA */}
       <ThemedTextInput 
-        style= {Styles.textInput}
         placeholder="Contrasenya"
         placeholderTextColor={'lightgray'} 
         secureTextEntry 
@@ -42,7 +42,7 @@ export default function HomeScreen() {
         autoCapitalize="none"
       />
       {/* BOTÓ INICI SESSIÓ */}
-      <Pressable
+      <ThemedPressable
         onPress={() => {
             console.log('Registre Completat!');
             homepage();
@@ -52,7 +52,7 @@ export default function HomeScreen() {
         <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Iniciar sessió
         </ThemedText>
-      </Pressable>
+      </ThemedPressable>
       {/* HR (LÍNIA HORITZONTAL)*/}
       <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 15, marginHorizontal: '5%'}}>
         <View style={{flex: 1, height: 1, backgroundColor: 'lightgrey'}} />
@@ -61,7 +61,7 @@ export default function HomeScreen() {
       </View>
 
       {/* BOTÓ CONTINUA AMB GOOGLE */}
-      <Pressable
+      <ThemedPressable
         onPress={register}
         style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
       >
@@ -74,9 +74,9 @@ export default function HomeScreen() {
             Continua amb Google
           </ThemedText>
         </View>
-      </Pressable>
+      </ThemedPressable>
       {/* BOTÓ CONTINUA AMB APPLE */}
-      <Pressable
+      <ThemedPressable
         onPress={register}
         style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
       >
@@ -92,7 +92,7 @@ export default function HomeScreen() {
             Continua amb Apple
           </ThemedText>
         </View>
-      </Pressable>
+      </ThemedPressable>
       <ThemedText style= {{ textAlign:'center', paddingBottom: 10,borderEndStartRadius:10, marginLeft: '5%', marginRight: '5%', fontSize: 13, color: 'grey'}}>
         En fer clic a iniciar sessió acceptes les nostres{' '}
         <ThemedText type="bold" style={{color: 'grey'}}>Condicions del servei</ThemedText>{' '} 

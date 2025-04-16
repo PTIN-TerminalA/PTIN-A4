@@ -1,6 +1,8 @@
-import { TextInput, type TextInputProps, StyleSheet } from "react-native";
+import { TextInput, type TextInputProps} from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { Styles } from "@/constants/Styles";
+import { FontStyles } from "@/constants/FontStyles";
 
 export type ThemedTextInputProps = TextInputProps & {
   lightColor?: string;
@@ -9,7 +11,7 @@ export type ThemedTextInputProps = TextInputProps & {
 };
 
 export function ThemedTextInput({
-  style,
+  style = Styles.textInput,
   lightColor,
   darkColor,
   type = "default",
@@ -21,11 +23,11 @@ export function ThemedTextInput({
     <TextInput
       style={[
         { color },
-        type === "default" ? styles.default : undefined,
-        type === "title" ? styles.title : undefined,
-        type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
-        type === "subtitle" ? styles.subtitle : undefined,
-        type === "link" ? styles.link : undefined,
+        type === "default" ? FontStyles.default : undefined,
+        type === "title" ? FontStyles.title : undefined,
+        type === "defaultSemiBold" ? FontStyles.defaultSemiBold : undefined,
+        type === "subtitle" ? FontStyles.subtitle : undefined,
+        type === "link" ? FontStyles.link : undefined,
         style, 
         {borderWidth: 1},
         {margin: 10}, 
@@ -38,31 +40,3 @@ export function ThemedTextInput({
     />
   );
 }
-
-const styles = StyleSheet.create({
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: "Roboto-Light",
-  },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: "Roboto-Regular",
-  },
-  title: {
-    fontSize: 32,
-    lineHeight: 32,
-    fontFamily: "Roboto-Bold",
-  },
-  subtitle: {
-    fontSize: 20,
-    fontFamily: "Roboto-Regular",
-  },
-  link: {
-    lineHeight: 30,
-    fontSize: 16,
-    color: "#0a7ea4",
-    fontFamily: "Roboto-Italic",
-  },
-});

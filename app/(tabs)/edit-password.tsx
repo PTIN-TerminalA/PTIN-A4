@@ -28,7 +28,7 @@ export default function ProfileScreen() {
     
     <ThemedView style={styles.container}> 
       <ThemedText style={{color: '#fff'}} type="subtitle">Actualitzar contrasenya</ThemedText>
-      <ThemedTextInput style={Styles.textInput}
+      <ThemedTextInput 
               placeholder="Anterior contrasenya" 
               secureTextEntry 
               value={currentPassword}
@@ -37,7 +37,7 @@ export default function ProfileScreen() {
               autoCapitalize="none"
       />
 
-      <ThemedTextInput style={Styles.textInput}
+      <ThemedTextInput 
               placeholder="Nova contrasenya" 
               secureTextEntry 
               value={newPassword}

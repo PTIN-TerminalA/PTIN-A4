@@ -2,14 +2,18 @@
  * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
-import {Colors} from "@/constants/Colors"
-import { StyleSheet,  useColorScheme,  type TextProps} from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors"
+import { StyleSheet } from "react-native";
+
 
 
 export const Styles = StyleSheet.create({
   view:{
-
+    flex: 1,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    padding: 20
   },
   textbox:{
 
@@ -25,6 +29,7 @@ export const Styles = StyleSheet.create({
     borderRadius: 10
   },
   button:{
+    backgroundColor: Colors.primari,
     margin: 10,
     borderRadius: 10, 
     height: '6%',
