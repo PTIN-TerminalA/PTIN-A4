@@ -46,7 +46,7 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-15T07:15:00',
       baggageAllowance: '1 × 10kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=RYANAIR-1'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 
     // Ryan Air MAD-BCN (Flight 2)
@@ -72,7 +72,7 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-16T18:00:00',
       baggageAllowance: '1 × 10kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=RYANAIR-2'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 
     // Iberia GRX-MAD (Flight 3)
@@ -99,7 +99,7 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-17T10:45:00',
       baggageAllowance: '1 × 23kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=IBERIA-3'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 
     // Iberia MAD-GRX (Flight 4)
@@ -126,7 +126,7 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-18T19:40:00',
       baggageAllowance: '1 × 23kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=IBERIA-4'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 
     // Air China BCN-HKG (Flight 5)
@@ -153,7 +153,7 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-18T12:35:00',
       baggageAllowance: '2 × 23kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=AIRCHINA-5'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 
     // Air China HKG-BCN (Flight 6)
@@ -180,7 +180,7 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-25T22:30:00',
       baggageAllowance: '2 × 23kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=AIRCHINA-6'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 
     // Vueling BCN-ALC (Flight 7)
@@ -206,7 +206,7 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-20T09:00:00',
       baggageAllowance: '1 × 10kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=VUELING-7'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 
     // Vueling ALC-BCN (Flight 8)
@@ -232,6 +232,6 @@ export const BoardingPasses: BoardingPass[] = [
       },
       boardingTime: '2025-03-22T17:15:00',
       baggageAllowance: '1 × 10kg',
-      qrCode: 'https://api.qrserver.com/v1/create-qr-code/?data=VUELING-8'
+      qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
 ];

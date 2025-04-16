@@ -14,9 +14,11 @@ export default function FlightInfoScreen() {
   const isDarkMode = colorScheme === 'dark';
   const boxColor = isDarkMode ? '#333333' : '#D0D0D0';
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
+  const oppositeColor = !isDarkMode ? Colors.dark.text : Colors.light.text;
   const { id } = useLocalSearchParams<{ id: string}>();
   const separatorColor = boxColor;
   const boardingPass = BoardingPasses.find(p => p.id === id) as BoardingPass;
+  const logo= require('@/assets/images/logo/logo.svg')
 
   if (!boardingPass) {
     return (
@@ -89,23 +91,26 @@ export default function FlightInfoScreen() {
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">TEMPS DE SORTIDA</ThemedText>
-                <ThemedText type="defaultSemiBold">{format(boardingPass.route.departureTime,"d-M-yyyy HH:mm")}</ThemedText>
+                <ThemedText type="defaultSemiBold">{format(boardingPass.route.departureTime,"d-M-yyyy H:mm")}</ThemedText>
               </View>
             </View>
 
             {/* Quarta fila d'informació */}
             <View style={styles.rowBox}>
               <View style={styles.innerBox}>
-                <ThemedText type="default">DESDE</ThemedText>
+                <ThemedText type="default">FINS</ThemedText>
                 <ThemedText type="defaultSemiBold">{boardingPass.route.destinationName}</ThemedText>
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">TEMPS D'ARRIBADA</ThemedText>
-                <ThemedText type="defaultSemiBold">{format(boardingPass.route.arrivalTime,"d-M-yyyy HH:mm")}</ThemedText>
+                <ThemedText type="defaultSemiBold">{format(boardingPass.route.arrivalTime,"d-M-yyyy H:mm")}</ThemedText>
               </View>
             </View>
 
             {/* Codi QR */}
+            <View style={styles.qrBox}>
+              <QRCode value={boardingPass.qrCode} size={250} logoSVG={logo} color={textColor} backgroundColor='transparent'></QRCode>
+            </View>
           </View>
         </SafeAreaView> 
       </Fragment>
@@ -140,6 +145,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginLeft: 15,
     marginRight: 15,
+  },
+
+  qrBox: {
+    marginTop: 20,
+    alignItems: 'center',
+    width: '100%',
   },
 
   separator: {

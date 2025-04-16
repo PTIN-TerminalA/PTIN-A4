@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# Android Build
+android/
+
 # Expo
 .expo/
 dist/
