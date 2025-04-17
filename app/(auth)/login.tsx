@@ -44,10 +44,9 @@ export default function HomeScreen() {
       {/* BOTÓ INICI SESSIÓ */}
       <ThemedPressable
         onPress={() => {
-            console.log('Registre Completat!');
+            console.log('Sessió Iniciada!');
             homepage();
         }}
-        style={[Styles.button, {backgroundColor: Colors.primari}]}
       >
         <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Iniciar sessió
@@ -63,7 +62,7 @@ export default function HomeScreen() {
       {/* BOTÓ CONTINUA AMB GOOGLE */}
       <ThemedPressable
         onPress={register}
-        style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
+        type="button_alt"
       >
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image 
@@ -78,7 +77,7 @@ export default function HomeScreen() {
       {/* BOTÓ CONTINUA AMB APPLE */}
       <ThemedPressable
         onPress={register}
-        style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
+        type="button_alt"
       >
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image 

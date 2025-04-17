@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
+import { ThemedPressable } from "@/components/ThemedPressable";
 
 export function homepage() {
   router.replace("/(tabs)/profile");
@@ -41,14 +42,16 @@ export default function RegisterScreen() {
         autoCorrect={false}
         autoCapitalize="none"
       />
-      <Button
-        nextFocusDown={40}
+      <ThemedPressable
         onPress={() => {
-            console.log('Registre Completat!');
+            console.log('Sessió Iniciada!');
             homepage();
         }}
-        title="Registrat!"
-      />
+      >
+        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
+          Registrat!
+        </ThemedText>
+      </ThemedPressable>
       <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
         En registrar-te, acceptes les nostres Condicions 
         del servei i la politica de privadesa
@@ -74,12 +77,5 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
     paddingTop: 40,
-  },
-  input:{
-    height: 40,
-    margin: 20,
-    padding: 10,
-    borderWidth: 1
-
   },
 });
