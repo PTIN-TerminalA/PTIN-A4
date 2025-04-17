@@ -6,6 +6,7 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import {Styles} from "@/constants/Styles"
 
 export default function TabTwoScreen() {
   return (
@@ -16,11 +17,11 @@ export default function TabTwoScreen() {
           size={310}
           color="#808080"
           name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
+          style={Styles.headerImage}
         />
       }
     >
-      <ThemedView style={styles.titleContainer}>
+      <ThemedView style={Styles.titleContainer}>
         <ThemedText type="title">Chatbot messenger</ThemedText>
       </ThemedView>
       <ThemedText>

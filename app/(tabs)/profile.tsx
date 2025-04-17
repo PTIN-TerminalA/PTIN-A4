@@ -2,6 +2,8 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, useColorScheme } from 
 import { useAuth } from '@/hooks/useAuth'; // Hook de autenticación
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
+import { Styles } from '@/constants/Styles';
+import { Colors } from '@/constants/Colors';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth(); // Obtiene los datos del usuario autenticado
@@ -45,7 +47,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    backgroundColor: '#023047',
+    backgroundColor: Colors.secundari,
     alignItems: 'center',
     paddingVertical: 100,
   },
@@ -59,7 +61,8 @@ const styles = StyleSheet.create({
     resizeMode: 'cover'
   },
   editButton: {
-    backgroundColor: '#219EBC',
+    ...Styles.button,
+    backgroundColor: Colors.primari,
     padding: 12,
     borderRadius: 10,
     alignSelf: 'center',
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutButton: {
-    backgroundColor: '#023047',
+    backgroundColor: Colors.secundari,
     padding: 12,
     borderRadius: 10,
     alignSelf: 'center',

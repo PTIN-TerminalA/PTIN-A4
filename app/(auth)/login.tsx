@@ -1,9 +1,12 @@
-import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, Pressable, useColorScheme, View, Image } from "react-native";
+import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, useColorScheme, View, Image } from "react-native";
 import { ThemedText } from '@/components/ThemedText';
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
+import { ThemedPressable } from "@/components/ThemedPressable";
+
 import {Colors} from "@/constants/Colors"
+import {Styles} from "@/constants/Styles"
 
 export function homepage() {
   router.replace("/(tabs)");
@@ -25,7 +28,6 @@ export default function HomeScreen() {
       </ThemedText>
       {/* CAPSA CORREU */}
       <ThemedTextInput
-        style= {style.box}
         placeholder="email@domain.com" 
         placeholderTextColor={'lightgray'} 
         autoCorrect={false} 
@@ -33,7 +35,6 @@ export default function HomeScreen() {
       />
       {/* CAPSA CONSTRASENYA */}
       <ThemedTextInput 
-        style= {style.box}
         placeholder="Contrasenya"
         placeholderTextColor={'lightgray'} 
         secureTextEntry 
@@ -41,25 +42,17 @@ export default function HomeScreen() {
         autoCapitalize="none"
       />
       {/* BOTÓ INICI SESSIÓ */}
-      <Pressable
+      <ThemedPressable
         onPress={() => {
             console.log('Registre Completat!');
             homepage();
         }}
-        style={{
-          margin: 10,
-          backgroundColor: Colors.primari, 
-          borderRadius: 10, 
-          height: '6%',
-          width: '90%',  
-          marginLeft: '5%', 
-          justifyContent: 'center'
-        }}
+        style={[Styles.button, {backgroundColor: Colors.primari}]}
       >
         <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Iniciar sessió
         </ThemedText>
-      </Pressable>
+      </ThemedPressable>
       {/* HR (LÍNIA HORITZONTAL)*/}
       <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 15, marginHorizontal: '5%'}}>
         <View style={{flex: 1, height: 1, backgroundColor: 'lightgrey'}} />
@@ -68,17 +61,9 @@ export default function HomeScreen() {
       </View>
 
       {/* BOTÓ CONTINUA AMB GOOGLE */}
-      <Pressable
+      <ThemedPressable
         onPress={register}
-        style={{
-          margin: 10,
-          backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey',
-          borderRadius: 10, 
-          height: '6%',
-          width: '90%',  
-          marginLeft: '5%', 
-          justifyContent: 'center'
-        }}
+        style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
       >
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image 
@@ -89,19 +74,11 @@ export default function HomeScreen() {
             Continua amb Google
           </ThemedText>
         </View>
-      </Pressable>
+      </ThemedPressable>
       {/* BOTÓ CONTINUA AMB APPLE */}
-      <Pressable
+      <ThemedPressable
         onPress={register}
-        style={{
-          margin: 10,
-          backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey',
-          borderRadius: 10, 
-          height: '6%',
-          width: '90%',  
-          marginLeft: '5%', 
-          justifyContent: 'center'
-        }}
+        style={[Styles.button, {backgroundColor: useColorScheme() === 'dark' ? '#2E2E2E' : 'lightgrey'}]}
       >
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image 
@@ -115,7 +92,7 @@ export default function HomeScreen() {
             Continua amb Apple
           </ThemedText>
         </View>
-      </Pressable>
+      </ThemedPressable>
       <ThemedText style= {{ textAlign:'center', paddingBottom: 10,borderEndStartRadius:10, marginLeft: '5%', marginRight: '5%', fontSize: 13, color: 'grey'}}>
         En fer clic a iniciar sessió acceptes les nostres{' '}
         <ThemedText type="bold" style={{color: 'grey'}}>Condicions del servei</ThemedText>{' '} 
@@ -128,9 +105,6 @@ export default function HomeScreen() {
           Crea un compte
         </ThemedText>
       </TouchableOpacity>
-
-
-
     </ThemedSafeAreaView>
     
   );
@@ -147,15 +121,4 @@ const style = StyleSheet.create({
     padding: 10,
     borderWidth: 1
   },
-  box:{
-    height: '6%',
-    width: '90%',
-    textAlign: 'left',
-    textAlignVertical: 'center',
-    margin: 10,
-    marginLeft: '5%', 
-    paddingLeft: '5%',
-    borderRadius: 10
-  }
-
 });
