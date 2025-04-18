@@ -64,11 +64,11 @@ export default function FlightInfoScreen() {
 
             {/* Primera fila d'informació */}
             <View style={styles.rowBox}>
-              <View style={styles.innerBox}>
+              <View style={[styles.innerBox, {width: '66%'}]}>
                 <ThemedText type="default">PASSATGER</ThemedText>
                 <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.passenger.name}</ThemedText>
               </View>
-              <View style={styles.innerBox}>
+              <View style={[styles.innerBox, {width: '33%'}]}>
                 <ThemedText type="default">NUM VOL</ThemedText>
                 <ThemedText type="defaultSemiBold">{boardingPass.flightNumber}</ThemedText>
               </View>
