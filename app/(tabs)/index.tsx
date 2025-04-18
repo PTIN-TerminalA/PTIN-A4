@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform } from "react-native";
+import {useColorScheme, Image, StyleSheet, Platform, TouchableOpacity } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
@@ -6,6 +6,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import React, { useEffect } from "react";
 import { router, useRootNavigationState } from "expo-router";
+
+import { Colors } from "@/constants/Colors"
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
 const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile 
@@ -15,6 +17,10 @@ export function login() {
 
 export default function HomeScreen() {
   const rootNavigationState = useRootNavigationState();
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const buttonColor = isDarkMode ? Colors.secundari : Colors.primari;
+  const buttonIcon = isDarkMode ? require('@/assets/images/Icons/scanner_DarkMode.png') : require('@/assets/images/Icons/scanner_LightMode.png');
 
   useEffect(() => {
     if (!isLoggedIn && rootNavigationState?.key) {
@@ -22,6 +28,10 @@ export default function HomeScreen() {
       login();
     }
   }, [rootNavigationState?.key]);
+
+  const handlerScannerPress = () => {
+    {/* TODO */}
+  }
 
   return (
     <ParallaxScrollView
@@ -71,6 +81,12 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
       </ThemedView>
+
+      <TouchableOpacity style={[styles.scannButton,{backgroundColor: buttonColor}]} onPress={handlerScannerPress}>
+        <Image source={buttonIcon} style={[styles.scannIconButton]}>
+        </Image>
+      </TouchableOpacity>
+
     </ParallaxScrollView>
   );
 }
@@ -91,5 +107,20 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: "absolute",
+  },
+  scannButton: {
+    width: 55,
+    height: 55,
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  scannIconButton: {
+    width: 40,
+    height: 40,
   },
 });
