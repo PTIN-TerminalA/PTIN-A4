@@ -1,4 +1,4 @@
-import {View, Image, StyleSheet, Text, useColorScheme} from 'react-native';
+import {View, Image, StyleSheet, Text, useColorScheme, LayoutChangeEvent} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams} from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
@@ -19,11 +19,13 @@ export default function FlightInfoScreen() {
   const separatorColor = boxColor;
   const boardingPass = BoardingPasses.find(p => p.id === id) as BoardingPass;
   const logo= require('@/assets/images/logo/logo.svg')
+  const [qrSize, setQrSize] = useState(0);
 
-  const formatFixedLength = (text: string, length: number) => {
-    const trimmed = text.length > length ? text.slice(0, length) : text;
-    return trimmed.padEnd(length, " "); // pads with spaces to reach desired length
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const { width } = event.nativeEvent.layout;
+    setQrSize(width * 0.9); // 90% of container width
   };
+
   
   
   if (!boardingPass) {
@@ -115,8 +117,8 @@ export default function FlightInfoScreen() {
             </View>
 
             {/* Codi QR */}
-            <View style={styles.qrBox}>
-              <QRCode value={boardingPass.qrCode} size={250} logoSVG={logo} color={textColor} backgroundColor='transparent'></QRCode>
+            <View style={styles.qrBox} onLayout={handleLayout}>
+              <QRCode value={boardingPass.qrCode} size={qrSize} logoSVG={logo} color={textColor} backgroundColor='transparent'></QRCode>
             </View>
           </View>
         </SafeAreaView> 
@@ -133,8 +135,8 @@ const styles = StyleSheet.create({
   },
 
   flightBox: {
-    width: 345,
-    height: 650,
+    width: '85%',
+    height: '85%',
     borderWidth: 4,
     flexDirection: 'column',
     alignItems: 'flex-start',
