@@ -51,7 +51,7 @@ export default function FlightInfoScreen() {
           <View style={[styles.flightBox, {borderColor: boxColor}]}>
             
             {/* Información inicial (imatge...) */}
-            <View style={styles.rowBox}>
+            <View style={styles.topBox}>
               <Image source={boardingPass.airlineImage} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>
               <View style={styles.flightTextInfo}>
                 <ThemedText style={[{ color: textColor }, { fontSize: 20 }]} type="defaultSemiBold">{boardingPass.airline}</ThemedText>
@@ -66,7 +66,7 @@ export default function FlightInfoScreen() {
             <View style={styles.rowBox}>
               <View style={styles.innerBox}>
                 <ThemedText type="default">PASSATGER</ThemedText>
-                <ThemedText type="defaultSemiBold">{formatFixedLength(boardingPass.passenger.name,25)}</ThemedText>
+                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.passenger.name}</ThemedText>
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">NUM VOL</ThemedText>
@@ -76,25 +76,25 @@ export default function FlightInfoScreen() {
 
             {/* Segona fila d'informació */}
             <View style={styles.rowBox}>
-              <View style={styles.innerBox}>
+              <View style={[styles.innerBox, {width: '33%'}]}>
                 <ThemedText type="default">SEIENT</ThemedText>
-                <ThemedText type="defaultSemiBold">{boardingPass.passenger.seat}</ThemedText>
+                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.passenger.seat}</ThemedText>
               </View>
-              <View style={styles.innerBox}>
+              <View style={[styles.innerBox, {width: '33%'}]}>
                 <ThemedText type="default">PORTA</ThemedText>
-                <ThemedText type="defaultSemiBold">{boardingPass.route.gate}</ThemedText>
+                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.gate}</ThemedText>
               </View>
-              <View style={styles.innerBox}>
+              <View style={[styles.innerBox, {width: '33%'}]}>
                 <ThemedText type="default">TERMINAL</ThemedText>
-                <ThemedText type="defaultSemiBold">{boardingPass.route.terminal}</ThemedText>
+                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.terminal}</ThemedText>
               </View>
             </View>
             
             {/* Tercera fila d'informació */}
             <View style={styles.rowBox}>
-              <View style={styles.innerBox}>
+              <View style={[styles.innerBox]}>
                 <ThemedText type="default">DESDE</ThemedText>
-                <ThemedText type="defaultSemiBold">{formatFixedLength(boardingPass.route.originName,16)}</ThemedText>
+                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.originName}</ThemedText>
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">TEMPS DE SORTIDA</ThemedText>
@@ -106,7 +106,7 @@ export default function FlightInfoScreen() {
             <View style={styles.rowBox}>
               <View style={styles.innerBox}>
                 <ThemedText type="default">FINS</ThemedText>
-                <ThemedText type="defaultSemiBold">{formatFixedLength(boardingPass.route.destinationName,16)}</ThemedText>
+                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.destinationName}</ThemedText>
               </View>
               <View style={styles.innerBox}>
                 <ThemedText type="default">TEMPS D'ARRIBADA</ThemedText>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
   flightBox: {
@@ -139,32 +139,41 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'flex-start',
     borderRadius: 30,
+    padding: 20,
+  },
+
+  topBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%'
   },
 
   rowBox: {
-    marginTop: 15,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
+    width: '100%',
   },
 
   innerBox: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-    marginLeft: 15,
-    marginRight: 15,
+    width: '50%',
+    marginTop: 15,
   },
 
   qrBox: {
-    marginTop: 20,
     alignItems: 'center',
     width: '100%',
+    height: '100%',
+    marginTop: 15,
   },
 
   separator: {
     height: 4,
     marginVertical: 10,
     alignSelf: 'center',
-    width: '100%',
+    width: '115%',
 
   },
 
@@ -173,8 +182,6 @@ const styles = StyleSheet.create({
     height: 60,
     borderWidth: 4,
     borderRadius: 30,
-    marginLeft: 15,
-    marginRight: 15,
   },
 
   flightTextInfo: {
