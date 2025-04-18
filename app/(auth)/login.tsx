@@ -1,4 +1,5 @@
-import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, useColorScheme, View, Image } from "react-native";
+import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, useColorScheme, View, Image, Alert} from "react-native";
+import {useState} from 'react'
 import { ThemedText } from '@/components/ThemedText';
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
@@ -14,7 +15,42 @@ export function homepage() {
 export function register() {
   router.replace("/(auth)/register");
 }
+
+
+
 export default function HomeScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await fetch("http://192.168.1.61:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Login failed");
+      }
+
+      console.log("logged in! Token:", data.access_token);
+    }
+    catch (error: unknown) {
+      if (error instanceof Error) {
+        Alert.alert("Login error", error.message);
+      }
+      else {
+        console.error('unknown error', error);
+      }
+    }
+  };
+
+
   return (
     <ThemedSafeAreaView style= {{ flex: 1, backgroundColor: "light", paddingTop: '15%'}}>
       <ThemedText type="title" style= {{paddingTop: 70, paddingBottom:40, textAlign:"center", fontSize: 32, lineHeight: 32}}> 
@@ -32,6 +68,7 @@ export default function HomeScreen() {
         placeholderTextColor={'lightgray'} 
         autoCorrect={false} 
         autoCapitalize="none"
+        onChangeText={setEmail}
       />
       {/* CAPSA CONSTRASENYA */}
       <ThemedTextInput 
@@ -40,14 +77,10 @@ export default function HomeScreen() {
         secureTextEntry 
         autoCorrect={false}
         autoCapitalize="none"
+        onChangeText={setPassword}
       />
       {/* BOTÓ INICI SESSIÓ */}
-      <ThemedPressable
-        onPress={() => {
-            console.log('Sessió Iniciada!');
-            homepage();
-        }}
-      >
+      <ThemedPressable onPress={() => handleLogin(email, password)}>
         <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Iniciar sessió
         </ThemedText>
