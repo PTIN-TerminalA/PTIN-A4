@@ -1,4 +1,4 @@
-import { Button, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { ScrollView, Button, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { router } from "expo-router";
@@ -16,51 +16,82 @@ export function login() {
 export default function RegisterScreen() {
   return (
     <ThemedSafeAreaView style={styles.container}>
-      <ThemedText type="title" style= {{textAlign:'center', paddingTop: 60,paddingBottom:80}}> 
-        Benvingut a Flysy!
-      </ThemedText>
-      <ThemedText style= {{textAlign:'center', fontWeight:'bold', fontSize:16, paddingBottom: 10,borderEndStartRadius:10}}>
-        Registrat
-      </ThemedText>
-      <ThemedText style= {{textAlign:'center', paddingBottom: 10,borderEndStartRadius:10}}>
-        Introdueix el teu correu electronic i crea una contrasenya per registrar-te
-      </ThemedText>
-      <ThemedTextInput 
-        placeholder="email@domain.com" 
-        autoCorrect={false} 
-        autoCapitalize="none"
-      />
-      <ThemedTextInput
-        placeholder="Contrasenya" 
-        secureTextEntry 
-        autoCorrect={false}
-        autoCapitalize="none"
-      />
-      <ThemedTextInput 
-        placeholder="Repeteix Contrasenya" 
-        secureTextEntry 
-        autoCorrect={false}
-        autoCapitalize="none"
-      />
-      <ThemedPressable
-        onPress={() => {
-            console.log('Sessió Iniciada!');
-            homepage();
-        }}
-      >
-        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
-          Registrat!
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <ThemedText type="title" style= {{textAlign:'center', paddingTop: 60,paddingBottom:80}}> 
+          Benvingut a Flysy!
         </ThemedText>
-      </ThemedPressable>
-      <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
-        En registrar-te, acceptes les nostres Condicions 
-        del servei i la politica de privadesa
-      </ThemedText>
-      <TouchableOpacity onPress={login}>
-        <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
-          Iniciar Sessió
+        <ThemedText style= {{textAlign:'center', fontWeight:'bold', fontSize:16, paddingBottom: 10,borderEndStartRadius:10}}>
+          Registrat
         </ThemedText>
-      </TouchableOpacity>
+        <ThemedText style= {{textAlign:'center', paddingBottom: 10,borderEndStartRadius:10}}>
+          Introdueix el teu correu electronic i crea una contrasenya per registrar-te
+        </ThemedText>
+        <ThemedTextInput 
+          placeholder="email@domain.com" 
+          autoCorrect={false} 
+          autoCapitalize="none"
+        />
+        <ThemedTextInput
+          placeholder="Contrasenya" 
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <ThemedTextInput 
+          placeholder="Repeteix Contrasenya" 
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <ThemedTextInput 
+          placeholder="Nom" 
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <ThemedTextInput 
+          placeholder="DNI" 
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <ThemedTextInput 
+          placeholder="Telèfon" 
+          autoCorrect={false} 
+          autoCapitalize="none"
+        />
+        <ThemedTextInput 
+          placeholder="Data de naixement" 
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <ThemedTextInput 
+          placeholder="Gènere" 
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        <ThemedPressable
+          onPress={() => {
+              console.log('Sessió Iniciada!');
+              homepage();
+          }}
+        >
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
+            Registrat!
+          </ThemedText>
+        </ThemedPressable>
+        <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
+          En registrar-te, acceptes les nostres Condicions 
+          del servei i la politica de privadesa
+        </ThemedText>
+        <TouchableOpacity onPress={login}>
+          <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
+            Iniciar Sessió
+          </ThemedText>
+        </TouchableOpacity>
+      </ScrollView>
     </ThemedSafeAreaView>
   );
 }
@@ -77,5 +108,11 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
     paddingTop: 40,
+  },
+  scrollContainer: {
+    padding: 20,
+    gap: 10,
+    paddingTop: 40,
+    paddingBottom: 300,
   },
 });
