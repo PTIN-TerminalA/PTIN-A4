@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import { useAuth } from "@/hooks/useAuth";
 
 import {Colors} from "@/constants/Colors"
 import {Styles} from "@/constants/Styles"
@@ -21,6 +22,7 @@ export function register() {
 export default function HomeScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -40,8 +42,7 @@ export default function HomeScreen() {
       }
 
       console.log("logged in! Token:", data.access_token);
-      
-      homepage();
+      login(email);
     }
     catch (error: unknown) {
       if (error instanceof Error) {
