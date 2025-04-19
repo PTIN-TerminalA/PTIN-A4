@@ -20,6 +20,10 @@ export default function FlightsScreen() {
 
   const handlerScannerPress = () => {
     {/* TODO */}
+    console.log('Scanner Pressed');
+    router.push({
+      pathname: '/flightInfo/scanBoardingPass',
+    })
   }
 
   const handleScrollBegin = () => {
