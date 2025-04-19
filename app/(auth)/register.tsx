@@ -6,9 +6,6 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
 
-import {Colors} from "@/constants/Colors"
-import {Styles} from "@/constants/Styles"
-
 export function homepage() {
   router.replace("/(tabs)/profile");
 }
@@ -47,7 +44,7 @@ export default function RegisterScreen() {
           usertype : 1 // Regular user type
         }),
       });
-      
+
       const userData = await userResponse.json();
       if (!userResponse.ok) {
         throw new Error(userData.detail || "Error al registrar l'usuari");
@@ -100,57 +97,65 @@ export default function RegisterScreen() {
           Benvingut a Flysy!
         </ThemedText>
         <ThemedText style= {{textAlign:'center', fontWeight:'bold', fontSize:16, paddingBottom: 10,borderEndStartRadius:10}}>
-          Registrat
+          Registra't
         </ThemedText>
         <ThemedText style= {{textAlign:'center', paddingBottom: 10,borderEndStartRadius:10}}>
           Introdueix les teves dades i crea una contrasenya per registrar-te
         </ThemedText>
         <ThemedTextInput 
-          placeholder="email@domain.com" 
+          placeholder="email@domain.com"
+          placeholderTextColor={'lightgray'}
           autoCorrect={false} 
           autoCapitalize="none"
           onChangeText={setEmail}
         />
         <ThemedTextInput
-          placeholder="Contrasenya" 
+          placeholder="Contrasenya"
+          placeholderTextColor={'lightgray'}
           secureTextEntry 
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setPassword}
         />
         <ThemedTextInput 
-          placeholder="Repeteix Contrasenya" 
+          placeholder="Repeteix Contrasenya"
+          placeholderTextColor={'lightgray'}
           secureTextEntry 
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setConfirmPassword}
         />
         <ThemedTextInput 
-          placeholder="Nom" 
+          placeholder="Nom"
+          placeholderTextColor={'lightgray'}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setName}
         />
         <ThemedTextInput 
-          placeholder="DNI" 
+          placeholder="DNI"
+          placeholderTextColor={'lightgray'}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setDni}
         />
         <ThemedTextInput 
-          placeholder="Telèfon" 
+          placeholder="Telèfon"
+          placeholderTextColor={'lightgray'}
           autoCorrect={false} 
           autoCapitalize="none"
           onChangeText={setPhone}
         />
         <ThemedTextInput 
-          placeholder="Data de naixement" 
+          placeholder="Data de naixement (YYYY-MM-DD)" 
+          placeholderTextColor={'lightgray'}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setBirthDate}
         />
         <ThemedTextInput 
           placeholder="Gènere" 
+          placeholderTextColor={'lightgray'}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setGender}
