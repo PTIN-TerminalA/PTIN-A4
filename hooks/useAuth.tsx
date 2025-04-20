@@ -4,11 +4,16 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 interface User {
   name: string;
   email: string;
+  dni?: string;
+  phone?: string;
+  birthDate?: string;
+  gender?: string;
   avatar: string;
 }
 
 interface AuthContextType {
   user: User | null;
+  register: (email: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => void,
   login: (email: string) => void;
   logout: () => void;
 }
@@ -18,6 +23,20 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+
+  const register = (email: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
+    setUser({
+      name,
+      email,
+      dni,
+      phone,
+      birthDate,
+      gender,
+      avatar: 'https://www.lavanguardia.com/peliculas-series/images/all/movie/posters/2009/12/movie-19995/w1280/yev8cuskZiDfzOPzVjSKPnvBnfk.jpg',
+    });
+
+    router.replace('/(tabs)'); // change this to your actual screen
+  };
 
   const login = (email: string) => {
     setUser({
@@ -35,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
