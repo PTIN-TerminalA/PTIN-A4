@@ -39,7 +39,7 @@ export default function FlightsScreen() {
       console.log('ticket d\'embarcament seleccionat')
       {/* TODO */}
       router.push({
-        pathname: '/flightInfo/flightInfo',
+        pathname: '/flightInfo',
         params: {id},
       })
     }
@@ -57,7 +57,7 @@ export default function FlightsScreen() {
           amb el fons de color primari o secundari (depenent de si es light o dark theme)
         */}
         {BoardingPasses.map(( boardingPass, index )=> (
-          <Link style={styles.scrollContent} key={boardingPass.id} href={{pathname: '/flightInfo/flightInfo',params: {id: boardingPass.id}}}>
+          <Link style={styles.scrollContent} key={boardingPass.id} href={{pathname: '/flightInfo',params: {id: boardingPass.id}}}>
             <TouchableOpacity onPress={() => handlerBoardingPassPress(boardingPass.id)}
               style={[styles.flightBox, {backgroundColor: index % 2 == 0 ? 'transparent' : boxColor}, {borderColor: boxColor}]}>
               <Image source={boardingPass.airlineImage} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>

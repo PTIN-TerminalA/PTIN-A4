@@ -10,8 +10,8 @@ android/
 ios/
 
 # Expo
-.expo/
 dist/
+.expo/
 web-build/
 expo-env.d.ts
 
@@ -45,6 +45,6 @@ yarn-error.*
 .idea/
 
 # VS Code
-.vscode/
+*.vscode/
 
 app-example

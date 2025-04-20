@@ -6,13 +6,7 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
 import { SelectList } from 'react-native-dropdown-select-list';
-
-export function homepage() {
-  router.replace("/(tabs)/profile");
-}
-export function login() {
-  router.replace("/(auth)/login");
-}
+import { useAuth } from "@/hooks/useAuth";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -23,6 +17,7 @@ export default function RegisterScreen() {
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [gender, setGender] = useState("");
+  const { login, logout } = useAuth();
 
   const handleRegister = async (email: string, password: string, confirmPassword: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
     // Comprovem si falta algun camp
@@ -113,7 +108,7 @@ export default function RegisterScreen() {
       }
   
       Alert.alert("Registre completat", "Usuari registrat correctament");
-      homepage();
+      login(email);     
   
     } catch (error) {
       if (error instanceof Error) {
@@ -232,7 +227,7 @@ export default function RegisterScreen() {
           En registrar-te, acceptes les nostres condicions 
           del servei i la política de privadesa
         </ThemedText>
-        <TouchableOpacity onPress={login}>
+        <TouchableOpacity onPress={logout}>
           <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
             Iniciar Sessió
           </ThemedText>
