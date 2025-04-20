@@ -4,7 +4,7 @@ import { useRouter, Link} from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useState } from 'react';
 import {Colors} from '@/constants/Colors'
-import { BoardingPasses } from '@/app/flightInfo/boardingPassesInfoTest'
+import { BoardingPasses } from '@/flightData/boardingPassesInfoTest'
 
 export default function FlightsScreen() {
   const router = useRouter();
