@@ -60,7 +60,7 @@ export default function RegisterScreen() {
   
     try {
       // 1: Register the user (create the user and get the access token)
-      const userResponse = await fetch("http://192.168.1.13:8000/api/register", {
+      const userResponse = await fetch("http://192.168.1.61:8000/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export default function RegisterScreen() {
 
       // 2: Decode the access token to extract the user_id (sub)
       const token = userData.access_token;
-      const userIdResponse = await fetch(`http://192.168.1.13:8000/api/get_user_id?token=${token}`);
+      const userIdResponse = await fetch(`http://192.168.1.61:8000/api/get_user_id?token=${token}`);
       if (!userIdResponse.ok) {
         const errorData = await userIdResponse.json();
         throw new Error(errorData.detail || "Error obtenint l'ID de l'usuari");
@@ -90,7 +90,7 @@ export default function RegisterScreen() {
       const userId = userIdData.user_id;
   
       // 3: Register the regular user
-      const regularResponse = await fetch("http://192.168.1.13:8000/api/register-regular", {
+      const regularResponse = await fetch("http://192.168.1.61:8000/api/register-regular", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
