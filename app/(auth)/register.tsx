@@ -5,7 +5,7 @@ import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
-// import { SelectList } from 'react-native-dropdown-select-list';
+import { SelectList } from 'react-native-dropdown-select-list';
 
 export function homepage() {
   router.replace("/(tabs)/profile");
@@ -187,13 +187,42 @@ export default function RegisterScreen() {
           autoCapitalize="none"
           onChangeText={setBirthDate}
         />
-        <ThemedTextInput 
-          placeholder="Gènere" 
-          placeholderTextColor={'lightgray'}
-          autoCorrect={false}
-          autoCapitalize="none"
-          onChangeText={setGender}
+        {/* DESPLEGABLE DEL GÈNERE */}
+        <SelectList
+          setSelected={setGender}
+          data={[
+            { key: 'male', value: 'Masculí' },
+            { key: 'female', value: 'Femení' },
+            { key: 'other', value: 'Altre' },
+            { key: 'rather_not_to_say', value: 'Prefereixo no dir' }
+          ]}
+          save="key"
+          defaultOption={{ key: gender, value: '' }}
+          placeholder="Selecciona Gènere"
+          inputStyles={{
+            color: 'lightgray', // Cambia el color del texto dentro del input
+            borderColor: 'white', // Cambia el color del borde del rectángulo
+            borderWidth: 1, // Define el grosor del borde
+            borderRadius: 10, // Redondea las esquinas del borde
+            padding: 6, // Espaciado dentro del campo
+            height: 50,
+            width: '90%',
+            // height: 50, // Asegúrate de que el campo tenga una altura adecuada
+            justifyContent: 'center', // Asegura que el texto esté centrado verticalmente
+          }}
+          dropdownStyles={{
+            backgroundColor: 'grey', // Fondo del desplegable
+            borderWidth: 1, // Borde del desplegable
+            borderColor: 'white', // Color del borde del desplegable
+            borderRadius: 10, // Redondeo de las esquinas del desplegable
+          }}
+          dropdownTextStyles={{
+            color: 'white', // Color de las letras en las opciones del desplegable
+          }}
+          arrowicon={<Text style={{ color: 'white' }}>↓</Text>} // Cambia el color de la flecha
+          search={false}
         />
+        {/********************/}
         <ThemedPressable onPress={() => handleRegister(email, password, confirmPassword, name, dni, phone, birthDate, gender)}>
           <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
             Registra't!
