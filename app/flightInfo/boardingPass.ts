@@ -12,7 +12,7 @@ export interface FlightRoute {
   originName: string;
   destination: string;
   destinationName: string;
-  departureTime: Date | string;
+  departureTime: string;
   arrivalTime: Date | string;
   terminal: string;
   gate: string;
@@ -33,7 +33,7 @@ export interface BoardingPass {
   route: FlightRoute;
   passenger: PassengerInfo;
   bookingReference?: string;
-  boardingTime?: Date | string;
+  boardingTime: string;
   baggageAllowance?: string;
   qrCode?: string;
 }

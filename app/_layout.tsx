@@ -9,10 +9,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
-
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
-
+import { useFlightNotifications } from '@/hooks/useFlightNotifications';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -47,6 +46,8 @@ export default function RootLayout() {
 function MainLayout() {
   const { user } = useAuth();
   const colorScheme = useColorScheme();
+
+  useFlightNotifications();
 
   return (
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

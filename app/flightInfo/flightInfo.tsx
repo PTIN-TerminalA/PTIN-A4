@@ -1,4 +1,4 @@
-import {View, Image, StyleSheet, Text, useColorScheme, LayoutChangeEvent} from 'react-native';
+import {View, Image, StyleSheet, Text, useColorScheme, LayoutChangeEvent, ScrollView} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams} from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
@@ -8,8 +8,6 @@ import { BoardingPasses } from './boardingPassesInfoTest';
 import {Colors} from '@/constants/Colors';
 import { format } from 'date-fns';
 import QRCode from 'react-native-qrcode-svg';
-import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
 
 export default function FlightInfoScreen() {
   const colorScheme = useColorScheme();
@@ -24,16 +22,6 @@ export default function FlightInfoScreen() {
   const [qrSize, setQrSize] = useState(0);
   const [departureCountdown, setDepartureCountdown] = useState('');
   const [boardingCountdown, setBoardingCountdown] = useState('');
-
-  useEffect(() => {
-    const requestPermissions = async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Permís per a notificacions no concedit.');
-      }
-    };
-    requestPermissions();
-  }, []);
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
@@ -67,37 +55,6 @@ export default function FlightInfoScreen() {
     return () => clearInterval(interval);
   }, [boardingPass]);
   
-  useEffect(() => {
-    if (!boardingPass) return;
-  
-    const now = new Date();
-    const boardingTime = new Date(boardingPass.boardingTime);
-    const departureTime = new Date(boardingPass.route.departureTime);
-    const tenMinutesBeforeDeparture = new Date(departureTime.getTime() - 10 * 60 * 1000);
-  
-    if (boardingTime > now) {
-      Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Porta d'embarcament oberta",
-          body: `L'embarcament per al teu vol ${boardingPass.route.flightNumber} ha començat.`,
-        },
-        trigger: boardingTime,
-      });
-    }
-  
-    if (tenMinutesBeforeDeparture > now) {
-      Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Queden 10 minuts",
-          body: `El teu vol ${boardingPass.route.flightNumber} està a punt de sortir.`,
-        },
-        trigger: tenMinutesBeforeDeparture,
-      });
-    }
-  
-  }, [boardingPass]);
-  
-  
   if (!boardingPass) {
     return (
       <View>
@@ -120,81 +77,83 @@ export default function FlightInfoScreen() {
         
         {/* Contingut de la pantalla */}
         <SafeAreaView style={styles.container}>
-          <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">La porta d'embarcament s'obre en: {boardingCountdown}</ThemedText>
-          <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">Temps fins a la sortida del vol: {departureCountdown}</ThemedText>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">La porta d'embarcament s'obre en: {boardingCountdown}</ThemedText>
+            <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">Temps fins a la sortida del vol: {departureCountdown}</ThemedText>
 
-          <View style={[styles.flightBox, {borderColor: boxColor}]}>
-            
-            {/* Información inicial (imatge...) */}
-            <View style={styles.topBox}>
-              <Image source={boardingPass.airlineImage} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>
-              <View style={styles.flightTextInfo}>
-                <ThemedText style={[{ color: textColor }, { fontSize: 20 }]} type="defaultSemiBold">{boardingPass.airline}</ThemedText>
-                <ThemedText style={{ color: textColor }} type="default">{boardingPass.route.origin} - {boardingPass.route.destination}</ThemedText>
+            <View style={[styles.flightBox, {borderColor: boxColor}]}>
+              
+              {/* Información inicial (imatge...) */}
+              <View style={styles.topBox}>
+                <Image source={boardingPass.airlineImage} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>
+                <View style={styles.flightTextInfo}>
+                  <ThemedText style={[{ color: textColor }, { fontSize: 20 }]} type="defaultSemiBold">{boardingPass.airline}</ThemedText>
+                  <ThemedText style={{ color: textColor }} type="default">{boardingPass.route.origin} - {boardingPass.route.destination}</ThemedText>
+                </View>
+              </View>
+
+              {/* Separador */}
+              <View style={[styles.separator, {backgroundColor: separatorColor}]}></View>
+
+              {/* Primera fila d'informació */}
+              <View style={styles.rowBox}>
+                <View style={[styles.innerBox, {width: '66%'}]}>
+                  <ThemedText type="default">PASSATGER</ThemedText>
+                  <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.passenger.name}</ThemedText>
+                </View>
+                <View style={[styles.innerBox, {width: '33%'}]}>
+                  <ThemedText type="default">NUM VOL</ThemedText>
+                  <ThemedText type="defaultSemiBold">{boardingPass.flightNumber}</ThemedText>
+                </View>
+              </View>
+
+              {/* Segona fila d'informació */}
+              <View style={styles.rowBox}>
+                <View style={[styles.innerBox, {width: '33%'}]}>
+                  <ThemedText type="default">SEIENT</ThemedText>
+                  <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.passenger.seat}</ThemedText>
+                </View>
+                <View style={[styles.innerBox, {width: '33%'}]}>
+                  <ThemedText type="default">PORTA</ThemedText>
+                  <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.gate}</ThemedText>
+                </View>
+                <View style={[styles.innerBox, {width: '33%'}]}>
+                  <ThemedText type="default">TERMINAL</ThemedText>
+                  <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.terminal}</ThemedText>
+                </View>
+              </View>
+              
+              {/* Tercera fila d'informació */}
+              <View style={styles.rowBox}>
+                <View style={[styles.innerBox]}>
+                  <ThemedText type="default">DESDE</ThemedText>
+                  <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.originName}</ThemedText>
+                </View>
+                <View style={styles.innerBox}>
+                  <ThemedText type="default">TEMPS DE SORTIDA</ThemedText>
+                  <ThemedText type="defaultSemiBold">{format(boardingPass.route.departureTime,"d-M-yyyy H:mm")}</ThemedText>
+                </View>
+              </View>
+
+              {/* Quarta fila d'informació */}
+              <View style={styles.rowBox}>
+                <View style={styles.innerBox}>
+                  <ThemedText type="default">FINS</ThemedText>
+                  <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.destinationName}</ThemedText>
+                </View>
+                <View style={styles.innerBox}>
+                  <ThemedText type="default">TEMPS D'ARRIBADA</ThemedText>
+                  <ThemedText type="defaultSemiBold">{format(boardingPass.route.arrivalTime,"d-M-yyyy H:mm")}</ThemedText>
+                </View>
+              </View>
+
+              {/* Codi QR */}
+              <View style={styles.qrBox} onLayout={handleLayout}>
+                <QRCode value={boardingPass.qrCode} size={qrSize} logoSVG={logo} color={textColor} backgroundColor='transparent'></QRCode>
               </View>
             </View>
-
-            {/* Separador */}
-            <View style={[styles.separator, {backgroundColor: separatorColor}]}></View>
-
-            {/* Primera fila d'informació */}
-            <View style={styles.rowBox}>
-              <View style={[styles.innerBox, {width: '66%'}]}>
-                <ThemedText type="default">PASSATGER</ThemedText>
-                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.passenger.name}</ThemedText>
-              </View>
-              <View style={[styles.innerBox, {width: '33%'}]}>
-                <ThemedText type="default">NUM VOL</ThemedText>
-                <ThemedText type="defaultSemiBold">{boardingPass.flightNumber}</ThemedText>
-              </View>
-            </View>
-
-            {/* Segona fila d'informació */}
-            <View style={styles.rowBox}>
-              <View style={[styles.innerBox, {width: '33%'}]}>
-                <ThemedText type="default">SEIENT</ThemedText>
-                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.passenger.seat}</ThemedText>
-              </View>
-              <View style={[styles.innerBox, {width: '33%'}]}>
-                <ThemedText type="default">PORTA</ThemedText>
-                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.gate}</ThemedText>
-              </View>
-              <View style={[styles.innerBox, {width: '33%'}]}>
-                <ThemedText type="default">TERMINAL</ThemedText>
-                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.terminal}</ThemedText>
-              </View>
-            </View>
-            
-            {/* Tercera fila d'informació */}
-            <View style={styles.rowBox}>
-              <View style={[styles.innerBox]}>
-                <ThemedText type="default">DESDE</ThemedText>
-                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.originName}</ThemedText>
-              </View>
-              <View style={styles.innerBox}>
-                <ThemedText type="default">TEMPS DE SORTIDA</ThemedText>
-                <ThemedText type="defaultSemiBold">{format(boardingPass.route.departureTime,"d-M-yyyy H:mm")}</ThemedText>
-              </View>
-            </View>
-
-            {/* Quarta fila d'informació */}
-            <View style={styles.rowBox}>
-              <View style={styles.innerBox}>
-                <ThemedText type="default">FINS</ThemedText>
-                <ThemedText numberOfLines={1} ellipsizeMode='tail' type="defaultSemiBold">{boardingPass.route.destinationName}</ThemedText>
-              </View>
-              <View style={styles.innerBox}>
-                <ThemedText type="default">TEMPS D'ARRIBADA</ThemedText>
-                <ThemedText type="defaultSemiBold">{format(boardingPass.route.arrivalTime,"d-M-yyyy H:mm")}</ThemedText>
-              </View>
-            </View>
-
-            {/* Codi QR */}
-            <View style={styles.qrBox} onLayout={handleLayout}>
-              <QRCode value={boardingPass.qrCode} size={qrSize} logoSVG={logo} color={textColor} backgroundColor='transparent'></QRCode>
-            </View>
-          </View>
-        </SafeAreaView> 
+          </ScrollView>
+        </SafeAreaView>
       </Fragment>
     );
   }
@@ -264,4 +223,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
+  scrollContent: {
+    alignItems: 'center',
+    paddingBottom: 150,
+  },
 });
