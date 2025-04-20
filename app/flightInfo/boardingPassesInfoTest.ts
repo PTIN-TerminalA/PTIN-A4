@@ -194,8 +194,8 @@ export const BoardingPasses: BoardingPass[] = [
         originName: airportNames.BCN,
         destination: 'ALC',
         destinationName: airportNames.ALC,
-        departureTime: '2025-03-20T09:30:00',
-        arrivalTime: '2025-03-20T10:45:00',
+        departureTime: '2025-04-19T18:30:00',
+        arrivalTime: '2025-04-19T19:45:00',
         terminal: '2',
         gate: 'B5'
       },
@@ -204,7 +204,7 @@ export const BoardingPasses: BoardingPass[] = [
         seat: '9D',
         ticketNumber: 'VY-4567891230'
       },
-      boardingTime: '2025-03-20T09:00:00',
+      boardingTime: '2025-04-19T18:00:00',
       baggageAllowance: '1 × 10kg',
       qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
@@ -220,8 +220,8 @@ export const BoardingPasses: BoardingPass[] = [
         originName: airportNames.ALC,
         destination: 'BCN',
         destinationName: airportNames.BCN,
-        departureTime: '2025-03-22T17:45:00',
-        arrivalTime: '2025-03-22T19:00:00',
+        departureTime: '2025-04-22T17:45:00',
+        arrivalTime: '2025-04-22T19:00:00',
         terminal: '1',
         gate: 'C2'
       },
@@ -230,7 +230,7 @@ export const BoardingPasses: BoardingPass[] = [
         seat: '3F',
         ticketNumber: 'VY-7891234560'
       },
-      boardingTime: '2025-03-22T17:15:00',
+      boardingTime: '2025-04-22T17:15:00',
       baggageAllowance: '1 × 10kg',
       qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },

@@ -2,12 +2,14 @@ import {View, Image, StyleSheet, Text, useColorScheme, LayoutChangeEvent} from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams} from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { BoardingPass} from '@/app/flightInfo/boardingPass';
 import { BoardingPasses } from './boardingPassesInfoTest';
 import {Colors} from '@/constants/Colors';
 import { format } from 'date-fns';
 import QRCode from 'react-native-qrcode-svg';
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 
 export default function FlightInfoScreen() {
   const colorScheme = useColorScheme();
@@ -20,12 +22,80 @@ export default function FlightInfoScreen() {
   const boardingPass = BoardingPasses.find(p => p.id === id) as BoardingPass;
   const logo= require('@/assets/images/logo/logo.svg')
   const [qrSize, setQrSize] = useState(0);
+  const [departureCountdown, setDepartureCountdown] = useState('');
+  const [boardingCountdown, setBoardingCountdown] = useState('');
+
+  useEffect(() => {
+    const requestPermissions = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permís per a notificacions no concedit.');
+      }
+    };
+    requestPermissions();
+  }, []);
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
     setQrSize(width * 0.9); // 90% of container width
   };
 
+  useEffect(() => {
+    if (!boardingPass) return;
+  
+    const updateCountdowns = () => {
+      const now = new Date();
+  
+      const departure = new Date(boardingPass.route.departureTime);
+      const boarding = new Date(boardingPass.boardingTime);
+  
+      const updateTime = (targetTime: Date) => {
+        const diff = targetTime.getTime() - now.getTime();
+        if (diff <= 0) return 'Ja ha passat!';
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        return `${h}h ${m}m ${s}s`;
+      };
+  
+      setDepartureCountdown(updateTime(departure));
+      setBoardingCountdown(updateTime(boarding));
+    };
+  
+    updateCountdowns();
+    const interval = setInterval(updateCountdowns, 1000);
+    return () => clearInterval(interval);
+  }, [boardingPass]);
+  
+  useEffect(() => {
+    if (!boardingPass) return;
+  
+    const now = new Date();
+    const boardingTime = new Date(boardingPass.boardingTime);
+    const departureTime = new Date(boardingPass.route.departureTime);
+    const tenMinutesBeforeDeparture = new Date(departureTime.getTime() - 10 * 60 * 1000);
+  
+    if (boardingTime > now) {
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Porta d'embarcament oberta",
+          body: `L'embarcament per al teu vol ${boardingPass.route.flightNumber} ha començat.`,
+        },
+        trigger: boardingTime,
+      });
+    }
+  
+    if (tenMinutesBeforeDeparture > now) {
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Queden 10 minuts",
+          body: `El teu vol ${boardingPass.route.flightNumber} està a punt de sortir.`,
+        },
+        trigger: tenMinutesBeforeDeparture,
+      });
+    }
+  
+  }, [boardingPass]);
   
   
   if (!boardingPass) {
@@ -50,6 +120,9 @@ export default function FlightInfoScreen() {
         
         {/* Contingut de la pantalla */}
         <SafeAreaView style={styles.container}>
+          <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">La porta d'embarcament s'obre en: {boardingCountdown}</ThemedText>
+          <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">Temps fins a la sortida del vol: {departureCountdown}</ThemedText>
+
           <View style={[styles.flightBox, {borderColor: boxColor}]}>
             
             {/* Información inicial (imatge...) */}
