@@ -17,7 +17,7 @@ export default function RegisterScreen() {
   const [phone, setPhone] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [gender, setGender] = useState("");
-  const { login, logout } = useAuth();
+  const { register, logout } = useAuth();
 
   const handleRegister = async (email: string, password: string, confirmPassword: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
     // Comprovem si falta algun camp
@@ -108,7 +108,8 @@ export default function RegisterScreen() {
       }
   
       Alert.alert("Registre completat", "Usuari registrat correctament");
-      login(email);     
+      // login(email);
+      register(name, email, dni, phone, birthDate, gender);  
   
     } catch (error) {
       if (error instanceof Error) {
@@ -195,26 +196,25 @@ export default function RegisterScreen() {
           defaultOption={{ key: gender, value: '' }}
           placeholder="Selecciona Gènere"
           inputStyles={{
-            color: 'lightgray', // Cambia el color del texto dentro del input
-            borderColor: 'white', // Cambia el color del borde del rectángulo
-            borderWidth: 1, // Define el grosor del borde
-            borderRadius: 10, // Redondea las esquinas del borde
-            padding: 6, // Espaciado dentro del campo
+            color: 'lightgray',
+            borderColor: 'white',
+            borderWidth: 1, 
+            borderRadius: 10, 
+            padding: 6, 
             height: 50,
             width: '90%',
-            // height: 50, // Asegúrate de que el campo tenga una altura adecuada
-            justifyContent: 'center', // Asegura que el texto esté centrado verticalmente
+            justifyContent: 'center', 
           }}
           dropdownStyles={{
-            backgroundColor: 'grey', // Fondo del desplegable
-            borderWidth: 1, // Borde del desplegable
-            borderColor: 'white', // Color del borde del desplegable
-            borderRadius: 10, // Redondeo de las esquinas del desplegable
+            backgroundColor: 'grey', 
+            borderWidth: 1, 
+            borderColor: 'white', 
+            borderRadius: 10, 
           }}
           dropdownTextStyles={{
-            color: 'white', // Color de las letras en las opciones del desplegable
+            color: 'white', 
           }}
-          arrowicon={<Text style={{ color: 'white' }}>↓</Text>} // Cambia el color de la flecha
+          arrowicon={<Text style={{ color: 'white' }}>↓</Text>} 
           search={false}
         />
         {/********************/}
