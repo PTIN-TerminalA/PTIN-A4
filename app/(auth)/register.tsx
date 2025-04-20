@@ -1,10 +1,11 @@
-import { Button, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, useColorScheme, View, Image, Alert} from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import { useState } from "react";
+import { SelectList } from 'react-native-dropdown-select-list';
 
 export function homepage() {
   router.replace("/(tabs)/profile");
@@ -14,53 +15,229 @@ export function login() {
 }
 
 export default function RegisterScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [dni, setDni] = useState("");
+  const [phone, setPhone] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [gender, setGender] = useState("");
+
+  const handleRegister = async (email: string, password: string, confirmPassword: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
+    // Comprovem si falta algun camp
+    if (!email) {
+      Alert.alert("Error", "Falta el camp: correu electrònic");
+      return;
+    }
+    if (!password) {
+      Alert.alert("Error", "Falta el camp: contrasenya");
+      return;
+    }
+    if (!confirmPassword) {
+      Alert.alert("Error", "Falta el camp: confirmar contrasenya");
+      return;
+    }
+    if (!name) {
+      Alert.alert("Error", "Falta el camp: nom");
+      return;
+    }
+    if (!dni) {
+      Alert.alert("Error", "Falta el camp: DNI");
+      return;
+    }
+    if (!phone) {
+      Alert.alert("Error", "Falta el camp: telèfon");
+      return;
+    }
+    if (!birthDate) {
+      Alert.alert("Error", "Falta el camp: data de naixement");
+      return;
+    }
+    if (!gender) {
+      Alert.alert("Error", "Falta el camp: gènere");
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Les contrasenyes no coincideixen");
+      return;
+    }
+  
+    try {
+      // 1: Register the user (create the user and get the access token)
+      const userResponse = await fetch("http://192.168.1.13:8000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          dni,
+          email,
+          password,
+          usertype : 1 // Regular user type
+        }),
+      });
+
+      const userData = await userResponse.json();
+      if (!userResponse.ok) {
+        throw new Error(userData.detail || "Error al registrar l'usuari");
+      }
+
+      // 2: Decode the access token to extract the user_id (sub)
+      const token = userData.access_token;
+      const userIdResponse = await fetch(`http://192.168.1.13:8000/api/get_user_id?token=${token}`);
+      if (!userIdResponse.ok) {
+        const errorData = await userIdResponse.json();
+        throw new Error(errorData.detail || "Error obtenint l'ID de l'usuari");
+      }
+      const userIdData = await userIdResponse.json();
+      const userId = userIdData.user_id;
+  
+      // 3: Register the regular user
+      const regularResponse = await fetch("http://192.168.1.13:8000/api/register-regular", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,   // Use the extracted user_id
+          phone_num: phone,
+          birth_date: birthDate,
+          identity: gender,
+        }),
+      });
+      const regularData = await regularResponse.json();
+      if (!regularResponse.ok) {
+        throw new Error(regularData.detail || "Error al registrar el regular");
+      }
+  
+      Alert.alert("Registre completat", "Usuari registrat correctament");
+      homepage();
+  
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error de registre", error.message);
+      } else {
+        console.error("Unknown error", error);
+      }
+    }
+  };  
+
   return (
     <ThemedSafeAreaView style={styles.container}>
-      <ThemedText type="title" style= {{textAlign:'center', paddingTop: 60,paddingBottom:80}}> 
-        Benvingut a Flysy!
-      </ThemedText>
-      <ThemedText style= {{textAlign:'center', fontWeight:'bold', fontSize:16, paddingBottom: 10,borderEndStartRadius:10}}>
-        Registrat
-      </ThemedText>
-      <ThemedText style= {{textAlign:'center', paddingBottom: 10,borderEndStartRadius:10}}>
-        Introdueix el teu correu electronic i crea una contrasenya per registrar-te
-      </ThemedText>
-      <ThemedTextInput 
-        placeholder="email@domain.com" 
-        autoCorrect={false} 
-        autoCapitalize="none"
-      />
-      <ThemedTextInput
-        placeholder="Contrasenya" 
-        secureTextEntry 
-        autoCorrect={false}
-        autoCapitalize="none"
-      />
-      <ThemedTextInput 
-        placeholder="Repeteix Contrasenya" 
-        secureTextEntry 
-        autoCorrect={false}
-        autoCapitalize="none"
-      />
-      <ThemedPressable
-        onPress={() => {
-            console.log('Sessió Iniciada!');
-            homepage();
-        }}
-      >
-        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
-          Registrat!
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+        <ThemedText type="title" style= {{textAlign:'center', paddingTop: 60,paddingBottom:80}}> 
+          Benvingut a Flysy!
         </ThemedText>
-      </ThemedPressable>
-      <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
-        En registrar-te, acceptes les nostres Condicions 
-        del servei i la politica de privadesa
-      </ThemedText>
-      <TouchableOpacity onPress={login}>
-        <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
-          Iniciar Sessió
+        <ThemedText style= {{textAlign:'center', fontWeight:'bold', fontSize:16, paddingBottom: 10,borderEndStartRadius:10}}>
+          Registra't
         </ThemedText>
-      </TouchableOpacity>
+        <ThemedText style= {{textAlign:'center', paddingBottom: 10,borderEndStartRadius:10}}>
+          Introdueix les teves dades i crea una contrasenya per registrar-te
+        </ThemedText>
+        <ThemedTextInput 
+          placeholder="email@domain.com"
+          placeholderTextColor={'lightgray'}
+          autoCorrect={false} 
+          autoCapitalize="none"
+          onChangeText={setEmail}
+        />
+        <ThemedTextInput
+          placeholder="Contrasenya"
+          placeholderTextColor={'lightgray'}
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+          onChangeText={setPassword}
+        />
+        <ThemedTextInput 
+          placeholder="Repeteix Contrasenya"
+          placeholderTextColor={'lightgray'}
+          secureTextEntry 
+          autoCorrect={false}
+          autoCapitalize="none"
+          onChangeText={setConfirmPassword}
+        />
+        <ThemedTextInput 
+          placeholder="Nom"
+          placeholderTextColor={'lightgray'}
+          autoCorrect={false}
+          autoCapitalize="none"
+          onChangeText={setName}
+        />
+        <ThemedTextInput 
+          placeholder="DNI"
+          placeholderTextColor={'lightgray'}
+          autoCorrect={false}
+          autoCapitalize="none"
+          onChangeText={setDni}
+        />
+        <ThemedTextInput 
+          placeholder="Telèfon"
+          placeholderTextColor={'lightgray'}
+          autoCorrect={false} 
+          autoCapitalize="none"
+          onChangeText={setPhone}
+        />
+        <ThemedTextInput 
+          placeholder="Data de naixement (YYYY-MM-DD)" 
+          placeholderTextColor={'lightgray'}
+          autoCorrect={false}
+          autoCapitalize="none"
+          onChangeText={setBirthDate}
+        />
+        {/* DESPLEGABLE DEL GÈNERE */}
+        <SelectList
+          setSelected={setGender}
+          data={[
+            { key: 'male', value: 'Masculí' },
+            { key: 'female', value: 'Femení' },
+            { key: 'other', value: 'Altre' },
+            { key: 'rather_not_to_say', value: 'Prefereixo no dir' }
+          ]}
+          save="key"
+          defaultOption={{ key: gender, value: '' }}
+          placeholder="Selecciona Gènere"
+          inputStyles={{
+            color: 'lightgray', // Cambia el color del texto dentro del input
+            borderColor: 'white', // Cambia el color del borde del rectángulo
+            borderWidth: 1, // Define el grosor del borde
+            borderRadius: 10, // Redondea las esquinas del borde
+            padding: 6, // Espaciado dentro del campo
+            height: 50,
+            width: '90%',
+            // height: 50, // Asegúrate de que el campo tenga una altura adecuada
+            justifyContent: 'center', // Asegura que el texto esté centrado verticalmente
+          }}
+          dropdownStyles={{
+            backgroundColor: 'grey', // Fondo del desplegable
+            borderWidth: 1, // Borde del desplegable
+            borderColor: 'white', // Color del borde del desplegable
+            borderRadius: 10, // Redondeo de las esquinas del desplegable
+          }}
+          dropdownTextStyles={{
+            color: 'white', // Color de las letras en las opciones del desplegable
+          }}
+          arrowicon={<Text style={{ color: 'white' }}>↓</Text>} // Cambia el color de la flecha
+          search={false}
+        />
+        {/********************/}
+        <ThemedPressable onPress={() => handleRegister(email, password, confirmPassword, name, dni, phone, birthDate, gender)}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
+            Registra't!
+          </ThemedText>
+        </ThemedPressable>
+        <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
+          En registrar-te, acceptes les nostres condicions 
+          del servei i la política de privadesa
+        </ThemedText>
+        <TouchableOpacity onPress={login}>
+          <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
+            Iniciar Sessió
+          </ThemedText>
+        </TouchableOpacity>
+      </ScrollView>
     </ThemedSafeAreaView>
   );
 }
@@ -77,5 +254,11 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
     paddingTop: 40,
+  },
+  scrollContainer: {
+    padding: 20,
+    gap: 10,
+    paddingTop: 40,
+    paddingBottom: 300,
   },
 });
