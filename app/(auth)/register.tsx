@@ -5,6 +5,7 @@ import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
+// import { SelectList } from 'react-native-dropdown-select-list';
 
 export function homepage() {
   router.replace("/(tabs)/profile");
@@ -24,6 +25,39 @@ export default function RegisterScreen() {
   const [gender, setGender] = useState("");
 
   const handleRegister = async (email: string, password: string, confirmPassword: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
+    // Comprovem si falta algun camp
+    if (!email) {
+      Alert.alert("Error", "Falta el camp: correu electrònic");
+      return;
+    }
+    if (!password) {
+      Alert.alert("Error", "Falta el camp: contrasenya");
+      return;
+    }
+    if (!confirmPassword) {
+      Alert.alert("Error", "Falta el camp: confirmar contrasenya");
+      return;
+    }
+    if (!name) {
+      Alert.alert("Error", "Falta el camp: nom");
+      return;
+    }
+    if (!dni) {
+      Alert.alert("Error", "Falta el camp: DNI");
+      return;
+    }
+    if (!phone) {
+      Alert.alert("Error", "Falta el camp: telèfon");
+      return;
+    }
+    if (!birthDate) {
+      Alert.alert("Error", "Falta el camp: data de naixement");
+      return;
+    }
+    if (!gender) {
+      Alert.alert("Error", "Falta el camp: gènere");
+      return;
+    }
     if (password !== confirmPassword) {
       Alert.alert("Error", "Les contrasenyes no coincideixen");
       return;
@@ -162,12 +196,12 @@ export default function RegisterScreen() {
         />
         <ThemedPressable onPress={() => handleRegister(email, password, confirmPassword, name, dni, phone, birthDate, gender)}>
           <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
-            Registrat!
+            Registra't!
           </ThemedText>
         </ThemedPressable>
         <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
-          En registrar-te, acceptes les nostres Condicions 
-          del servei i la politica de privadesa
+          En registrar-te, acceptes les nostres condicions 
+          del servei i la política de privadesa
         </ThemedText>
         <TouchableOpacity onPress={login}>
           <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
