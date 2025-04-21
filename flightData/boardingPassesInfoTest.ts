@@ -6,7 +6,7 @@ import { BoardingPass } from '@/flightData/boardingPass';
 */}
 
 
-const airportNames: Record<string, string> = {
+export const airportNames: Record<string, string> = {
   BCN: 'Barcelona-El Prat',
   MAD: 'Madrid-Barajas',
   GRX: 'Granada-Jaén',
@@ -14,7 +14,7 @@ const airportNames: Record<string, string> = {
   ALC: 'Alicante-Elche'
 };
 
-const passengerNames = [
+export const passengerNames = [
   'Joel Esteller Planesas',
   'Laia Esteller Planesas',
   'Juan Carlos Esteller Alcarria',
@@ -22,7 +22,7 @@ const passengerNames = [
   'Maria del Carmen Planesa Benavent'
 ];
 
-export const BoardingPasses: BoardingPass[] = [
+export let BoardingPasses: BoardingPass[] = [
     // Ryan Air BCN-MAD (Flight 1)
     {
       id: '1',
