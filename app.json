@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ptin_a4",
-    "slug": "ptin_a4",
+    "slug": "ptin-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -43,8 +43,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "9e0f4e86-ac22-44eb-85da-9d513986b8f0"
+        "projectId": "49502d3f-fe03-4966-b178-f411000a69ce"
       }
-    }
+    },
+    "owner": "ptin"
   }
 }
