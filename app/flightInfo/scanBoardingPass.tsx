@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 import { Image } from 'react-native';
 import { View } from 'react-native';
 import { useThemeColor } from '@/hooks/useThemeColor';
-
+import { insertFromQR } from '@/flightData/qrImporter';
 
 export default function ScanBoardingPassScreen(){
     const buttonColor = useThemeColor({}, 'button'); 
@@ -22,10 +22,18 @@ export default function ScanBoardingPassScreen(){
     const handleQRCodeScanned = ({ data }: { data: string }) => {
         if (scanned) return; // evita múltiples escaneigs
         setScanned(true);
-        alert(`Dades escanejades: ${data}`);
-        // TODO: Afegir tota la lògica de l'escaneig en sí i com ens guardem
-        // les dades escanejades per mostrar-les a la app
-
+        //alert(`Dades escanejades: ${data}`);
+        
+        const cleaned = data.trim().replace(/^\uFEFF/, '');
+        try {
+          const qrContent = JSON.parse(cleaned);
+          insertFromQR(qrContent);
+          router.back();
+          
+        } catch (error) {
+          alert('Error processant el codi QR');
+          console.error('QR error:', error);
+        }
       };
     
     if (!permission) {

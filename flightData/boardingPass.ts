@@ -13,7 +13,7 @@ export interface FlightRoute {
   destination: string;
   destinationName: string;
   departureTime: string;
-  arrivalTime: Date | string;
+  arrivalTime: string;
   terminal: string;
   gate: string;
 }
