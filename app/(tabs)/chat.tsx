@@ -138,6 +138,407 @@
 
 
 
+// import React, { useState, useRef, useEffect } from 'react';
+// import {
+//   View,
+//   Text,
+//   TextInput,
+//   TouchableOpacity,
+//   FlatList,
+//   KeyboardAvoidingView,
+//   Platform,
+//   StyleSheet,
+//   useColorScheme
+// } from 'react-native';
+// import { Ionicons } from '@expo/vector-icons';
+// import { Colors } from '@/constants/Colors';
+// import Voice from '@react-native-voice/voice' // Cambié la importación aquí
+// import Constants from 'expo-constants';
+
+
+// type Message = {
+//   id: string;
+//   text: string;
+//   sender: 'user' | 'bot';
+// };
+
+// export default function ChatScreen() {
+//   const colorScheme = useColorScheme();
+//   const isDarkMode = colorScheme === 'dark';
+
+//   const themeColors = {
+//     background: isDarkMode ? Colors.dark.background : Colors.light.background,
+//     inputBackground: isDarkMode ? '#1e1e1e' : '#fff',
+//     inputBorder: isDarkMode ? '#333' : '#ccc',
+//     textColor: isDarkMode ? '#fff' : '#000',
+//     userBubble: Colors.primari,
+//     botBubble: isDarkMode ? '#333' : '#E5E5EA',
+//   };
+
+//   const [messages, setMessages] = useState<Message[]>([]);
+//   const [inputText, setInputText] = useState('');
+//   const [isRecording, setIsRecording] = useState(false);
+//   const flatListRef = useRef<FlatList>(null);
+
+//   // Voice handlers
+//   useEffect(() => {
+//     // Aquí definimos los eventos de voz
+//     Voice.onSpeechResults = onSpeechResults;
+//     Voice.onSpeechError = onSpeechError;
+
+//     return () => {
+//       // Limpiamos los listeners cuando el componente se desmonte
+//       Voice.destroy().then(Voice.removeAllListeners);
+//     };
+//   }, []);
+
+//   const onSpeechResults = (e: any) => {
+//     const results = e.value;
+//     if (results && results[0]) {
+//       const spokenText = results[0];
+//       const userMessage: Message = {
+//         id: Date.now().toString(),
+//         text: spokenText,
+//         sender: 'user',
+//       };
+//       setMessages(prev => [...prev, userMessage]);
+
+//       setTimeout(() => {
+//         const botMessage: Message = {
+//           id: (Date.now() + 1).toString(),
+//           text: '¡Mensaje recibido!',
+//           sender: 'bot',
+//         };
+//         setMessages(prev => [...prev, botMessage]);
+//         flatListRef.current?.scrollToEnd({ animated: true });
+//       }, 800);
+//     }
+//     setIsRecording(false);
+//   };
+
+//   const onSpeechError = (e: any) => {
+//     console.error('Voice error:', e);
+//     setIsRecording(false);
+//   };
+
+//   const toggleRecording = async () => {
+//     try {
+//       if (isRecording) {
+//         await Voice.stop(); // Detener la grabación
+//         setIsRecording(false);
+//       } else {
+//         console.log('Voice:', Voice);
+//         console.log('Started listening 111');
+//         console.log(Constants.executionEnvironment); // 'expo' → estás en Expo Go, 'standalone' o 'developer' → dev client
+//         await Voice.start('es-ES'); // Cambia el idioma a 'es-ES' o el que prefieras
+//         console.log('Started listening 222');
+//         setIsRecording(true);
+//       }
+//     } catch (error) {
+//       console.error('Voice start error:', error);
+//       setIsRecording(false);
+//     }
+//   };
+
+//   const sendMessage = () => {
+//     if (!inputText.trim()) return;
+
+//     const userMessage: Message = {
+//       id: Date.now().toString(),
+//       text: inputText,
+//       sender: 'user',
+//     };
+
+//     setMessages(prev => [...prev, userMessage]);
+//     setInputText('');
+
+//     setTimeout(() => {
+//       const botMessage: Message = {
+//         id: (Date.now() + 1).toString(),
+//         text: '¡Mensaje recibido!',
+//         sender: 'bot',
+//       };
+//       setMessages(prev => [...prev, botMessage]);
+//       flatListRef.current?.scrollToEnd({ animated: true });
+//     }, 800);
+//   };
+
+//   const renderItem = ({ item }: { item: Message }) => (
+//     <View
+//       style={[styles.messageContainer, {
+//         alignSelf: item.sender === 'user' ? 'flex-end' : 'flex-start',
+//         backgroundColor: item.sender === 'user' ? themeColors.userBubble : themeColors.botBubble,
+//       }]}
+//     >
+//       <Text style={[styles.messageText, { color: themeColors.textColor }]}>
+//         {item.text}
+//       </Text>
+//     </View>
+//   );
+
+//   return (
+//     <KeyboardAvoidingView
+//       style={[styles.container, { backgroundColor: themeColors.background }]}
+//       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+//       keyboardVerticalOffset={90}
+//     >
+//       <FlatList
+//         ref={flatListRef}
+//         data={messages}
+//         renderItem={renderItem}
+//         keyExtractor={(item) => item.id}
+//         contentContainerStyle={styles.chat}
+//         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+//       />
+
+//       <View
+//         style={[styles.inputContainer, {
+//           backgroundColor: themeColors.inputBackground,
+//           borderTopColor: themeColors.inputBorder,
+//         }]}
+//       >
+//         <TextInput
+//           value={inputText}
+//           onChangeText={setInputText}
+//           placeholder="Escribe un mensaje..."
+//           placeholderTextColor={isDarkMode ? '#aaa' : '#999'}
+//           style={[styles.input, {
+//             backgroundColor: themeColors.inputBackground,
+//             borderColor: themeColors.inputBorder,
+//             color: themeColors.textColor,
+//           }]}
+//         />
+//         <TouchableOpacity onPress={toggleRecording} style={styles.iconButton}>
+//           <Ionicons
+//             name={isRecording ? 'mic' : 'mic-outline'}
+//             size={24}
+//             color={isRecording ? '#FF3B30' : '#555'}
+//           />
+//         </TouchableOpacity>
+//         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+//           <Ionicons name="send" size={22} color="#fff" />
+//         </TouchableOpacity>
+//       </View>
+//     </KeyboardAvoidingView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1 },
+//   chat: { padding: 10, paddingBottom: 70 },
+//   messageContainer: { padding: 10, marginVertical: 4, maxWidth: '75%', borderRadius: 12 },
+//   messageText: { fontSize: 16 },
+//   inputContainer: { flexDirection: 'row', padding: 10, borderTopWidth: 1, alignItems: 'center' },
+//   input: { flex: 1, borderRadius: 20, borderWidth: 1, paddingHorizontal: 15, paddingVertical: 8 },
+//   sendButton: { backgroundColor: Colors.primari, marginLeft: 8, padding: 10, borderRadius: 50 },
+//   iconButton: { marginLeft: 8 },
+// });
+
+
+// import React, { useState, useRef, useEffect } from 'react';
+// import {
+//   View,
+//   Text,
+//   TextInput,
+//   TouchableOpacity,
+//   FlatList,
+//   KeyboardAvoidingView,
+//   Platform,
+//   StyleSheet,
+//   useColorScheme
+// } from 'react-native';
+// import { Ionicons } from '@expo/vector-icons';
+// import { Colors } from '@/constants/Colors';
+// import * as ExpoStt from 'expo-stt';
+
+// type Message = {
+//   id: string;
+//   text: string;
+//   sender: 'user' | 'bot';
+// };
+
+// export default function ChatScreen() {
+//   const colorScheme = useColorScheme();
+//   const isDarkMode = colorScheme === 'dark';
+
+//   const themeColors = {
+//     background: isDarkMode ? Colors.dark.background : Colors.light.background,
+//     inputBackground: isDarkMode ? '#1e1e1e' : '#fff',
+//     inputBorder: isDarkMode ? '#333' : '#ccc',
+//     textColor: isDarkMode ? '#fff' : '#000',
+//     userBubble: Colors.primari,
+//     botBubble: isDarkMode ? '#333' : '#E5E5EA',
+//   };
+
+//   const [messages, setMessages] = useState<Message[]>([]);
+//   const [inputText, setInputText] = useState('');
+//   const [isRecording, setIsRecording] = useState(false);
+//   const [error, setError] = useState<string | undefined>();
+//   const flatListRef = useRef<FlatList>(null);
+
+//   useEffect(() => {
+//     const onSpeechStart = ExpoStt.addOnSpeechStartListener(() => {
+//       setInputText('');
+//       setError(undefined);
+//       setIsRecording(true);
+//     });
+
+//     const onSpeechResult = ExpoStt.addOnSpeechResultListener(({ value }) => {
+//       if (value?.[0]) {
+//         const spokenText = value[0];
+//         const userMessage: Message = {
+//           id: Date.now().toString(),
+//           text: spokenText,
+//           sender: 'user',
+//         };
+//         setMessages(prev => [...prev, userMessage]);
+
+//         setTimeout(() => {
+//           const botMessage: Message = {
+//             id: (Date.now() + 1).toString(),
+//             text: '¡Mensaje recibido!',
+//             sender: 'bot',
+//           };
+//           setMessages(prev => [...prev, botMessage]);
+//           flatListRef.current?.scrollToEnd({ animated: true });
+//         }, 800);
+//       }
+//       setIsRecording(false);
+//     });
+
+//     const onSpeechCancelled = ExpoStt.addOnSpeechCancelledListener(() => {
+//       setIsRecording(false);
+//     });
+
+//     const onSpeechError = ExpoStt.addOnSpeechErrorListener(({ cause }) => {
+//       console.error('Speech error:', cause);
+//       setError(cause);
+//       setIsRecording(false);
+//     });
+
+//     const onSpeechEnd = ExpoStt.addOnSpeechEndListener(() => {
+//       setIsRecording(false);
+//     });
+
+//     return () => {
+//       onSpeechStart.remove();
+//       onSpeechResult.remove();
+//       onSpeechCancelled.remove();
+//       onSpeechError.remove();
+//       onSpeechEnd.remove();
+//     };
+//   }, []);
+
+//   const toggleRecording = async () => {
+//     try {
+//       if (isRecording) {
+//         await ExpoStt.stopSpeech();
+//         setIsRecording(false);
+//       } else {
+//         const granted = await ExpoStt.requestRecognitionPermission();
+//         if (granted) {
+//           await ExpoStt.startSpeech();
+//         } else {
+//           setError('Permiso de micrófono no concedido.');
+//         }
+//       }
+//     } catch (error) {
+//       console.error('Error al iniciar reconocimiento:', error);
+//       setIsRecording(false);
+//     }
+//   };
+
+//   const sendMessage = () => {
+//     if (!inputText.trim()) return;
+
+//     const userMessage: Message = {
+//       id: Date.now().toString(),
+//       text: inputText,
+//       sender: 'user',
+//     };
+
+//     setMessages(prev => [...prev, userMessage]);
+//     setInputText('');
+
+//     setTimeout(() => {
+//       const botMessage: Message = {
+//         id: (Date.now() + 1).toString(),
+//         text: '¡Mensaje recibido!',
+//         sender: 'bot',
+//       };
+//       setMessages(prev => [...prev, botMessage]);
+//       flatListRef.current?.scrollToEnd({ animated: true });
+//     }, 800);
+//   };
+
+//   const renderItem = ({ item }: { item: Message }) => (
+//     <View
+//       style={[styles.messageContainer, {
+//         alignSelf: item.sender === 'user' ? 'flex-end' : 'flex-start',
+//         backgroundColor: item.sender === 'user' ? themeColors.userBubble : themeColors.botBubble,
+//       }]}>
+//       <Text style={[styles.messageText, { color: themeColors.textColor }]}>
+//         {item.text}
+//       </Text>
+//     </View>
+//   );
+
+//   return (
+//     <KeyboardAvoidingView
+//       style={[styles.container, { backgroundColor: themeColors.background }]}
+//       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+//       keyboardVerticalOffset={90}>
+//       <FlatList
+//         ref={flatListRef}
+//         data={messages}
+//         renderItem={renderItem}
+//         keyExtractor={(item) => item.id}
+//         contentContainerStyle={styles.chat}
+//         onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+//       />
+
+//       <View
+//         style={[styles.inputContainer, {
+//           backgroundColor: themeColors.inputBackground,
+//           borderTopColor: themeColors.inputBorder,
+//         }]}>
+//         <TextInput
+//           value={inputText}
+//           onChangeText={setInputText}
+//           placeholder="Escribe un mensaje..."
+//           placeholderTextColor={isDarkMode ? '#aaa' : '#999'}
+//           style={[styles.input, {
+//             backgroundColor: themeColors.inputBackground,
+//             borderColor: themeColors.inputBorder,
+//             color: themeColors.textColor,
+//           }]}
+//         />
+//         <TouchableOpacity onPress={toggleRecording} style={styles.iconButton}>
+//           <Ionicons
+//             name={isRecording ? 'mic' : 'mic-outline'}
+//             size={24}
+//             color={isRecording ? '#FF3B30' : '#555'}
+//           />
+//         </TouchableOpacity>
+//         <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+//           <Ionicons name="send" size={22} color="#fff" />
+//         </TouchableOpacity>
+//       </View>
+//     </KeyboardAvoidingView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1 },
+//   chat: { padding: 10, paddingBottom: 70 },
+//   messageContainer: { padding: 10, marginVertical: 4, maxWidth: '75%', borderRadius: 12 },
+//   messageText: { fontSize: 16 },
+//   inputContainer: { flexDirection: 'row', padding: 10, borderTopWidth: 1, alignItems: 'center' },
+//   input: { flex: 1, borderRadius: 20, borderWidth: 1, paddingHorizontal: 15, paddingVertical: 8 },
+//   sendButton: { backgroundColor: Colors.primari, marginLeft: 8, padding: 10, borderRadius: 50 },
+//   iconButton: { marginLeft: 8 },
+// });
+
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -152,9 +553,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import Voice from '@react-native-voice/voice' // Cambié la importación aquí
-import Constants from 'expo-constants';
-
+import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
 
 type Message = {
   id: string;
@@ -178,64 +577,77 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [error, setError] = useState<string | undefined>();
   const flatListRef = useRef<FlatList>(null);
 
-  // Voice handlers
   useEffect(() => {
-    // Aquí definimos los eventos de voz
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechError = onSpeechError;
-
+    const startSub = ExpoSpeechRecognitionModule.addListener('start', () => {
+      setInputText('');
+      setError(undefined);
+      setIsRecording(true);
+    });
+  
+    const endSub = ExpoSpeechRecognitionModule.addListener('end', () => {
+      setIsRecording(false);
+    });
+  
+    const resultSub = ExpoSpeechRecognitionModule.addListener('result', (event) => {
+      const spokenText = event.results[0]?.transcript;
+      if (spokenText) {
+        const userMessage: Message = {
+          id: Date.now().toString(),
+          text: spokenText,
+          sender: 'user',
+        };
+        setMessages((prev) => [...prev, userMessage]);
+  
+        setTimeout(() => {
+          const botMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            text: '¡Mensaje recibido!',
+            sender: 'bot',
+          };
+          setMessages((prev) => [...prev, botMessage]);
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 800);
+      }
+      setIsRecording(false);
+    });
+  
+    const errorSub = ExpoSpeechRecognitionModule.addListener('error', (event) => {
+      console.log('Error code:', event.error, 'Error message:', event.message);
+      setError(event.message);
+      setIsRecording(false);
+    });
+  
     return () => {
-      // Limpiamos los listeners cuando el componente se desmonte
-      Voice.destroy().then(Voice.removeAllListeners);
+      startSub.remove();
+      endSub.remove();
+      resultSub.remove();
+      errorSub.remove();
     };
   }, []);
-
-  const onSpeechResults = (e: any) => {
-    const results = e.value;
-    if (results && results[0]) {
-      const spokenText = results[0];
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        text: spokenText,
-        sender: 'user',
-      };
-      setMessages(prev => [...prev, userMessage]);
-
-      setTimeout(() => {
-        const botMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: '¡Mensaje recibido!',
-          sender: 'bot',
-        };
-        setMessages(prev => [...prev, botMessage]);
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 800);
-    }
-    setIsRecording(false);
-  };
-
-  const onSpeechError = (e: any) => {
-    console.error('Voice error:', e);
-    setIsRecording(false);
-  };
+  
+  
+  
 
   const toggleRecording = async () => {
     try {
       if (isRecording) {
-        await Voice.stop(); // Detener la grabación
+        // Stop recording
+        await ExpoSpeechRecognitionModule.stop();
         setIsRecording(false);
       } else {
-        console.log('Voice:', Voice);
-        console.log('Started listening 111');
-        console.log(Constants.executionEnvironment); // 'expo' → estás en Expo Go, 'standalone' o 'developer' → dev client
-        await Voice.start('es-ES'); // Cambia el idioma a 'es-ES' o el que prefieras
-        console.log('Started listening 222');
-        setIsRecording(true);
+        // Request permissions and start recording
+        const { granted } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+        if (granted) {
+          await ExpoSpeechRecognitionModule.start({ lang: 'es-ES', interimResults: false, continuous: false });
+        } else {
+          setError('Permiso de micrófono no concedido.');
+        }
       }
-    } catch (error) {
-      console.error('Voice start error:', error);
+    } catch (err) {
+      console.error('Error al iniciar reconocimiento:', err);
       setIsRecording(false);
     }
   };
@@ -249,7 +661,7 @@ export default function ChatScreen() {
       sender: 'user',
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputText('');
 
     setTimeout(() => {
@@ -258,18 +670,20 @@ export default function ChatScreen() {
         text: '¡Mensaje recibido!',
         sender: 'bot',
       };
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
       flatListRef.current?.scrollToEnd({ animated: true });
     }, 800);
   };
 
   const renderItem = ({ item }: { item: Message }) => (
     <View
-      style={[styles.messageContainer, {
-        alignSelf: item.sender === 'user' ? 'flex-end' : 'flex-start',
-        backgroundColor: item.sender === 'user' ? themeColors.userBubble : themeColors.botBubble,
-      }]}
-    >
+      style={[
+        styles.messageContainer,
+        {
+          alignSelf: item.sender === 'user' ? 'flex-end' : 'flex-start',
+          backgroundColor: item.sender === 'user' ? themeColors.userBubble : themeColors.botBubble,
+        },
+      ]}>
       <Text style={[styles.messageText, { color: themeColors.textColor }]}>
         {item.text}
       </Text>
@@ -280,8 +694,7 @@ export default function ChatScreen() {
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: themeColors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={90}
-    >
+      keyboardVerticalOffset={90}>
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -292,21 +705,13 @@ export default function ChatScreen() {
       />
 
       <View
-        style={[styles.inputContainer, {
-          backgroundColor: themeColors.inputBackground,
-          borderTopColor: themeColors.inputBorder,
-        }]}
-      >
+        style={[styles.inputContainer, { backgroundColor: themeColors.inputBackground, borderTopColor: themeColors.inputBorder }]}>
         <TextInput
           value={inputText}
           onChangeText={setInputText}
           placeholder="Escribe un mensaje..."
           placeholderTextColor={isDarkMode ? '#aaa' : '#999'}
-          style={[styles.input, {
-            backgroundColor: themeColors.inputBackground,
-            borderColor: themeColors.inputBorder,
-            color: themeColors.textColor,
-          }]}
+          style={[styles.input, { backgroundColor: themeColors.inputBackground, borderColor: themeColors.inputBorder, color: themeColors.textColor }]}
         />
         <TouchableOpacity onPress={toggleRecording} style={styles.iconButton}>
           <Ionicons
@@ -333,3 +738,4 @@ const styles = StyleSheet.create({
   sendButton: { backgroundColor: Colors.primari, marginLeft: 8, padding: 10, borderRadius: 50 },
   iconButton: { marginLeft: 8 },
 });
+
