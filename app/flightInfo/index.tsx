@@ -232,5 +232,6 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     alignItems: 'center',
+    marginTop: 15,
   },
 });
