@@ -14,7 +14,6 @@ export default function FlightInfoScreen() {
   const isDarkMode = colorScheme === 'dark';
   const boxColor = isDarkMode ? '#333333' : '#D0D0D0';
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
-  const oppositeColor = !isDarkMode ? Colors.dark.text : Colors.light.text;
   const { id } = useLocalSearchParams<{ id: string}>();
   const separatorColor = boxColor;
   const boardingPass = BoardingPasses.find(p => p.id === id) as BoardingPass;
@@ -25,7 +24,7 @@ export default function FlightInfoScreen() {
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
-    setQrSize(width * 0.9); // 90% of container width
+    setQrSize(width* 0.9); // 90% of container width
   };
 
   useEffect(() => {
@@ -76,11 +75,8 @@ export default function FlightInfoScreen() {
         </Stack.Screen>
         
         {/* Contingut de la pantalla */}
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
           <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">La porta d'embarcament s'obre en: {boardingCountdown}</ThemedText>
-            <ThemedText style={[{ color: textColor, margin: 10}, { fontSize: 20 }]} type="defaultSemiBold">Temps fins a la sortida del vol: {departureCountdown}</ThemedText>
-
             <View style={[styles.flightBox, {borderColor: boxColor}]}>
               
               {/* Información inicial (imatge...) */}
@@ -91,6 +87,13 @@ export default function FlightInfoScreen() {
                   <ThemedText style={{ color: textColor }} type="default">{boardingPass.route.origin} - {boardingPass.route.destination}</ThemedText>
                 </View>
               </View>
+              
+              {/* Separador */}
+              <View style={[styles.separator, {backgroundColor: separatorColor}]}></View>
+
+              {/* Temporitzadors */}
+              <ThemedText  type="defaultSemiBold">L'embarcament comença en: {boardingCountdown}</ThemedText>
+              <ThemedText  type="defaultSemiBold">Temps fins la sortida: {departureCountdown}</ThemedText>
 
               {/* Separador */}
               <View style={[styles.separator, {backgroundColor: separatorColor}]}></View>
@@ -146,14 +149,18 @@ export default function FlightInfoScreen() {
                   <ThemedText type="defaultSemiBold">{format(boardingPass.route.arrivalTime,"d-M-yyyy H:mm")}</ThemedText>
                 </View>
               </View>
+              
+              {/* Separador */}
+              <View style={[styles.separator, {backgroundColor: separatorColor}]}></View>
 
               {/* Codi QR */}
               <View style={styles.qrBox} onLayout={handleLayout}>
                 <QRCode value={boardingPass.qrCode} size={qrSize} logoSVG={logo} color={textColor} backgroundColor='transparent'></QRCode>
               </View>
             </View>
+            <View style={{height: 100}}></View>
           </ScrollView>
-        </SafeAreaView>
+        </View>
       </Fragment>
     );
   }
@@ -167,13 +174,13 @@ const styles = StyleSheet.create({
   },
 
   flightBox: {
-    width: '85%',
-    height: '85%',
+    width: '95%',
+    height: '90%',
     borderWidth: 4,
     flexDirection: 'column',
     alignItems: 'flex-start',
     borderRadius: 30,
-    padding: 20,
+    padding: 15,
   },
 
   topBox: {
@@ -200,14 +207,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
-    marginTop: 15,
+    marginTop: 25,
   },
 
   separator: {
     height: 4,
     marginVertical: 10,
     alignSelf: 'center',
-    width: '115%',
+    width: '110%',
 
   },
 
@@ -225,6 +232,5 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     alignItems: 'center',
-    paddingBottom: 150,
   },
 });
