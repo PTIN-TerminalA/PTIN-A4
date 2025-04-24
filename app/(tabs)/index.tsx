@@ -3,10 +3,14 @@ import {View,TouchableOpacity, ScrollView, useColorScheme, Image, StyleSheet, Di
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { router, useRootNavigationState } from "expo-router";
 
 import { Colors } from "@/constants/Colors"
+import { ThemedPressable } from "@/components/ThemedPressable";
+import { InfoModal } from "@/components/InfoModal";
+
+const localImage = require("@/assets/images/mapa_universitat_v2.jpg");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
 const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile 
@@ -21,6 +25,7 @@ export default function HomeScreen() {
   const buttonColor = isDarkMode ? Colors.secundari : Colors.primari;
   const buttonIcon = isDarkMode ? require('@/assets/images/Icons/scanner_DarkMode.png') : require('@/assets/images/Icons/scanner_LightMode.png');
   const {height} = Dimensions.get("window");
+  const [modalVisible, setModalVisible] = useState(false);
   
   const handlerScannerPress = () => {
     {/* TODO */}
@@ -61,6 +66,26 @@ export default function HomeScreen() {
         <Image source={buttonIcon} style={[styles.scannIconButton]}>
         </Image>
       </TouchableOpacity>
+
+      {/* Botón que abre el modal */}
+      <ThemedPressable onPress={() => setModalVisible(true)} type="button">
+        <ThemedText type="bold">Provar Modal</ThemedText>
+      </ThemedPressable>
+
+      {/* Modal personalizado */}
+      <InfoModal
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSelect={() => {
+          console.log("Has seleccionado este lugar");
+          setModalVisible(false);
+        }}
+        imageUrl={Image.resolveAssetSource(localImage).uri}
+        title="Gate"
+        minutesText="1 min"
+        distanceText="500 m"
+        buttonText="Triar"
+      />
     </View>
   );
 };

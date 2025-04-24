@@ -29,7 +29,8 @@ export function ThemedPressable({
     type === "button_alt" && {
       backgroundColor: useThemeColor({ light: lightColor, dark: darkColor }, "button_alt"),
     },    
-    style = Styles.button,
+    Styles.button,
+    style, //style = Styles.button,
   ]}
     {...rest}
   />
