@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Indoor Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Estil per als marcadors de cotxes */
+    .custom-car-marker {
+      width: 25px;
+      height: 25px;
+      border: 1px solid white;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const imageUrl = 'https://i.postimg.cc/kGfjxXkx/mapa-universitat-v2.jpg'; // <-- has de tenir "plano.png" al mateix directori o canviar-ho
+    const imageWidth = 995;
+    const imageHeight = 630;
+    const bounds = [[0, 0], [imageHeight, imageWidth]];
+
+    const baseY = imageHeight / 2;
+    const baseX = imageWidth / 2;
+    const offsetY = 100;
+    const offsetX = 150;
+    const NUM_CARS = 10;
+    const colors = ['red', 'blue', 'green', 'orange', 'purple', 'yellow', 'pink', 'teal', 'brown', 'black'];
+
+    const map = L.map('map', {
+      crs: L.CRS.Simple,
+      minZoom: -1,
+      zoom: 0,
+      center: [baseY, baseX],
+      maxBounds: bounds,
+    });
+
+    L.imageOverlay(imageUrl, bounds).addTo(map);
+    map.fitBounds(bounds);
+
+    function createCustomIcon(color) {
+      return L.divIcon({
+        className: '',
+        html: `<div style="
+          width: 25px;
+          height: 25px;
+          background-color: ${color};
+          border: 1px solid white;
+          border-radius: 2px;
+        "></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
+      });
+    }
+
+    function generateInitialPositions() {
+      const positions = [];
+      for (let i = 0; i < NUM_CARS; i++) {
+        const offsetLat = (Math.random() - 0.5) * offsetY;
+        const offsetLng = (Math.random() - 0.5) * offsetX;
+        positions.push([baseY + offsetLat, baseX + offsetLng]);
+      }
+      return positions;
+    }
+
+    let carPositions = generateInitialPositions();
+    const carMarkers = [];
+
+    carPositions.forEach((pos, index) => {
+      const marker = L.marker(pos, { icon: createCustomIcon(colors[index % colors.length]) })
+        .bindPopup(`Cotxe #${index + 1}`)
+        .addTo(map);
+      carMarkers.push(marker);
+    });
+
+    setInterval(() => {
+      const minY = baseY - offsetY / 2;
+      const maxY = baseY + offsetY / 2;
+      const minX = baseX - offsetX / 2;
+      const maxX = baseX + offsetX / 2;
+      carMarkers.forEach((marker, index) => {
+        let [lat, lng] = carPositions[index];
+        const newLat = Math.min(maxY, Math.max(minY, lat + (Math.random() - 0.5) * 10));
+        const newLng = Math.min(maxX, Math.max(minX, lng + (Math.random() - 0.5) * 10));
+        marker.setLatLng([newLat, newLng]);
+        carPositions[index] = [newLat, newLng];
+      });
+    }, 1000);
+
+  </script>
+</body>
+</html>
