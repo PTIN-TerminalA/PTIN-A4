@@ -11,12 +11,14 @@ export const Colors = {
   primari: "#219ebc",
   secundari: "#023047",
   accent_primari: "#ffb703",
-  accent_secundari: "#fb8500", // alert_background
+  accent_secundari: "#fb8500",
 
   input_background: "transparent", // also card_background
   input_border: "#000", 
   input_text: "#d3d3d3", // also card_text
   icon: "#687076",
+
+  alert: "#fb8500",
 
   light: {
     text: "#000",
