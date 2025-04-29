@@ -7,6 +7,7 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
 import { SelectList } from 'react-native-dropdown-select-list';
 import { useAuth } from "@/hooks/useAuth";
+import { API_URL } from "@/constants/Api";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -60,7 +61,8 @@ export default function RegisterScreen() {
   
     try {
       // Register the user (create the user and get the access token)
-      const userResponse = await fetch("http://192.168.1.18:8000/api/register", {
+      // const userResponse = await fetch("http://192.168.1.18:8000/api/register", {
+      const userResponse = await fetch(`${API_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +83,7 @@ export default function RegisterScreen() {
       const token = userData.access_token;
   
       // Register the regular user
-      const regularResponse = await fetch("http://192.168.1.18:8000/api/register-regular", {
+      const regularResponse = await fetch(`${API_URL}/api/register-regular`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
