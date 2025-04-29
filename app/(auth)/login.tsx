@@ -7,7 +7,7 @@ import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useAuth } from "@/hooks/useAuth";
 
-import {Colors} from "@/constants/Colors"
+import {Colors, tintColorDark} from "@/constants/Colors"
 import {Styles} from "@/constants/Styles"
 
 export function homepage() {
@@ -69,7 +69,7 @@ export default function HomeScreen() {
       {/* CAPSA CORREU */}
       <ThemedTextInput
         placeholder="email@domain.com" 
-        placeholderTextColor={'lightgray'} 
+        placeholderTextColor={Colors.input_text}
         autoCorrect={false} 
         autoCapitalize="none"
         onChangeText={setEmail}
@@ -77,7 +77,7 @@ export default function HomeScreen() {
       {/* CAPSA CONSTRASENYA */}
       <ThemedTextInput 
         placeholder="Contrasenya"
-        placeholderTextColor={'lightgray'} 
+        placeholderTextColor={Colors.input_text}
         secureTextEntry 
         autoCorrect={false}
         autoCapitalize="none"
@@ -148,7 +148,7 @@ export default function HomeScreen() {
 const style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: tintColorDark,
     paddingTop: StatusBar.currentHeight
   },
   input:{

@@ -3,13 +3,14 @@ import { useAuth } from '@/hooks/useAuth'; // Hook de autenticación
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Styles } from '@/constants/Styles';
-import { Colors } from '@/constants/Colors';
+import { Colors, tintColorDark } from '@/constants/Colors';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth(); // Obtiene los datos del usuario autenticado
   const router = useRouter();
   const colorScheme = useColorScheme(); // 'light' o 'dark'
-  const backgroundColor = colorScheme === 'dark' ? '#121212' : '#fff';
+  const backgroundColor = colorScheme === 'dark' ? Colors.dark.background : Colors.light.background;
+  const textColor = colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
 
   return (
     <View style={[styles.container, {backgroundColor}]}>
@@ -19,8 +20,8 @@ export default function ProfileScreen() {
           source={user?.avatar ? { uri: user.avatar } : require('@/assets/images/Icons/user.png') } 
           style={styles.avatar} 
         />
-        <ThemedText style={{color: '#fff'}} type="subtitle">{user?.name || "Nom"}</ThemedText>
-        <ThemedText style={{color: '#fff'}} type="default">{user?.email || "email@gmail.com"}</ThemedText>
+        <ThemedText style={{color: tintColorDark}} type="subtitle">{user?.name || "Nom"}</ThemedText>
+        <ThemedText style={{color: tintColorDark}} type="default">{user?.email || "email@gmail.com"}</ThemedText>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
@@ -30,7 +31,7 @@ export default function ProfileScreen() {
         </View>
         {/* Botó Editar Data de naixement */}
         <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-birthdate")}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar data naixement</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar data naixement</ThemedText>
         </TouchableOpacity>
 
         {/* Capsa DNI */}
@@ -39,7 +40,7 @@ export default function ProfileScreen() {
         </View>
         {/* Botón Editar DNI */}
         <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar DNI</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar DNI</ThemedText>
         </TouchableOpacity>
 
         {/* Capsa Telèfon */}
@@ -48,7 +49,7 @@ export default function ProfileScreen() {
         </View>
         {/* Botón Editar Telèfon */}
         <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar telèfon</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar telèfon</ThemedText>
         </TouchableOpacity>
 
         {/* Capsa Gènere */}
@@ -57,27 +58,27 @@ export default function ProfileScreen() {
         </View>
         {/* Botón Editar Gènere */}
         <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar gènere</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar gènere</ThemedText>
         </TouchableOpacity>
 
         {/* Botó Editar Nom */}
         <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-name")}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar nom</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar nom</ThemedText>
         </TouchableOpacity>
 
         {/* Botón Editar Correu */}
         <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar correu</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar correu</ThemedText>
         </TouchableOpacity>
 
         {/* Botón Editar Contrasenya */}
         <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-password")}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Actualitzar contrasenya</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar contrasenya</ThemedText>
         </TouchableOpacity>
 
         {/* Botón de Cerrar Sesión */}
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-          <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Log Out</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">Log Out</ThemedText>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -87,7 +88,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
   },
   scrollContainer: {
     padding: 20,
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: tintColorDark,
     marginBottom: 10,
     resizeMode: 'cover'
   },
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
   },
   textBox: {
     ...Styles.button,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
     padding: 5,
     borderRadius: 1,
     alignSelf: 'center',
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutButton: {
-    backgroundColor: Colors.secundari,
+    backgroundColor: Colors.primari,
     padding: 12,
     borderRadius: 10,
     alignSelf: 'center',

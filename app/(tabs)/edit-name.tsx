@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
-import { Colors } from "@/constants/Colors";
+import { Colors, tintColorDark } from "@/constants/Colors";
 import { Styles } from "@/constants/Styles";
 
 export default function EditNameScreen() {
@@ -36,7 +36,7 @@ export default function EditNameScreen() {
       />
 
       <TouchableOpacity style={styles.confirmButton} onPress={handleChangeName}>
-        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Canviar nom</ThemedText>
+        <ThemedText style={{color: tintColorDark}} type="defaultSemiBold">Canviar nom</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );

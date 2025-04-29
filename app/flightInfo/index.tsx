@@ -12,7 +12,7 @@ import QRCode from 'react-native-qrcode-svg';
 export default function FlightInfoScreen() {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
-  const boxColor = isDarkMode ? '#333333' : '#D0D0D0';
+  const boxColor = isDarkMode ? Colors.dark.box : Colors.light.box;
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
   const { id } = useLocalSearchParams<{ id: string}>();
   const separatorColor = boxColor;

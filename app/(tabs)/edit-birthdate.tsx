@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
-import { Colors } from "@/constants/Colors";
+import { Colors, tintColorDark } from "@/constants/Colors";
 import { Styles } from "@/constants/Styles";
 
 export default function EditBirthDateScreen() {
@@ -52,7 +52,7 @@ export default function EditBirthDateScreen() {
       />
 
       <TouchableOpacity style={styles.confirmButton} onPress={handleChangeDate}>
-        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Canviar data</ThemedText>
+        <ThemedText style={{color: tintColorDark}} type="defaultSemiBold">Canviar data</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );

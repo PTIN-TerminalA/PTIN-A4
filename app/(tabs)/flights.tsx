@@ -11,7 +11,7 @@ export default function FlightsScreen() {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
   const buttonColor = isDarkMode ? Colors.secundari : Colors.primari;
-  const boxColor = isDarkMode ? '#333333' : '#D0D0D0';
+  const boxColor = isDarkMode ? Colors.dark.box : Colors.light.box;
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
   const buttonIcon = isDarkMode ? require('@/assets/images/Icons/scanner_DarkMode.png') : require('@/assets/images/Icons/scanner_LightMode.png');
   const [isScrolling, setIsScrolling] = useState(false);

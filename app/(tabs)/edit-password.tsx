@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
-import { Colors } from "@/constants/Colors"
+import { Colors, tintColorDark } from "@/constants/Colors"
 import { Styles } from "@/constants/Styles"
 
 export default function ProfileScreen() {
@@ -27,7 +27,7 @@ export default function ProfileScreen() {
   return (
     
     <ThemedView style={styles.container}> 
-      <ThemedText style={{color: '#fff'}} type="subtitle">Actualitzar contrasenya</ThemedText>
+      <ThemedText style={{color: tintColorDark}} type="subtitle">Actualitzar contrasenya</ThemedText>
       <ThemedTextInput 
               placeholder="Anterior contrasenya" 
               secureTextEntry 
@@ -47,7 +47,7 @@ export default function ProfileScreen() {
       />
 
       <TouchableOpacity style={styles.confirmButton} onPress={handleChangePassword}>
-        <ThemedText style={{color: '#fff'}} type="defaultSemiBold">Canviar contrasenya</ThemedText>
+        <ThemedText style={{color: tintColorDark}} type="defaultSemiBold">Canviar contrasenya</ThemedText>
       </TouchableOpacity>
     </ThemedView>
   );

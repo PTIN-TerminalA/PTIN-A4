@@ -7,6 +7,7 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
 import { SelectList } from 'react-native-dropdown-select-list';
 import { useAuth } from "@/hooks/useAuth";
+import {Colors} from "@/constants/Colors"
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ export default function RegisterScreen() {
   const [birthDate, setBirthDate] = useState("");
   const [gender, setGender] = useState("");
   const { register, logout } = useAuth();
+  const inputText = useColorScheme() === 'dark' ? Colors.dark.text : Colors.light.text;
 
   const handleRegister = async (email: string, password: string, confirmPassword: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
     // Comprovem si falta algun camp
@@ -134,14 +136,14 @@ export default function RegisterScreen() {
         </ThemedText>
         <ThemedTextInput 
           placeholder="email@domain.com"
-          placeholderTextColor={'lightgray'}
+          placeholderTextColor={Colors.input_text}
           autoCorrect={false} 
           autoCapitalize="none"
           onChangeText={setEmail}
         />
         <ThemedTextInput
           placeholder="Contrasenya"
-          placeholderTextColor={'lightgray'}
+          placeholderTextColor={Colors.input_text}
           secureTextEntry 
           autoCorrect={false}
           autoCapitalize="none"
@@ -149,7 +151,7 @@ export default function RegisterScreen() {
         />
         <ThemedTextInput 
           placeholder="Repeteix Contrasenya"
-          placeholderTextColor={'lightgray'}
+          placeholderTextColor={Colors.input_text}
           secureTextEntry 
           autoCorrect={false}
           autoCapitalize="none"
@@ -157,28 +159,28 @@ export default function RegisterScreen() {
         />
         <ThemedTextInput 
           placeholder="Nom"
-          placeholderTextColor={'lightgray'}
+          placeholderTextColor={Colors.input_text}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setName}
         />
         <ThemedTextInput 
           placeholder="DNI"
-          placeholderTextColor={'lightgray'}
+          placeholderTextColor={Colors.input_text}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setDni}
         />
         <ThemedTextInput 
           placeholder="Telèfon"
-          placeholderTextColor={'lightgray'}
+          placeholderTextColor={Colors.input_text}
           autoCorrect={false} 
           autoCapitalize="none"
           onChangeText={setPhone}
         />
         <ThemedTextInput 
           placeholder="Data de naixement (YYYY-MM-DD)" 
-          placeholderTextColor={'lightgray'}
+          placeholderTextColor={Colors.input_text}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={setBirthDate}
@@ -196,7 +198,7 @@ export default function RegisterScreen() {
           defaultOption={{ key: gender, value: '' }}
           placeholder="Selecciona Gènere"
           inputStyles={{
-            color: 'lightgray',
+            color: gender ? inputText : Colors.input_text,
             borderColor: 'white',
             borderWidth: 1, 
             borderRadius: 10, 
@@ -206,15 +208,14 @@ export default function RegisterScreen() {
             justifyContent: 'center', 
           }}
           dropdownStyles={{
-            backgroundColor: 'grey', 
+            backgroundColor: 'lightgrey', 
             borderWidth: 1, 
-            borderColor: 'white', 
             borderRadius: 10, 
           }}
           dropdownTextStyles={{
             color: 'white', 
           }}
-          arrowicon={<Text style={{ color: 'white' }}>↓</Text>} 
+          arrowicon={<Text style={{ color: Colors.input_text }}>↓</Text>} 
           search={false}
         />
         {/********************/}
