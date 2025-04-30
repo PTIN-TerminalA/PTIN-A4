@@ -7,6 +7,7 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
 import { SelectList } from 'react-native-dropdown-select-list';
 import { useAuth } from "@/hooks/useAuth";
+import { API_URL } from "@/constants/Api";
 import {Colors} from "@/constants/Colors"
 
 export default function RegisterScreen() {
@@ -61,8 +62,9 @@ export default function RegisterScreen() {
     }
   
     try {
-      // 1: Register the user (create the user and get the access token)
-      const userResponse = await fetch("http://192.168.1.61:8000/api/register", {
+      // Register the user (create the user and get the access token)
+      // const userResponse = await fetch("http://192.168.1.18:8000/api/register", {
+      const userResponse = await fetch(`${API_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,25 +82,16 @@ export default function RegisterScreen() {
       if (!userResponse.ok) {
         throw new Error(userData.detail || "Error al registrar l'usuari");
       }
-
-      // 2: Decode the access token to extract the user_id (sub)
       const token = userData.access_token;
-      const userIdResponse = await fetch(`http://192.168.1.61:8000/api/get_user_id?token=${token}`);
-      if (!userIdResponse.ok) {
-        const errorData = await userIdResponse.json();
-        throw new Error(errorData.detail || "Error obtenint l'ID de l'usuari");
-      }
-      const userIdData = await userIdResponse.json();
-      const userId = userIdData.user_id;
   
-      // 3: Register the regular user
-      const regularResponse = await fetch("http://192.168.1.61:8000/api/register-regular", {
+      // Register the regular user
+      const regularResponse = await fetch(`${API_URL}/api/register-regular`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: userId,   // Use the extracted user_id
+          token: token,
           phone_num: phone,
           birth_date: birthDate,
           identity: gender,

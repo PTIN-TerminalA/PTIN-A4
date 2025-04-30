@@ -6,6 +6,7 @@ import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useAuth } from "@/hooks/useAuth";
+import { API_URL } from "@/constants/Api";
 
 import {Colors, tintColorDark} from "@/constants/Colors"
 import {Styles} from "@/constants/Styles"
@@ -27,7 +28,7 @@ export default function HomeScreen() {
   const handleLogin = async (email: string, password: string) => {
     try {
       {/* IP local de la maquina, solo para testeo */}
-      const response = await fetch("http://192.168.1.61:8000/api/login", {
+      const response = await fetch(`${API_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
