@@ -9,6 +9,7 @@ import { router, useRootNavigationState } from "expo-router";
 import { Colors } from "@/constants/Colors"
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { InfoModal } from "@/components/InfoModal";
+import MapaUni from "@/components/MapaUni";
 
 const localImage = require("@/assets/images/mapa_universitat_v2.jpg");
 
@@ -45,21 +46,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView horizontal
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-        maximumZoomScale={3}
-        minimumZoomScale={1}
-        pinchGestureEnabled={true}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-      >
-        <Image
-          source={ require('@/assets/images/mapa_universitat_v2.jpg')}
-          style={{ height }}
-          resizeMode="contain"
-        />
-      </ScrollView>
+      <MapaUni/>
 
       {/* Botó per escannejar */}
       <TouchableOpacity style={[styles.scannButton,{backgroundColor: buttonColor}]} onPress={handlerScannerPress}>
