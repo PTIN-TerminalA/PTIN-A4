@@ -1,19 +1,27 @@
-import {View,TouchableOpacity, ScrollView, useColorScheme, Image, StyleSheet, Dimensions} from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  ScrollView,
+  useColorScheme,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import React, { useEffect, useState } from "react";
 import { router, useRootNavigationState } from "expo-router";
-
-import { Colors } from "@/constants/Colors"
+import { useUserUbication } from "@/hooks/useUserUbication";
+import { Colors } from "@/constants/Colors";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { InfoModal } from "@/components/InfoModal";
 
 const localImage = require("@/assets/images/mapa_universitat_v2.jpg");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
-const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile 
+const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile
 export function login() {
   router.replace("/(auth)/login");
 }
@@ -21,19 +29,24 @@ export function login() {
 export default function HomeScreen() {
   const rootNavigationState = useRootNavigationState();
   const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === 'dark';
+  const isDarkMode = colorScheme === "dark";
   const buttonColor = isDarkMode ? Colors.secundari : Colors.primari;
-  const buttonIcon = isDarkMode ? require('@/assets/images/Icons/scanner_DarkMode.png') : require('@/assets/images/Icons/scanner_LightMode.png');
-  const {height} = Dimensions.get("window");
+  const buttonIcon = isDarkMode
+    ? require("@/assets/images/Icons/scanner_DarkMode.png")
+    : require("@/assets/images/Icons/scanner_LightMode.png");
+  const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
-  
+  const location = useUserUbication();
+
   const handlerScannerPress = () => {
-    {/* TODO */}
-    console.log('Scanner Pressed');
+    {
+      /* TODO */
+    }
+    console.log("Scanner Pressed");
     router.push({
-      pathname: '/flightInfo/scanBoardingPass',
-    })
-  }
+      pathname: "/flightInfo/scanBoardingPass",
+    });
+  };
 
   useEffect(() => {
     if (!isLoggedIn && rootNavigationState?.key) {
@@ -42,10 +55,10 @@ export default function HomeScreen() {
     }
   }, [rootNavigationState?.key]);
 
-
   return (
     <View style={styles.container}>
-      <ScrollView horizontal
+      <ScrollView
+        horizontal
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         maximumZoomScale={3}
@@ -55,16 +68,18 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
       >
         <Image
-          source={ require('@/assets/images/mapa_universitat_v2.jpg')}
+          source={require("@/assets/images/mapa_universitat_v2.jpg")}
           style={{ height }}
           resizeMode="contain"
         />
       </ScrollView>
 
       {/* Botó per escannejar */}
-      <TouchableOpacity style={[styles.scannButton,{backgroundColor: buttonColor}]} onPress={handlerScannerPress}>
-        <Image source={buttonIcon} style={[styles.scannIconButton]}>
-        </Image>
+      <TouchableOpacity
+        style={[styles.scannButton, { backgroundColor: buttonColor }]}
+        onPress={handlerScannerPress}
+      >
+        <Image source={buttonIcon} style={[styles.scannIconButton]}></Image>
       </TouchableOpacity>
 
       {/* Botón que abre el modal */}
@@ -88,13 +103,13 @@ export default function HomeScreen() {
       />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    position: 'relative'
+    backgroundColor: "#000",
+    position: "relative",
   },
   contentContainer: {
     flexGrow: 1,
@@ -103,16 +118,16 @@ const styles = StyleSheet.create({
   scannButton: {
     width: 55,
     height: 55,
-    position: 'absolute',
+    position: "absolute",
     bottom: 30,
     right: 20,
     borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   scannIconButton: {
     width: 40,
     height: 40,
   },
-})
+});
