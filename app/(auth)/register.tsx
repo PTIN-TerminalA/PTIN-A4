@@ -60,7 +60,7 @@ export default function RegisterScreen() {
   
     try {
       // 1: Register the user (create the user and get the access token)
-      const userResponse = await fetch("http://192.168.1.61:8000/api/register", {
+      const userResponse = await fetch("http://10.229.232.27:8000/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

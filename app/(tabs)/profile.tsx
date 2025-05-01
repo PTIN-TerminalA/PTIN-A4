@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     paddingBottom: 150,
   },
   header: {
-    backgroundColor: Colors.secundari,
+    backgroundColor: Colors.primari,
     alignItems: 'center',
     paddingVertical: 60,
     height: 250,
