@@ -92,7 +92,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
               onPress={onSelect}
               style={styles.button}
             >
-              <ThemedText type="bold" style={{ color: "white", fontSize: 16 }}>
+              <ThemedText type="bold" style={{ color: textColor, fontSize: 16 }}>
                 {buttonText}
               </ThemedText>
             </ThemedPressable>

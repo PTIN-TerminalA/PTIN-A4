@@ -27,7 +27,7 @@ export default function ProfileScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         {/* Capsa Data de naixement */}
         <View style={styles.textBox}>
-          <ThemedText style={{color: Colors.primari}} type="defaultSemiBold">{user?.birthDate || "2000-12-12"}</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.birthDate || "2000-12-12"}</ThemedText>
         </View>
         {/* Botó Editar Data de naixement */}
         <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-birthdate")}>
@@ -36,7 +36,7 @@ export default function ProfileScreen() {
 
         {/* Capsa DNI */}
         <View style={styles.textBox}>
-          <ThemedText style={{color: Colors.primari}} type="defaultSemiBold">{user?.dni || "36328819C"}</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.dni || "36328819C"}</ThemedText>
         </View>
         {/* Botón Editar DNI */}
         <TouchableOpacity style={styles.editButton} onPress={() => {}}>
@@ -45,7 +45,7 @@ export default function ProfileScreen() {
 
         {/* Capsa Telèfon */}
         <View style={styles.textBox}>
-          <ThemedText style={{color: Colors.primari}} type="defaultSemiBold">{user?.phone || "+34645108922"}</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.phone || "+34645108922"}</ThemedText>
         </View>
         {/* Botón Editar Telèfon */}
         <TouchableOpacity style={styles.editButton} onPress={() => {}}>
@@ -54,7 +54,7 @@ export default function ProfileScreen() {
 
         {/* Capsa Gènere */}
         <View style={styles.textBox}>
-          <ThemedText style={{color: Colors.primari}} type="defaultSemiBold">{user?.gender || "(Desconegut)"}</ThemedText>
+          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.gender || "(Desconegut)"}</ThemedText>
         </View>
         {/* Botón Editar Gènere */}
         <TouchableOpacity style={styles.editButton} onPress={() => {}}>

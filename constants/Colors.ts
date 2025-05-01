@@ -3,7 +3,7 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-export const tintColorLight = "#0a7ea4";
+export const tintColorLight = "#000";
 export const tintColorDark = "#fff";
 
 export const Colors = {
@@ -16,7 +16,6 @@ export const Colors = {
   input_background: "transparent", // also card_background
   input_border: "#000", 
   input_text: "#d3d3d3", // also card_text
-  icon: "#687076",
 
   alert: "#fb8500",
 
