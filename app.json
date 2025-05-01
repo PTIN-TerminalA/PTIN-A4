@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ptin_a4",
-    "slug": "ptin_a4",
+    "slug": "ptin-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -20,7 +20,10 @@
       "package": "com.bruxy.ptin_a4",
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.CHANGE_WIFI_STATE",
+        "android.permission.ACCESS_FINE_LOCATION"
       ]
     },
     "web": {
@@ -56,8 +59,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "9e0f4e86-ac22-44eb-85da-9d513986b8f0"
+        "projectId": "49502d3f-fe03-4966-b178-f411000a69ce"
       }
-    }
+    },
+    "owner": "ptin"
   }
 }

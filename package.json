@@ -15,6 +15,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@dudigital/react-native-zoomable-view": "^1.1.4",
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
@@ -41,6 +42,8 @@
     "react-native": "0.76.7",
     "react-native-dropdown-select-list": "^2.0.5",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-image-pan-zoom": "^2.1.12",
+    "react-native-maps": "1.18.0",
     "react-native-modal": "^14.0.0-rc.1",
     "react-native-qrcode-svg": "^6.3.15",
     "react-native-reanimated": "~3.16.1",
@@ -48,7 +51,9 @@
     "react-native-screens": "~4.4.0",
     "react-native-svg": "15.8.0",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "13.12.5",
+    "react-native-wifi-reborn": "^4.13.5",
+    "react-native-zoomable-view": "^0.3.1"
   },
   "devDependencies": {
     "@babel/compat-data": "^7.26.8",
