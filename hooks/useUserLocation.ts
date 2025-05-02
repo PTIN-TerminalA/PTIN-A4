@@ -2,8 +2,13 @@ import { useState, useEffect } from "react";
 import { Platform, PermissionsAndroid } from "react-native";
 import WifiManager from "react-native-wifi-reborn";
 
-export function useUserUbication(scanInterval = 3000) {
-  const [location, setLocation] = useState(null); // Això hauran de ser les coordenades del mapa
+interface UserLocation {
+  x: number;
+  y: number;
+}
+export function useUserLocation(scanInterval = 3000) {
+  const [location, setLocation] = useState<UserLocation | null>(null);
+
   useEffect(() => {
     const requestPermissions = async () => {
       if (Platform.OS !== "android") return;
@@ -29,7 +34,12 @@ export function useUserUbication(scanInterval = 3000) {
           strength: wifi.level,
         }));
         // TODO: enviar això al backend/api
-        console.log("Wifi scan result:", wifiSimplifiedList);
+
+        const fakePosition = {
+          x: 500,
+          y: 300,
+        };
+        setLocation(fakePosition); // Simulació de la posició
       } catch (error) {
         console.error("Wifi scan error:", error);
       }

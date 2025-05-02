@@ -11,9 +11,10 @@ import { Image as RNImage } from "react-native";
 interface InfoModalProps {
   isVisible: boolean;
   onClose: () => void;
-  imageUrl: string;
+  imageUrl: number | { uri: string } | { uri: string; headers?: any };
   onSelect: () => void;
   title?: string;
+  description?: string; // <-- Afegim això
   minutesText?: string;
   distanceText?: string;
   buttonText?: string;
@@ -28,6 +29,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
   minutesText = "2 min",
   distanceText = "1 km",
   buttonText = "Seleccionar",
+  description = "",
 }) => {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -46,7 +48,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
         <View style={styles.handle} />
 
         <Image
-          source={{ uri: imageUrl }}
+          source={typeof imageUrl === "string" ? { uri: imageUrl } : imageUrl} // de moment ho fem així perquè son les dades mockup però ja ho canviarem més endevant si s'escau
           style={styles.image}
           resizeMode="cover"
         />
@@ -60,6 +62,12 @@ export const InfoModal: React.FC<InfoModalProps> = ({
               style={[styles.title, { color: textColor }]}
             >
               {title}
+            </ThemedText>
+            <ThemedText
+              type="default"
+              style={[{ marginBottom: 8, color: textColor }]}
+            >
+              {description}
             </ThemedText>
 
             <View style={styles.metaRow}>
@@ -92,7 +100,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
               onPress={onSelect}
               style={styles.button}
             >
-              <ThemedText type="bold" style={{ color: textColor, fontSize: 16 }}>
+              <ThemedText
+                type="bold"
+                style={{ color: textColor, fontSize: 16 }}
+              >
                 {buttonText}
               </ThemedText>
             </ThemedPressable>

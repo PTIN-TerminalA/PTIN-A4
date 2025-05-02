@@ -1,24 +1,23 @@
 import {
   View,
   TouchableOpacity,
-  ScrollView,
   useColorScheme,
   Image,
   StyleSheet,
   Dimensions,
 } from "react-native";
 
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
 import React, { useEffect, useState } from "react";
 import { router, useRootNavigationState } from "expo-router";
-import { useUserUbication } from "@/hooks/useUserUbication";
+import { useUserLocation } from "@/hooks/useUserLocation";
 import { Colors } from "@/constants/Colors";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { InfoModal } from "@/components/InfoModal";
 import MapaUni from "@/components/MapaUni";
-
+import { useServices } from "@/hooks/useServices";
+import { Service } from "@/constants/mocks/mockTypes";
+import { useCarLocation } from "@/hooks/useCarLocation";
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
@@ -37,8 +36,10 @@ export default function HomeScreen() {
     : require("@/assets/images/Icons/scanner_LightMode.png");
   const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
-  const location = useUserUbication();
-
+  const userLocation = useUserLocation();
+  const { services } = useServices();
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const carLocation = useCarLocation();
   const handlerScannerPress = () => {
     {
       /* TODO */
@@ -58,7 +59,15 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <MapaUni/>
+      <MapaUni
+        services={services}
+        onServicePress={(service) => {
+          setSelectedService(service);
+          setModalVisible(true);
+        }}
+        carPos={carLocation.location}
+        userLocation={userLocation.location}
+      />
 
       {/* Botó per escannejar */}
       <TouchableOpacity
@@ -78,14 +87,15 @@ export default function HomeScreen() {
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSelect={() => {
-          console.log("Has seleccionado este lugar");
+          console.log("Has seleccionat:", selectedService?.name);
           setModalVisible(false);
         }}
-        imageUrl={Image.resolveAssetSource(localImage).uri}
-        title="Gate"
-        minutesText="1 min"
-        distanceText="500 m"
-        buttonText="Triar"
+        imageUrl={selectedService?.ad_path}
+        title={selectedService?.name ?? ""}
+        minutesText="1 min" // Opcional, si ho calcules
+        distanceText="500 m" // Opcional, si ho calcules
+        buttonText="Demanar cotxe"
+        description={selectedService?.description ?? ""}
       />
     </View>
   );
@@ -95,7 +105,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.dark.background,
-    position: 'relative'
+    position: "relative",
   },
   contentContainer: {
     flexGrow: 1,
