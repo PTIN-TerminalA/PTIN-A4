@@ -1,130 +1,159 @@
-import { StyleSheet, Image, Platform } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, ScrollView} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter, Link } from 'expo-router';
+import { ThemedText } from '@/components/ThemedText';
+import { useState } from 'react';
+import { Colors} from '@/constants/Colors'
+import { services as mockServices, services } from "@/constants/mocks/services";
 
-import { Collapsible } from "@/components/Collapsible";
-import { ExternalLink } from "@/components/ExternalLink";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import { Colors } from "@/constants/Colors"
+export default function ServiceScreen() {
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
+  const carButtonColor = isDarkMode ? Colors.secundari : Colors.primari;
+  const carButtonIcon = require('@/assets/images/Icons/car.png');
+  const router = useRouter();
+  const boxColor = isDarkMode ? Colors.dark.box : Colors.light.box;
+  const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
+  const borderColor1 = isDarkMode ? Colors.dark.box_border : Colors.light.box_border;
+  const borderColor2 = isDarkMode ? Colors.dark.box : Colors.light.box;
+  const [isScrolling, setIsScrolling] = useState(false);
+  const serveis = services.filter( // simulació amb els mocks
+    (service) =>
+      service.id === 1 || service.id === 3 || service.id === 4 // McDonalds, Zara, Starbucks
+  );
+  
 
-export default function TabTwoScreen() {
+  const handlerCarPress = () => {
+    {/* TODO */}
+    console.log('Destí seleccionat');
+    router.push({
+      pathname: '/(tabs)',
+    })
+  }
+
+  const handleScrollBegin = () => {
+    setIsScrolling(true)
+  }
+
+  const handleScrollEnd = () => {
+    setIsScrolling(false)
+  }
+
+  const handlerServicePress = () => {
+    if (!isScrolling) {
+      console.log('tenda seleccionada')
+      {/* TODO */}
+    }
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: Colors.light.box, dark: Colors.dark.box }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color={Colors.icon}
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>
-        This app includes example code to help you get started.
-      </ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText>{" "}
-          and{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in{" "}
-          <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{" "}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the
-          web version, press <ThemedText type="defaultSemiBold">w</ThemedText>{" "}
-          in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the{" "}
-          <ThemedText type="defaultSemiBold">@2x</ThemedText> and{" "}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to
-          provide files for different screen densities
-        </ThemedText>
-        <Image
-          source={require("@/assets/images/react-logo.png")}
-          style={{ alignSelf: "center" }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText>{" "}
-          to see how to load{" "}
-          <ThemedText style={{ fontFamily: "Roboto-Italic" }}>
-            custom fonts such as this one uuuuu.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{" "}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook
-          lets you inspect what the user's current color scheme is, and so you
-          can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{" "}
-          <ThemedText type="defaultSemiBold">
-            components/HelloWave.tsx
-          </ThemedText>{" "}
-          component uses the powerful{" "}
-          <ThemedText type="defaultSemiBold">
-            react-native-reanimated
-          </ThemedText>{" "}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The{" "}
-              <ThemedText type="defaultSemiBold">
-                components/ParallaxScrollView.tsx
-              </ThemedText>{" "}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView style={[styles.container]}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        onScrollBeginDrag={handleScrollBegin}
+        onScrollEndDrag={handleScrollEnd}
+        onMomentumScrollBegin={handleScrollBegin}
+        onMomentumScrollEnd={handleScrollEnd}
+        scrollEventThrottle={16}>
+
+        {/* Simulació de la visualització de serveis */}
+        <View style={{ height: 35 }} />
+        {serveis.map((tenda, index) => (
+          <View style={styles.scrollContent} key={tenda.id}>
+            <TouchableOpacity
+              onPress={handlerServicePress}
+              style={[styles.serviceBox,
+                {backgroundColor: index % 2 === 0 ? "transparent" : boxColor,
+                  borderColor: index % 2 === 0 ? borderColor1 : borderColor2,},]}>
+              <Image
+                source={require('../../assets/images/Icons/shopping.png')}
+                style={[styles.serviceImage, { borderColor: boxColor }]}
+              />
+              <View style={styles.serviceTextInfo}>
+                <ThemedText style={[{ color: textColor, fontSize: 20 }]} type="defaultSemiBold">
+                  {tenda.name}
+                </ThemedText>
+                <ThemedText style={{ color: textColor }} type="default">
+                  {tenda.location}
+                </ThemedText>
+                <ThemedText style={{ color: textColor }} type="default">
+                  {tenda.description}
+                </ThemedText>
+              </View>
+            </TouchableOpacity>
+            </View>
+        ))}
+        <View style={{ height: 150 }} />
+
+      </ScrollView>
+
+      {/* Botó per demanar cotxe */}
+      <TouchableOpacity
+        style={[styles.carButton, { backgroundColor: carButtonColor }]}
+        onPress={handlerCarPress}>
+        <Image source={carButtonIcon} style={[styles.carIconButton,
+        {tintColor: useColorScheme() == 'dark' ? Colors.dark.text : Colors.light.text}]}></Image>
+      </TouchableOpacity>
+
+    </SafeAreaView>
+
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
+  container: {
+    flex: 1,
+    position: 'relative',
+    alignItems: 'center'
   },
-  titleContainer: {
-    flexDirection: "row",
-    gap: 8,
+
+  scrollContent: {
+    padding: 15,
+  },
+
+  serviceBox: {
+    width: 345,
+    height: 85,
+    borderWidth: 1,
+    marginBottom: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 30,
+  },
+  serviceTextInfo: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  serviceImage: {
+    width: 60,
+    height: 60,
+    borderWidth: 4,
+    borderRadius: 30,
+    marginLeft: 15,
+    marginRight: 15,
+  },
+
+  carButton: {
+    width: 55,
+    height: 55,
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  carIconButton: {
+    width: 40,
+    height: 40,
+  },
+
+  airlineImage: {
+    width: 60,
+    height: 60,
+    borderWidth: 4,
+    borderRadius: 30,
+    marginLeft: 15,
+    marginRight: 15,
   },
 });
