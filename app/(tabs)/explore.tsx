@@ -5,6 +5,9 @@ import { ThemedText } from '@/components/ThemedText';
 import { useState } from 'react';
 import { Colors} from '@/constants/Colors'
 import { services as mockServices, services } from "@/constants/mocks/services";
+import { Service } from "@/constants/mocks/mockTypes";
+import { useRideRequest } from "@/hooks/useRideRequest";
+import { useUserLocation } from "@/hooks/useUserLocation";
 
 export default function ServiceScreen() {
   const colorScheme = useColorScheme();
@@ -22,9 +25,14 @@ export default function ServiceScreen() {
       service.id === 1 || service.id === 3 || service.id === 4 // McDonalds, Zara, Starbucks
   );
   
+  const ride = useRideRequest();
+  const userLocation = useUserLocation();
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const handlerCarPress = () => {
-    {/* TODO */}
+    {/* TO DO */}
+    { /** Utilitzar useRideRequest després de seleccionar un servei */}
+
     console.log('Destí seleccionat');
     router.push({
       pathname: '/(tabs)',

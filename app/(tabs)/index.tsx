@@ -18,6 +18,7 @@ import MapaUni from "@/components/MapaUni";
 import { useServices } from "@/hooks/useServices";
 import { Service } from "@/constants/mocks/mockTypes";
 import { useCarLocation } from "@/hooks/useCarLocation";
+import { useRideRequest } from "@/hooks/useRideRequest";
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
@@ -40,6 +41,7 @@ export default function HomeScreen() {
   const { services } = useServices();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const carLocation = useCarLocation();
+  const ride = useRideRequest();
   const handlerScannerPress = () => {
     {
       /* TODO */
@@ -94,9 +96,12 @@ export default function HomeScreen() {
         onClose={() => setModalVisible(false)}
         onSelect={() => {
           console.log("Has seleccionat:", selectedService?.name);
+          if (selectedService && userLocation.location) {
+            ride.requestRide(selectedService, userLocation.location);
+          }
           setModalVisible(false);
         }}
-        /** Si s'ha seleccionat un destí el modal canvia */
+        /** Si no s'ha seleccionat un destí el modal canvia */
         imageUrl={selectedService?.ad_path || localImage}
         title={selectedService?.name || "Demana un cotxe"}
         minutesText={selectedService == null ? "" : "2 min"} // Opcional, si ho calcules
