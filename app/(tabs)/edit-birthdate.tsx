@@ -6,6 +6,7 @@ import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
 import { Colors, tintColorDark } from "@/constants/Colors";
 import { Styles } from "@/constants/Styles";
+import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function EditBirthDateScreen() {
   const router = useRouter();
@@ -51,9 +52,9 @@ export default function EditBirthDateScreen() {
         inputMode='numeric'
       />
 
-      <TouchableOpacity style={styles.confirmButton} onPress={handleChangeDate}>
-        <ThemedText style={{color: tintColorDark}} type="defaultSemiBold">Canviar data</ThemedText>
-      </TouchableOpacity>
+      <ThemedPressable type="button" onPress={handleChangeDate}>
+        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Canviar data</ThemedText>
+      </ThemedPressable>
     </ThemedView>
   );
 }
@@ -64,12 +65,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20
-  },
-  confirmButton: {
-    ...Styles.button,
-    backgroundColor: Colors.secundari,
-    marginTop: 20,
-    width: '80%',
-  },
+  }
 });
 //[Styles.button, {backgroundColor: Colors.secundari}, {width: '80%'},{marginTop: 20}]}

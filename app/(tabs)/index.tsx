@@ -19,7 +19,7 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import { InfoModal } from "@/components/InfoModal";
 import MapaUni from "@/components/MapaUni";
 
-const localImage = require("@/assets/images/mapa_universitat_v2.jpg");
+const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
 const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
     position: "absolute",
-    bottom: 30,
+    bottom: 70,
     right: 20,
     borderRadius: 20,
     alignItems: "center",

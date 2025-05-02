@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   flightBox: {
     width: 345,
     height: 85,
-    borderWidth: 4,
+    borderWidth: 1,
     marginBottom: 30,
     flexDirection: 'row',
     alignItems: 'center',

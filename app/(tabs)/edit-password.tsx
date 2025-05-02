@@ -6,6 +6,7 @@ import { ThemedTextInput } from '@/components/ThemedTextInput';
 import { useState } from 'react';
 import { Colors, tintColorDark } from "@/constants/Colors"
 import { Styles } from "@/constants/Styles"
+import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -46,9 +47,9 @@ export default function ProfileScreen() {
               autoCapitalize="none"
       />
 
-      <TouchableOpacity style={styles.confirmButton} onPress={handleChangePassword}>
-        <ThemedText style={{color: tintColorDark}} type="defaultSemiBold">Canviar contrasenya</ThemedText>
-      </TouchableOpacity>
+      <ThemedPressable type="button" onPress={handleChangePassword}>
+        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Canviar contrasenya</ThemedText>
+      </ThemedPressable>
     </ThemedView>
   );
 }
@@ -60,11 +61,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     padding: 20
-  },
-  confirmButton: {
-      ...Styles.button,
-      backgroundColor: Colors.secundari,
-      marginTop: 20,
-      width: '80%',
   },
 });

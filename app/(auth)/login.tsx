@@ -85,7 +85,9 @@ export default function HomeScreen() {
         onChangeText={setPassword}
       />
       {/* BOTÓ INICI SESSIÓ */}
-      <ThemedPressable onPress={() => handleLogin(email, password)}>
+      <ThemedPressable 
+        type="button"
+        onPress={() => handleLogin(email, password)}>
         <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Iniciar sessió
         </ThemedText>
@@ -137,11 +139,13 @@ export default function HomeScreen() {
         <ThemedText type="bold" style={{color: 'grey'}}>Política de privadesa</ThemedText>
       </ThemedText>
       {/* BOTÓ CREA UN COMPTE */}
-      <TouchableOpacity onPress={register}>
-        <ThemedText type="bold" style={{textAlign:'center', fontSize:16, marginTop:15}}>
+      <ThemedPressable
+        type="button_secundari" 
+        onPress={register}>
+        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
           Crea un compte
         </ThemedText>
-      </TouchableOpacity>
+      </ThemedPressable>
     </ThemedSafeAreaView>
     
   );

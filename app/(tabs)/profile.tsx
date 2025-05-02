@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Styles } from '@/constants/Styles';
 import { Colors, tintColorDark } from '@/constants/Colors';
+import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth(); // Obtiene los datos del usuario autenticado
@@ -26,60 +27,60 @@ export default function ProfileScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         {/* Capsa Data de naixement */}
-        <View style={styles.textBox}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.birthDate || "2000-12-12"}</ThemedText>
+        <View style={[styles.textBox, { marginBottom: 1 }]}>
+          <ThemedText style={{color: textColor}} type="default">{user?.birthDate || "2000-12-12"}</ThemedText>
         </View>
         {/* Botó Editar Data de naixement */}
-        <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-birthdate")}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar data naixement</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button" onPress={() => router.push("/edit-birthdate")}  style={{ marginTop: -15 }}>
+          {<ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Actualitzar data de naixement</ThemedText>}
+        </ThemedPressable>
 
         {/* Capsa DNI */}
         <View style={styles.textBox}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.dni || "36328819C"}</ThemedText>
+          <ThemedText style={{color: textColor}} type="default">{user?.dni || "36328819C"}</ThemedText>
         </View>
         {/* Botón Editar DNI */}
-        <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar DNI</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button" onPress={() => {}} style={{ marginTop: -15 }}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Actualitzar DNI</ThemedText>
+        </ThemedPressable>
 
         {/* Capsa Telèfon */}
         <View style={styles.textBox}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.phone || "+34645108922"}</ThemedText>
+          <ThemedText style={{color: textColor}} type="default">{user?.phone || "+34645108922"}</ThemedText>
         </View>
         {/* Botón Editar Telèfon */}
-        <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar telèfon</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button" onPress={() => {}} style={{ marginTop: -15 }}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Actualitzar telèfon</ThemedText>
+        </ThemedPressable>
 
         {/* Capsa Gènere */}
         <View style={styles.textBox}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">{user?.gender || "(Desconegut)"}</ThemedText>
+          <ThemedText style={{color: textColor}} type="default">{user?.gender || "(Desconegut)"}</ThemedText>
         </View>
         {/* Botón Editar Gènere */}
-        <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar gènere</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button" onPress={() => {}} style={{ marginTop: -15 }}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Actualitzar gènere</ThemedText>
+        </ThemedPressable>
 
         {/* Botó Editar Nom */}
-        <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-name")}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar nom</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button" onPress={() => router.push("/edit-name")}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Actualitzar nom</ThemedText>
+        </ThemedPressable>
 
         {/* Botón Editar Correu */}
-        <TouchableOpacity style={styles.editButton} onPress={() => {}}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar correu</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button" onPress={() => {}}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Actualitzar correu</ThemedText>
+        </ThemedPressable>
 
         {/* Botón Editar Contrasenya */}
-        <TouchableOpacity style={styles.editButton} onPress={() => router.push("/edit-password")}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Actualitzar contrasenya</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button" onPress={() => router.push("/edit-password")}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Actualitzar contrasenya</ThemedText>
+        </ThemedPressable>
 
         {/* Botón de Cerrar Sesión */}
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-          <ThemedText style={{color: textColor}} type="defaultSemiBold">Log Out</ThemedText>
-        </TouchableOpacity>
+        <ThemedPressable type="button_secundari" onPress={logout}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Tancar sessió</ThemedText>
+        </ThemedPressable>
       </ScrollView>
     </View>
   );
@@ -92,9 +93,9 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 20,
-    gap: 10,
+    gap: 18,
     paddingTop: 40,
-    paddingBottom: 150,
+    paddingBottom: 160,
   },
   header: {
     backgroundColor: Colors.secundari,
@@ -111,35 +112,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     resizeMode: 'cover'
   },
-  editButton: {
-    ...Styles.button,
-    backgroundColor: Colors.primari,
-    padding: 12,
-    borderRadius: 10,
-    alignSelf: 'center',
-    marginTop: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
   textBox: {
-    ...Styles.button,
     backgroundColor: 'transparent',
     padding: 5,
-    borderRadius: 1,
-    alignSelf: 'center',
-    marginTop: 10,
-    width: '80%',
-    borderColor: Colors.primari,
-    borderWidth: 1,
-    alignItems: 'center',
-  },
-  logoutButton: {
-    backgroundColor: Colors.primari,
-    padding: 12,
+    paddingVertical: 10, // más altura
     borderRadius: 10,
     alignSelf: 'center',
-    marginTop: 15,
-    width: '80%',
+    marginTop: 10,
+    width: '90%',
+    borderColor: Colors.primari,
+    borderWidth: 1,
     alignItems: 'center',
   },
 });

@@ -32,7 +32,6 @@ export function ThemedTextInput({
         {borderWidth: 1},
         {margin: 10}, 
         {borderColor: color}
-
       ]}
       placeholderTextColor={color}
       

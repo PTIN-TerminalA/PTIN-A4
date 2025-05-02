@@ -63,7 +63,7 @@ const MapaUni: React.FC = () => {
         <View style={{ width: displayedWidth, height: screen.height }}>
           {/* Imagen de fondo */}
           <Image
-            source={require('@/assets/images/mapa_universitat_v2.jpg')}
+            source={require('@/assets/images/planol.png')}
             style={{ width: displayedWidth, height: screen.height }}
             resizeMode="cover"
           />

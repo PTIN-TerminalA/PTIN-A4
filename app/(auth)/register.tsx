@@ -21,6 +21,7 @@ export default function RegisterScreen() {
   const [gender, setGender] = useState("");
   const { register, logout } = useAuth();
   const inputText = useColorScheme() === 'dark' ? Colors.dark.text : Colors.light.text;
+  const backgroundColor = useColorScheme() === 'dark' ? Colors.dark.background : Colors.light.background;
 
   const handleRegister = async (email: string, password: string, confirmPassword: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
     // Comprovem si falta algun camp
@@ -116,7 +117,7 @@ export default function RegisterScreen() {
   };  
 
   return (
-    <ThemedSafeAreaView style={styles.container}>
+    <ThemedSafeAreaView style={[styles.container, { backgroundColor }]}>
       <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <ThemedText type="title" style= {{textAlign:'center', paddingTop: 60,paddingBottom:80}}> 
           Benvingut a Flysy!
@@ -164,14 +165,15 @@ export default function RegisterScreen() {
           autoCapitalize="none"
           onChangeText={setDni}
         />
-        <ThemedTextInput 
+        <ThemedTextInput
           placeholder="Telèfon"
           placeholderTextColor={Colors.input_text}
           autoCorrect={false} 
           autoCapitalize="none"
           onChangeText={setPhone}
         />
-        <ThemedTextInput 
+        <ThemedTextInput
+          // style={{width:'100%', alignSelf: 'center', borderRadius: 15}}
           placeholder="Data de naixement (YYYY-MM-DD)" 
           placeholderTextColor={Colors.input_text}
           autoCorrect={false}
@@ -195,7 +197,8 @@ export default function RegisterScreen() {
             borderColor: 'white',
             borderWidth: 1, 
             borderRadius: 10, 
-            padding: 6, 
+            padding: 10, 
+            paddingHorizontal: 10,
             height: 50,
             width: '90%',
             justifyContent: 'center', 
@@ -203,29 +206,41 @@ export default function RegisterScreen() {
           dropdownStyles={{
             backgroundColor: 'lightgrey', 
             borderWidth: 1, 
-            borderRadius: 10, 
+            borderRadius: 10,
           }}
           dropdownTextStyles={{
-            color: 'white', 
+            color: 'white',
           }}
-          arrowicon={<Text style={{ color: Colors.input_text }}>↓</Text>} 
+          boxStyles={{
+            borderColor: 'transparent',
+            paddingHorizontal: 10,
+          }}
+          arrowicon={<Text style={{ color: Colors.input_text }}>↓</Text>}
           search={false}
         />
         {/********************/}
-        <ThemedPressable onPress={() => handleRegister(email, password, confirmPassword, name, dni, phone, birthDate, gender)}>
+        {/** BOTÓ DE REGISTRE */}
+        <ThemedPressable
+          type="button"
+          onPress={() => handleRegister(email, password, confirmPassword, name, dni, phone, birthDate, gender)}>
           <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
             Registra't!
           </ThemedText>
         </ThemedPressable>
+
         <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>
           En registrar-te, acceptes les nostres condicions 
           del servei i la política de privadesa
         </ThemedText>
-        <TouchableOpacity onPress={logout}>
-          <ThemedText style={{textAlign:'center', fontWeight: 'bold', fontSize:16, marginTop:15}}>
+        
+        {/** BOTÓ D'INICIAR SESSIÓ */}
+        <ThemedPressable 
+          type="button_secundari"
+          onPress={logout}>
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
             Iniciar Sessió
           </ThemedText>
-        </TouchableOpacity>
+        </ThemedPressable>
       </ScrollView>
     </ThemedSafeAreaView>
   );
@@ -241,13 +256,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    gap: 10,
-    paddingTop: 40,
+    paddingTop: StatusBar.currentHeight
   },
   scrollContainer: {
     padding: 20,
-    gap: 10,
     paddingTop: 40,
-    paddingBottom: 300,
+    paddingBottom: 200,
   },
 });
