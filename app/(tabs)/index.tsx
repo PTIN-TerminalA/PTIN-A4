@@ -79,7 +79,13 @@ export default function HomeScreen() {
 
       {/* Botón que abre el modal */}
       <ThemedPressable onPress={() => setModalVisible(true)} type="button">
-        <ThemedText type="bold">Provar Modal</ThemedText>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+          <Image 
+            source={require('../../assets/images/Icons/car.png')} 
+            style={{width: 40, height: 40, marginRight: 25, 
+            tintColor: useColorScheme() == 'dark' ? Colors.dark.text : Colors.light.text}}/>
+          <ThemedText type="bold">Selecciona un destí</ThemedText>
+          </View>
       </ThemedPressable>
 
       {/* Modal personalizado */}
@@ -90,12 +96,13 @@ export default function HomeScreen() {
           console.log("Has seleccionat:", selectedService?.name);
           setModalVisible(false);
         }}
-        imageUrl={selectedService?.ad_path}
-        title={selectedService?.name ?? ""}
-        minutesText="1 min" // Opcional, si ho calcules
-        distanceText="500 m" // Opcional, si ho calcules
+        /** Si s'ha seleccionat un destí el modal canvia */
+        imageUrl={selectedService?.ad_path || localImage}
+        title={selectedService?.name || "Demana un cotxe"}
+        minutesText={selectedService == null ? "" : "2 min"} // Opcional, si ho calcules
+        distanceText={selectedService == null ? "" : "500 m"} // Opcional, si ho calcules
         buttonText="Demanar cotxe"
-        description={selectedService?.description ?? ""}
+        description={selectedService?.description || "Primer selecciona un destí dins la terminal A"}
       />
     </View>
   );

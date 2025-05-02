@@ -26,8 +26,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
   imageUrl,
   onSelect,
   title = "Lloc",
-  minutesText = "2 min",
-  distanceText = "1 km",
+  minutesText,
+  distanceText,
   buttonText = "Seleccionar",
   description = "",
 }) => {
@@ -71,6 +71,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
             </ThemedText>
 
             <View style={styles.metaRow}>
+              {minutesText && ( // Modificació del modal quan no es selecciona un destí
               <View style={styles.metaItem}>
                 <RNImage source={ClockIcon} style={styles.metaIcon} />
                 <ThemedText
@@ -80,7 +81,9 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   {minutesText}
                 </ThemedText>
               </View>
+              )}
 
+              {distanceText && ( // Modificació del modal quan no es selecciona un destí
               <View style={styles.metaItem}>
                 <RNImage source={DestinoIcon} style={styles.metaIcon} />
                 <ThemedText
@@ -90,10 +93,13 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   {distanceText}
                 </ThemedText>
               </View>
+              )}
+
             </View>
           </View>
 
           {/* Derecha*/}
+          {distanceText && ( // Modificació del modal quan no es selecciona un destí
           <View style={styles.buttonWrapper}>
             <ThemedPressable
               type="button"
@@ -108,6 +114,8 @@ export const InfoModal: React.FC<InfoModalProps> = ({
               </ThemedText>
             </ThemedPressable>
           </View>
+          )}
+
         </View>
       </View>
     </Modal>
