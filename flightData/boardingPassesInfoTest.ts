@@ -194,8 +194,8 @@ export let BoardingPasses: BoardingPass[] = [
         originName: airportNames.BCN,
         destination: 'ALC',
         destinationName: airportNames.ALC,
-        departureTime: '2025-04-21T02:22:00',
-        arrivalTime: '2025-04-21T03:30:00',
+        departureTime: '2025-04-22T13:25:00',
+        arrivalTime: '2025-04-22T013:30:00',
         terminal: '2',
         gate: 'B5'
       },
@@ -204,7 +204,7 @@ export let BoardingPasses: BoardingPass[] = [
         seat: '9D',
         ticketNumber: 'VY-4567891230'
       },
-      boardingTime: '2025-04-21T02:21:00',
+      boardingTime: '2025-04-22T13:14:30',
       baggageAllowance: '1 × 10kg',
       qrCode: 'https://www.youtube.com/watch?v=xvFZjo5PgG0&ab_channel=Duran'
     },
