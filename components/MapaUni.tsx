@@ -5,6 +5,7 @@ import MapMarker from "@/components/MapMarker";
 import { Service } from "@/constants/mocks/mockTypes";
 import CarMarker from "@/components/CarMarker";
 import UserMarker from "@/components/UserMarker";
+import { ThemedView } from "@/components/ThemedView";
 
 interface Car {
   x: number;
@@ -80,14 +81,14 @@ const MapaUni: React.FC<Props> = ({
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <ImageZoom
         {...({
           cropWidth: screen.width,
           cropHeight: screen.height,
           imageWidth: displayedWidth,
           imageHeight: screen.height,
-          minScale: 1,
+          minScale: 0.3,
           maxScale: 3,
           enableCenterFocus: false,
           useNativeDriver: true,
@@ -143,14 +144,13 @@ const MapaUni: React.FC<Props> = ({
           )}
         </View>
       </ImageZoom>
-    </View>
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
   },
 });
 
