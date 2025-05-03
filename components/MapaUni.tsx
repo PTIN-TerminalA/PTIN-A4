@@ -19,6 +19,7 @@ type Props = {
     id: string;
     x: number;
     y: number;
+    rotation: number;
     visible: boolean;
   } | null;
 
@@ -61,7 +62,6 @@ const MapaUni: React.FC<Props> = ({
   //Movimiento de los coches
   useEffect(() => {
     setCarPositions(generatePositions());
-
     const interval = setInterval(() => {
       setCarPositions((cars) =>
         cars.map((car) => ({
@@ -138,6 +138,7 @@ const MapaUni: React.FC<Props> = ({
             <CarMarker
               x={carPos.x}
               y={carPos.y}
+              rotation={carPos.rotation}
               scale={scale}
               onPress={() => console.log("Cotxe clicat")}
             />
