@@ -19,6 +19,7 @@ import { useServices } from "@/hooks/useServices";
 import { Service } from "@/constants/mocks/mockTypes";
 import { useCarLocation } from "@/hooks/useCarLocation";
 import { useRideRequest } from "@/hooks/useRideRequest";
+import { ThemedView } from "@/components/ThemedView";
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
@@ -60,7 +61,7 @@ export default function HomeScreen() {
   }, [rootNavigationState?.key]);
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <MapaUni
         services={services}
         onServicePress={(service) => {
@@ -109,14 +110,13 @@ export default function HomeScreen() {
         buttonText="Demanar cotxe"
         description={selectedService?.description || "Primer selecciona un destí dins la terminal A"}
       />
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
     position: "relative",
   },
   contentContainer: {
