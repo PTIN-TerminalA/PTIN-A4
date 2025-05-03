@@ -1,10 +1,13 @@
+import { transform } from "@babel/core";
 import React from "react";
 import { View, StyleSheet, Image, Pressable } from "react-native";
+import { RotateInUpRight } from "react-native-reanimated";
 
 type Props = {
   x: number;
   y: number;
   scale: number;
+  rotation?: number;
   visible?: boolean;
   onPress?: () => void;
 };
@@ -16,6 +19,7 @@ const CarMarker: React.FC<Props> = ({
   y,
   scale,
   visible = true,
+  rotation = 0,
   onPress,
 }) => {
   if (!visible) return null;
@@ -28,6 +32,7 @@ const CarMarker: React.FC<Props> = ({
         {
           left: x * scale - ICON_SIZE / 2,
           top: y * scale - ICON_SIZE / 2,
+          transform: [{ rotate: `${rotation ?? 0}deg` }],
         },
       ]}
     >
