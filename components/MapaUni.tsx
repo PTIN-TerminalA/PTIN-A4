@@ -25,6 +25,9 @@ type Props = {
     x: number;
     y: number;
   } | null;
+
+  routePoints?: { x: number; y: number }[]; //fake route
+
 };
 
 const imageWidth = 1027;
@@ -42,6 +45,7 @@ const MapaUni: React.FC<Props> = ({
   onServicePress,
   carPos,
   userLocation,
+  routePoints
 }) => {
   const [carPositions, setCarPositions] = useState<Car[]>([]);
 
@@ -141,6 +145,53 @@ const MapaUni: React.FC<Props> = ({
               onPress={() => console.log("Cotxe clicat")}
             />
           )}
+
+          {routePoints && routePoints.length > 1 && (
+            <View
+              style={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                width: displayedWidth,
+                height: screen.height,
+              }}
+              pointerEvents="none"
+            >
+              {routePoints.map((point, index) => {
+                if (index === 0) return null;
+                const prev = routePoints[index - 1];
+                const x1 = prev.x * scale;
+                const y1 = prev.y * scale;
+                const x2 = point.x * scale;
+                const y2 = point.y * scale;
+
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const length = Math.sqrt(dx * dx + dy * dy);
+
+                const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      position: "absolute",
+                      left: x1,
+                      top: y1,
+                      width: length,
+                      height: 2,
+                      backgroundColor: "dodgerblue",
+                      transform: [{ rotateZ: `${angle}deg` }],
+                    }}
+                  />
+                );
+              })}
+            </View>
+          )}
+
+
+
+
         </View>
       </ImageZoom>
     </View>

@@ -19,6 +19,7 @@ import { useServices } from "@/hooks/useServices";
 import { Service } from "@/constants/mocks/mockTypes";
 import { useCarLocation } from "@/hooks/useCarLocation";
 import { useRideRequest } from "@/hooks/useRideRequest";
+import { useRouteDestination } from "@/hooks/useRouteDestination"; //fake route
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
@@ -40,8 +41,13 @@ export default function HomeScreen() {
   const userLocation = useUserLocation();
   const { services } = useServices();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const carLocation = useCarLocation();
+  //Una nou estat pel servei al que sí volem anar i no seleccionem i prou.
+  //Pel cas d'un viatge on demanem cap a un destí i abans de confirmar mirem 
+  // un altre servei (canvia el selectedservice però no volem que ho faci el confirmedservice)
+  const [confirmedService, setConfirmedService] = useState<Service | null>(null); 
+  const [startingTrip, setStartingTrip] = useState(false); 
   const ride = useRideRequest();
+  const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">("select");
   const handlerScannerPress = () => {
     {
       /* TODO */
@@ -51,6 +57,12 @@ export default function HomeScreen() {
       pathname: "/flightInfo/scanBoardingPass",
     });
   };
+  const routePoints = useRouteDestination( //fake route
+    userLocation?.location ?? null,
+    confirmedService ? { x: confirmedService.x, y: confirmedService.y } : null
+  );
+  // const carLocation = useCarLocation(); //Usamos la asignació de abajo para que la imagen del coche vaya hasta el destino.
+  const carLocation = useCarLocation(routePoints, startingTrip);
 
   useEffect(() => {
     if (!isLoggedIn && rootNavigationState?.key) {
@@ -69,6 +81,7 @@ export default function HomeScreen() {
         }}
         carPos={carLocation.location}
         userLocation={userLocation.location}
+        routePoints={rideStage === "confirm" ? routePoints : []} //fake route
       />
 
       {/* Botó per escannejar */}
@@ -80,13 +93,37 @@ export default function HomeScreen() {
       </TouchableOpacity>
 
       {/* Botón que abre el modal */}
-      <ThemedPressable onPress={() => setModalVisible(true)} type="button">
+      <ThemedPressable
+        onPress={() => {
+          if (rideStage === "select") {
+            setModalVisible(true);
+            setStartingTrip(false);
+          } else if (rideStage === "confirm") {
+            console.log("Has confirmat el viatge a:", confirmedService?.name);
+            setRideStage("inside");
+          } else if (rideStage === "inside") {
+            setStartingTrip(true);
+            console.log("Ets a dins del vehicle cap a:", confirmedService?.name);
+            console.log("Començant viatge");
+            if (confirmedService  && userLocation.location) {
+              ride.requestRide(confirmedService , userLocation.location);
+            }
+            setRideStage("select");
+            setConfirmedService(null);
+            setSelectedService(null);
+          }
+        }}
+        type="button"
+      >
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <Image 
             source={require('../../assets/images/Icons/car.png')} 
             style={{width: 40, height: 40, marginRight: 25, 
             tintColor: useColorScheme() == 'dark' ? Colors.dark.text : Colors.light.text}}/>
-          <ThemedText type="bold">Selecciona un destí</ThemedText>
+          {/* <ThemedText type="bold">Selecciona un destí</ThemedText> */}
+          {rideStage === "select" && <ThemedText type="bold">Selecciona un destí</ThemedText>}
+          {rideStage === "confirm" && <ThemedText type="bold">Confirma el viatge</ThemedText>}
+          {rideStage === "inside" && <ThemedText type="bold">Confirma que ets a dins</ThemedText>}
           </View>
       </ThemedPressable>
 
@@ -95,12 +132,21 @@ export default function HomeScreen() {
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSelect={() => {
-          console.log("Has seleccionat:", selectedService?.name);
-          if (selectedService && userLocation.location) {
-            ride.requestRide(selectedService, userLocation.location);
+          if (rideStage === "select") {
+            setConfirmedService(selectedService); // confirmamos este como destino real
+            console.log("Has seleccionat:", selectedService?.name);
+            setRideStage("confirm");
+          }
+          else if (rideStage === "confirm" || rideStage === "inside") {
+            if (selectedService !== confirmedService) {
+              console.log("Has seleccionat:", selectedService?.name);
+              setConfirmedService(selectedService);
+              setRideStage("confirm");
+            }
           }
           setModalVisible(false);
         }}
+        
         /** Si no s'ha seleccionat un destí el modal canvia */
         imageUrl={selectedService?.ad_path || localImage}
         title={selectedService?.name || "Demana un cotxe"}
