@@ -14,7 +14,7 @@ type Position = {
 
 export function useUserLocation(scanInterval = 3000) {
   const [location, setLocation] = useState<Position | null>(null);
-  
+
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {
       const response = await fetch("http://192.168.1.10:8000/localize", {
@@ -29,7 +29,7 @@ export function useUserLocation(scanInterval = 3000) {
         console.error("API response error");
         return null;
       }
-
+      
       const data = await response.json();
       console.log(data);
       return data;

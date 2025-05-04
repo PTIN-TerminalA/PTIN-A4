@@ -131,7 +131,7 @@ const MapaUni: React.FC<Props> = ({
               }}
             />
           ))}*/}
-          
+
           {userLocation && (
             <UserMarker
               x={userLocation.x * imageWidth}

@@ -72,7 +72,7 @@ export default function HomeScreen() {
         carPos={carLocation.location}
         userLocation={userLocation} 
       />
-
+      
       {/* Botó per escannejar */}
       <TouchableOpacity
         style={[styles.scannButton, { backgroundColor: buttonColor }]}
