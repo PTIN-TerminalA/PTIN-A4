@@ -12,8 +12,8 @@ type Position = {
   y: number;
 };
 
-export function useUserUbication(scanInterval = 3000) {
-  const [location, setLocation] = useState(null); // Això hauran de ser les coordenades del mapa
+export function useUserLocation(scanInterval = 3000) {
+  const [location, setLocation] = useState<Position | null>(null);
   
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {

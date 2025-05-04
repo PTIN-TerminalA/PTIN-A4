@@ -11,9 +11,10 @@ import { Image as RNImage } from "react-native";
 interface InfoModalProps {
   isVisible: boolean;
   onClose: () => void;
-  imageUrl: string;
+  imageUrl: number | { uri: string } | { uri: string; headers?: any };
   onSelect: () => void;
   title?: string;
+  description?: string; // <-- Afegim això
   minutesText?: string;
   distanceText?: string;
   buttonText?: string;
@@ -25,9 +26,10 @@ export const InfoModal: React.FC<InfoModalProps> = ({
   imageUrl,
   onSelect,
   title = "Lloc",
-  minutesText = "2 min",
-  distanceText = "1 km",
+  minutesText,
+  distanceText,
   buttonText = "Seleccionar",
+  description = "",
 }) => {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -46,7 +48,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({
         <View style={styles.handle} />
 
         <Image
-          source={{ uri: imageUrl }}
+          source={typeof imageUrl === "string" ? { uri: imageUrl } : imageUrl} // de moment ho fem així perquè son les dades mockup però ja ho canviarem més endevant si s'escau
           style={styles.image}
           resizeMode="cover"
         />
@@ -61,8 +63,15 @@ export const InfoModal: React.FC<InfoModalProps> = ({
             >
               {title}
             </ThemedText>
+            <ThemedText
+              type="default"
+              style={[{ marginBottom: 8, color: textColor }]}
+            >
+              {description}
+            </ThemedText>
 
             <View style={styles.metaRow}>
+              {minutesText && ( // Modificació del modal quan no es selecciona un destí
               <View style={styles.metaItem}>
                 <RNImage source={ClockIcon} style={styles.metaIcon} />
                 <ThemedText
@@ -72,7 +81,9 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   {minutesText}
                 </ThemedText>
               </View>
+              )}
 
+              {distanceText && ( // Modificació del modal quan no es selecciona un destí
               <View style={styles.metaItem}>
                 <RNImage source={DestinoIcon} style={styles.metaIcon} />
                 <ThemedText
@@ -82,21 +93,29 @@ export const InfoModal: React.FC<InfoModalProps> = ({
                   {distanceText}
                 </ThemedText>
               </View>
+              )}
+
             </View>
           </View>
 
           {/* Derecha*/}
+          {distanceText && ( // Modificació del modal quan no es selecciona un destí
           <View style={styles.buttonWrapper}>
             <ThemedPressable
               type="button"
               onPress={onSelect}
               style={styles.button}
             >
-              <ThemedText type="bold" style={{ color: textColor, fontSize: 16 }}>
+              <ThemedText
+                type="bold"
+                style={{ color: textColor, fontSize: 16 }}
+              >
                 {buttonText}
               </ThemedText>
             </ThemedPressable>
           </View>
+          )}
+
         </View>
       </View>
     </Modal>

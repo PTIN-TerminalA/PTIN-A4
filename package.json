@@ -32,6 +32,7 @@
     "expo-modules-core": "~2.2.3",
     "expo-notifications": "~0.29.14",
     "expo-router": "~4.0.19",
+    "expo-speech-recognition": "^1.1.1",
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
     "expo-symbols": "~0.2.2",
