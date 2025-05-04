@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { Alert } from 'react-native';
+import { API_URL } from "@/constants/Api";
 
 interface User {
   name: string;
@@ -15,7 +16,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   register: (email: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => void,
-  login: (email: string) => void;
+  login: (token: string) => void;
   logout: () => void;
   deleteAccount: () => void;
 }
@@ -40,10 +41,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.replace('/(tabs)'); // change this to your actual screen
   };
 
-  const login = (email: string) => {
+  const login = async (token: string) => {
+    const response = await fetch(`${API_URL}/api/profile`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}`,},
+    });
+
+    if (!response.ok) throw new Error("Error al obtener el perfil");
+    const profile = await response.json();
+
     setUser({
-      name: email.split('@')[0],
-      email,
+      name: profile.name,
+      email: profile.email,
+      birthDate: profile.birth_date,
+      phone: profile.phone_num,
+      gender: profile.identity,
       avatar: 'https://www.lavanguardia.com/peliculas-series/images/all/movie/posters/2009/12/movie-19995/w1280/yev8cuskZiDfzOPzVjSKPnvBnfk.jpg',
     });
 

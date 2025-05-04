@@ -2,7 +2,7 @@ import { ScrollView, View, Switch, Image, StyleSheet, TouchableOpacity, useColor
 import { useAuth } from '@/hooks/useAuth'; // Hook de autenticación
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, tintColorDark, tintColorLight } from '@/constants/Colors';
+import { Colors, tintColorDark } from '@/constants/Colors';
 import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function ProfileScreen() {
@@ -69,19 +69,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* CAPSA DNI */}
-        <View style={[styles.box, {backgroundColor: boxBackgroudColor}]}>
-          <View style={styles.boxInfoSection}>
-            <ThemedText style={{color: textColor}} type="bold">DNI</ThemedText>
-            <ThemedText style={{color: textColor}} type="default">{user?.dni || "36328819C"}</ThemedText>
-          </View>
-          <View style={styles.boxTextContainer}>
-            <ThemedPressable type="button" onPress={() => {}} style={styles.button}>
-              <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Editar</ThemedText>
-            </ThemedPressable>
-          </View>
-        </View>
-
         {/* CAPSA TELÈFON */}
         <View style={[styles.box, {backgroundColor: boxBackgroudColor}]}>
           <View style={styles.boxInfoSection}>
@@ -108,18 +95,12 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* CAPSA CONTRASENYA */}
-        <View style={[styles.box, {backgroundColor: boxBackgroudColor}]}>
-          <View style={styles.boxInfoSection}>
-            <ThemedText style={{color: textColor}} type="bold">Contrasenya</ThemedText>
-            <ThemedText style={{color: textColor}} type="default">*******</ThemedText>
+        {/* BOTÓ EDITAR CONTRASENYA */}
+        <ThemedPressable type="button" onPress={() => router.push("/edit-password")}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Editar contrasenya</ThemedText>
           </View>
-          <View style={styles.boxTextContainer}>
-            <ThemedPressable type="button" onPress={() => router.push("/edit-password")} style={styles.button}>
-              <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Editar</ThemedText>
-            </ThemedPressable>
-          </View>
-        </View>
+        </ThemedPressable>
 
         {/* BOTÓ DE TANCAR SESSIÓ */}
         <ThemedPressable type="button" onPress={logout}>
@@ -134,6 +115,9 @@ export default function ProfileScreen() {
         {/* BOTÓ D'ELIMINAR COMPTE' */}
         <ThemedPressable type="button" onPress={deleteAccount}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <Image source={require('../../assets/images/Icons/trash.png')} 
+              style={{width: 30, height: 30, marginRight: 25, 
+              tintColor: useColorScheme() == 'dark' ? Colors.dark.text : Colors.light.text}}/>
             <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Eliminar compte</ThemedText>
           </View>
         </ThemedPressable>
@@ -195,9 +179,9 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 20,
-    gap: 8,
+    gap: 5,
     paddingTop: 40,
-    paddingBottom: 120,
+    paddingBottom: 45,
   },
   header: {
     backgroundColor: Colors.secundari,
