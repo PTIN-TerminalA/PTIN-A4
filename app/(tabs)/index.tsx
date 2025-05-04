@@ -45,7 +45,7 @@ export default function HomeScreen() {
   //Pel cas d'un viatge on demanem cap a un destí i abans de confirmar mirem 
   // un altre servei (canvia el selectedservice però no volem que ho faci el confirmedservice)
   const [confirmedService, setConfirmedService] = useState<Service | null>(null); 
-  const [startingTrip, setStartingTrip] = useState(false); 
+  const [startingTrip, setStartingTrip] = useState(false);
   const ride = useRideRequest();
   const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">("select");
   const handlerScannerPress = () => {
@@ -57,10 +57,12 @@ export default function HomeScreen() {
       pathname: "/flightInfo/scanBoardingPass",
     });
   };
+  
   const routePoints = useRouteDestination( //fake route
-    userLocation?.location ?? null,
-    confirmedService ? { x: confirmedService.x, y: confirmedService.y } : null
+     userLocation?.location ?? null,
+     confirmedService ? { x: confirmedService.x, y: confirmedService.y } : null,
   );
+  
   // const carLocation = useCarLocation(); //Usamos la asignació de abajo para que la imagen del coche vaya hasta el destino.
   const carLocation = useCarLocation(routePoints, startingTrip);
 
@@ -81,7 +83,7 @@ export default function HomeScreen() {
         }}
         carPos={carLocation.location}
         userLocation={userLocation.location}
-        routePoints={rideStage === "confirm" ? routePoints : []} //fake route
+        routePoints={routePoints ?? []} //fake route
       />
 
       {/* Botó per escannejar */}
@@ -97,19 +99,18 @@ export default function HomeScreen() {
         onPress={() => {
           if (rideStage === "select") {
             setModalVisible(true);
-            setStartingTrip(false);
           } else if (rideStage === "confirm") {
             console.log("Has confirmat el viatge a:", confirmedService?.name);
             setRideStage("inside");
           } else if (rideStage === "inside") {
-            setStartingTrip(true);
             console.log("Ets a dins del vehicle cap a:", confirmedService?.name);
             console.log("Començant viatge");
+            setStartingTrip(true);
             if (confirmedService  && userLocation.location) {
               ride.requestRide(confirmedService , userLocation.location);
             }
             setRideStage("select");
-            setConfirmedService(null);
+            // setConfirmedService(null);
             setSelectedService(null);
           }
         }}
@@ -134,11 +135,12 @@ export default function HomeScreen() {
         onSelect={() => {
           if (rideStage === "select") {
             setConfirmedService(selectedService); // confirmamos este como destino real
+            setStartingTrip(false); 
             console.log("Has seleccionat:", selectedService?.name);
             setRideStage("confirm");
           }
           else if (rideStage === "confirm" || rideStage === "inside") {
-            if (selectedService !== confirmedService) {
+            if (selectedService?.id !== confirmedService?.id) {
               console.log("Has seleccionat:", selectedService?.name);
               setConfirmedService(selectedService);
               setRideStage("confirm");

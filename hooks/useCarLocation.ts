@@ -9,7 +9,7 @@ interface CarLocation {
 
 export function useCarLocation(
   routePoints: { x: number; y: number }[] | null,
-  canMove: boolean = false,
+  startedTrip: boolean,
   pollingInterval = 100
 ) {
   const [location, setLocation] = useState<CarLocation>({
@@ -22,13 +22,7 @@ export function useCarLocation(
   const [targetIndex, setTargetIndex] = useState(0);
 
   useEffect(() => {
-    if (canMove && routePoints && routePoints.length > 0) {
-      setTargetIndex(0);
-    }
-  }, [canMove, routePoints]);
-
-  useEffect(() => {
-    if (!routePoints || routePoints.length < 2 || !canMove) return;
+    if (!startedTrip || !routePoints || routePoints.length < 2) return;
 
     const interval = setInterval(() => {
       setLocation((current) => {
@@ -60,7 +54,7 @@ export function useCarLocation(
     }, pollingInterval);
 
     return () => clearInterval(interval);
-  }, [routePoints, targetIndex, pollingInterval, canMove]);
+  }, [routePoints, targetIndex, pollingInterval]);
   
   return { location };
 }
