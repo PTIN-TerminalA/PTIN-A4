@@ -7,6 +7,10 @@ interface Car {
   y: number;
 }
 
+interface MapaUniProps {
+  userLocation: { x: number; y: number } | null; 
+}
+
 const imageWidth = 1027;
 const imageHeight = 664;
 const NUM_CARS = 10;
@@ -17,7 +21,7 @@ const screen = Dimensions.get('window');
 const scale = screen.height / imageHeight;
 const displayedWidth = imageWidth * scale;
 
-const MapaUni: React.FC = () => {
+const MapaUni: React.FC<MapaUniProps> = ({ userLocation }) => {
   const [carPositions, setCarPositions] = useState<Car[]>([]);
 
   //Genera coches con posiciones aleatorias alrededor del centro
@@ -85,6 +89,24 @@ const MapaUni: React.FC = () => {
               }}
             />
           ))}
+          
+          {/* Posición del usuario */}
+          {userLocation && (
+            <View
+              style={{
+                position: 'absolute',
+                left: userLocation.x * imageWidth * scale - 10,
+                top: userLocation.y * imageHeight * scale - 10,
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                backgroundColor: 'blue',
+                borderColor: 'white',
+                borderWidth: 2,
+              }}
+            />
+          )}
+
         </View>
       </ImageZoom>
     </View>

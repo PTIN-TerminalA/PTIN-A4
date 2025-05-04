@@ -37,7 +37,7 @@ export default function HomeScreen() {
     : require("@/assets/images/Icons/scanner_LightMode.png");
   const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
-  const location = useUserUbication();
+  const {location: userLocation} = useUserUbication(); 
 
   const handlerScannerPress = () => {
     {
@@ -58,7 +58,9 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <MapaUni/>
+      <MapaUni
+        userLocation={userLocation}
+      />
 
       {/* Botó per escannejar */}
       <TouchableOpacity
