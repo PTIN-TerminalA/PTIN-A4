@@ -194,7 +194,7 @@ export default function RegisterScreen() {
           placeholder="Selecciona Gènere"
           inputStyles={{
             color: gender ? inputText : Colors.input_text,
-            borderColor: 'white',
+            borderColor: useColorScheme() === 'dark' ? 'white' : 'black',
             borderWidth: 1, 
             borderRadius: 10, 
             padding: 10, 
