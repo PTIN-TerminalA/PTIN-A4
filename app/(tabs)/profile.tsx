@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Image, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import { ScrollView, View, Switch, Image, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { useAuth } from '@/hooks/useAuth'; // Hook de autenticación
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
@@ -6,13 +6,12 @@ import { Colors, tintColorDark, tintColorLight } from '@/constants/Colors';
 import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function ProfileScreen() {
-  const { user, logout } = useAuth(); // Obtiene los datos del usuario autenticado
+  const { user, logout, deleteAccount } = useAuth(); // Obtiene los datos del usuario autenticado
   const router = useRouter();
   const colorScheme = useColorScheme(); // 'light' o 'dark'
   const backgroundColor = colorScheme === 'dark' ? Colors.dark.background : Colors.light.background;
   const textColor = colorScheme === 'dark' ? Colors.dark.text : Colors.light.text;
   const boxBackgroudColor = colorScheme === 'dark' ? Colors.dark.box : Colors.light.box;
-  const editIcon = require('@/assets/images/Icons/edit.png');
 
   return (
     <View style={[styles.container, {backgroundColor}]}>
@@ -24,8 +23,8 @@ export default function ProfileScreen() {
         <TouchableOpacity
           style={[styles.editButton, {borderColor: tintColorDark}, 
           { backgroundColor: Colors.primari }]}>
-          <Image source={editIcon} style={[{width: 40}, {height: 40},
-          {tintColor: colorScheme == 'dark' ? Colors.dark.text : Colors.light.text}]}></Image>
+          <Image source={require('@/assets/images/Icons/edit.png')} style={[{width: 40}, {height: 40},
+          {tintColor: colorScheme === 'dark' ? Colors.dark.text : Colors.light.text}]}></Image>
         </TouchableOpacity>
       </View>
 
@@ -132,6 +131,13 @@ export default function ProfileScreen() {
           </View>
         </ThemedPressable>
 
+        {/* BOTÓ D'ELIMINAR COMPTE' */}
+        <ThemedPressable type="button" onPress={deleteAccount}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>Eliminar compte</ThemedText>
+          </View>
+        </ThemedPressable>
+
       </ScrollView>
     </View>
   );
@@ -180,7 +186,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     position: 'absolute',
-    bottom: 30,
+    bottom: 20,
     left: 145,
     borderRadius: 20,
     borderWidth: 2,
@@ -189,14 +195,16 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 20,
-    gap: 18,
+    gap: 8,
     paddingTop: 40,
-    paddingBottom: 160,
+    paddingBottom: 120,
   },
   header: {
     backgroundColor: Colors.secundari,
-    alignItems: 'flex-start',
-    paddingVertical: 60,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 50,
     height: 250,
   },
   avatar: {
@@ -205,8 +213,8 @@ const styles = StyleSheet.create({
     borderRadius: 70,
     borderWidth: 4,
     borderColor: tintColorDark,
-    marginBottom: 1,
+    marginTop: 30,
     marginLeft: 30,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
 });
