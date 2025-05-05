@@ -30,7 +30,6 @@ export function ThemedTextInput({
         type === "link" ? FontStyles.link : undefined,
         style, 
         {borderWidth: 1},
-        {margin: 10}, 
         {borderColor: color}
       ]}
       placeholderTextColor={color}

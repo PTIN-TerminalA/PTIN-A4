@@ -26,7 +26,7 @@ export type Service = {
   name: string;
   description: string;
   location: string;
-  link: string;
+  link?: string;
   ad_path: string;
   x: number; // Coordenada X al mapa
   y: number; // Coordenada Y al mapa

@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import QRCode from 'react-native-qrcode-svg';
 
 export default function FlightInfoScreen() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme() || 'light';
   const isDarkMode = colorScheme === 'dark';
   const boxColor = isDarkMode ? Colors.dark.box : Colors.light.box;
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
@@ -69,7 +69,8 @@ export default function FlightInfoScreen() {
           options={{
             headerShown: true,
             headerTitle: () => <ThemedText style={{fontSize: 20}} type='bold'>Targeta d'embarcament</ThemedText>,
-            headerTitleAlign: 'left'
+            headerTitleAlign: 'left',
+            headerStyle: {backgroundColor: Colors[colorScheme].box}
           }}
         >
         </Stack.Screen>
