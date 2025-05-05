@@ -38,11 +38,12 @@ export default function HomeScreen() {
     : require("@/assets/images/Icons/scanner_LightMode.png");
   const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
-  const userLocation = useUserLocation();
+  const {location: userLocation} =  useUserLocation();
   const { services } = useServices();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const carLocation = useCarLocation();
   const ride = useRideRequest();
+
   const handlerScannerPress = () => {
     {
       /* TODO */
@@ -69,9 +70,9 @@ export default function HomeScreen() {
           setModalVisible(true);
         }}
         carPos={carLocation.location}
-        userLocation={userLocation.location}
+        userLocation={userLocation} 
       />
-
+      
       {/* Botó per escannejar */}
       <TouchableOpacity
         style={[styles.scannButton, { backgroundColor: buttonColor }]}
