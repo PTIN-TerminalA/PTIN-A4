@@ -27,7 +27,6 @@ export default function HomeScreen() {
 
   const handleLogin = async (email: string, password: string) => {
     try {
-      {/* IP local de la maquina, solo para testeo */}
       const response = await fetch(`${API_URL}/api/login`, {
         method: "POST",
         headers: {
@@ -42,8 +41,9 @@ export default function HomeScreen() {
         throw new Error(data.detail || "Login failed");
       }
 
-      console.log("logged in! Token:", data.access_token);
-      login(email);
+      const token = data.access_token;
+      console.log("logged in! Token:", token);
+      login(token);
     }
     catch (error: unknown) {
       if (error instanceof Error) {
