@@ -42,7 +42,7 @@ export const Colors = {
     iconActive: "#fff",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
-    box_border: "#d3d3d3", // card_border
-    box: "#d3d3d3", // card_secundari
+    box_border: "#ffffff", // card_border
+    box: "#2e2e2e", // card_secundari
   },
 };

@@ -10,11 +10,10 @@ export default function FlightsScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
-  const buttonColor = isDarkMode ? Colors.secundari : Colors.primari;
+  const buttonColor = Colors.primari;
   const boxColor = isDarkMode ? Colors.dark.box : Colors.light.box;
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
-  const borderColor1 = isDarkMode ? Colors.dark.box_border : Colors.light.box_border;
-  const borderColor2 = isDarkMode ? Colors.dark.box : Colors.light.box;
+  const borderColor = isDarkMode ? Colors.dark.box : Colors.light.box;
   const buttonIcon = isDarkMode ? require('@/assets/images/Icons/scanner_DarkMode.png') : require('@/assets/images/Icons/scanner_LightMode.png');
   const [showText, setShowText] = useState(true);
   const scrollOffset = useRef(0);
@@ -81,7 +80,7 @@ export default function FlightsScreen() {
         {BoardingPasses.map(( boardingPass, index )=> (
           <Link style={styles.scrollContent} key={boardingPass.id} href={{pathname: '/flightInfo',params: {id: boardingPass.id}}}>
             <TouchableOpacity onPress={() => handlerBoardingPassPress(boardingPass.id)}
-              style={[styles.flightBox, {backgroundColor: index % 2 == 0 ? 'transparent' : boxColor}, {borderColor: index % 2 == 0 ? borderColor1 : borderColor2}]}>
+              style={[styles.flightBox, {backgroundColor: index % 2 == 0 ? 'transparent' : boxColor}, {borderColor: borderColor}]}>
               <Image source={boardingPass.airlineImage} style={[styles.airlineImage, {borderColor: boxColor}]} ></Image>
               <View style={styles.flightTextInfo}>
                 <ThemedText style={[{color: textColor}, {fontSize: 20}]} type="defaultSemiBold">{boardingPass.airline}</ThemedText>
