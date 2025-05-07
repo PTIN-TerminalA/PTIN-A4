@@ -38,7 +38,7 @@ export default function HomeScreen() {
     : require("@/assets/images/Icons/scanner_LightMode.png");
   const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
-  const {location: userLocation} =  useUserLocation();
+  const {location: userLocation} =  useUserLocation(4000);
   const { services } = useServices();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const carLocation = useCarLocation();
@@ -98,8 +98,8 @@ export default function HomeScreen() {
         onClose={() => setModalVisible(false)}
         onSelect={() => {
           console.log("Has seleccionat:", selectedService?.name);
-          if (selectedService && userLocation.location) {
-            ride.requestRide(selectedService, userLocation.location);
+          if (selectedService && userLocation) {
+            ride.requestRide(selectedService, userLocation);
           }
           setModalVisible(false);
         }}

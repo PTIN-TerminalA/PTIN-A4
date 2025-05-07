@@ -81,6 +81,10 @@ export default function ServiceInfoScreen() {
                 {backgroundColor: Colors[colorScheme].box},
               ]}
               onPress={() => handleGoWebsite(service.link!)}
+              iconSource={ colorScheme === 'dark' ?
+                require('@/assets/images/Icons/website_darkmode.png'):
+                require('@/assets/images/Icons/website_lightmode.png')
+              }
             ></DirectionButton>
           )}
 

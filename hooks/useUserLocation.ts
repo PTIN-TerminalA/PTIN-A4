@@ -17,7 +17,7 @@ export function useUserLocation(scanInterval = 3000) {
 
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {
-      const response = await fetch("http://192.168.1.10:8000/localize", {
+      const response = await fetch("http://192.168.162.27:8000/localize", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,16 +58,23 @@ export function useUserLocation(scanInterval = 3000) {
   useEffect(() => {
     const scan = async () => {
       try {
-        const wifiList = await WifiManager.loadWifiList();
-        const wifiSimplifiedList = wifiList.map((wifi) => ({
-          bssid: wifi.BSSID,
-          rssi: wifi.level,
-        }));
-        const pos = await localizeUser(wifiSimplifiedList);
-        if (pos) {
-          setLocation(pos);
-        }
-        console.log("Wifi scan result:", wifiSimplifiedList);
+        const wifiList = await WifiManager.reScanAndLoadWifiList();
+
+        if (wifiList) {
+          const wifiSimplifiedList: Measurement[] = wifiList.map((wifi) => ({
+            bssid: wifi.BSSID.replace(/:/g, ''), // Remove ":"
+            rssi: wifi.level ?? -100,
+          }));
+          
+          const pos = await localizeUser(wifiSimplifiedList);
+          
+          if (pos) 
+            setLocation(pos);
+        
+          console.log("Wifi scan result:", wifiSimplifiedList);
+
+          }
+
       } catch (error) {
         console.error("Wifi scan error:", error);
       }
