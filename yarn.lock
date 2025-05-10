@@ -1247,7 +1247,7 @@
     node-forge "^1.2.1"
     nullthrows "^1.1.1"
 
-"@expo/config-plugins@~9.0.17":
+"@expo/config-plugins@~9.0.17", "@expo/config-plugins@8 || 9":
   version "9.0.17"
   resolved "https://registry.npmjs.org/@expo/config-plugins/-/config-plugins-9.0.17.tgz"
   integrity sha512-m24F1COquwOm7PBl5wRbkT9P9DviCXe0D7S7nQsolfbhdCWuvMkfXeoWmgjtdhy7sDlOyIgBrAdnB6MfsWKqIg==
@@ -6849,6 +6849,11 @@ react-native-modal@^14.0.0-rc.1:
   integrity sha512-v5pvGyx1FlmBzdHyPqBsYQyS2mIJhVmuXyNo5EarIzxicKhuoul6XasXMviGcXboEUT0dTYWs88/VendojPiVw==
   dependencies:
     react-native-animatable "1.4.0"
+
+react-native-nfc-manager@^3.16.1:
+  version "3.16.1"
+  resolved "https://registry.npmjs.org/react-native-nfc-manager/-/react-native-nfc-manager-3.16.1.tgz"
+  integrity sha512-rYhJSThAxAT4AVpZzZJc3X1jiTnZQlmrzk9DeeWLstUTXCoECt/75brLgn+EiXK+AfONnMnFdsSzIyruVWyIdw==
 
 react-native-qrcode-svg@^6.3.15:
   version "6.3.15"
