@@ -26,7 +26,7 @@ export function useUserLocation(scanInterval = 3000) {
       });
 
       if (!response.ok) {
-        console.error("API response error");
+        //console.error("API response error");
         return null;
       }
       
@@ -76,7 +76,7 @@ export function useUserLocation(scanInterval = 3000) {
           }
 
       } catch (error) {
-        console.error("Wifi scan error:", error);
+        //console.error("Wifi scan error:", error);
       }
     };
     // Primer escaneig immediat
