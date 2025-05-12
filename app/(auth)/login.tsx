@@ -1,4 +1,4 @@
-import { StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, useColorScheme, View, Image, Alert} from "react-native";
+import { StyleSheet, StatusBar, ActivityIndicator, useColorScheme, View, Image, Alert} from "react-native";
 import {useState} from 'react'
 import { ThemedText } from '@/components/ThemedText';
 import { router } from "expo-router";
@@ -6,7 +6,7 @@ import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { ThemedTextInput } from "@/components/ThemedTextInput";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useAuth } from "@/hooks/useAuth";
-import { API_URL } from "@/constants/Api";
+import { createDebouncedAction } from '@/api/Debounce';
 
 import {Colors, tintColorDark} from "@/constants/Colors"
 import {Styles} from "@/constants/Styles"
@@ -18,43 +18,29 @@ export function register() {
   router.replace("/(auth)/register");
 }
 
-
-
 export default function HomeScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   const handleLogin = async (email: string, password: string) => {
+    setLoading(true); 
     try {
-      const response = await fetch(`${API_URL}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Login failed");
-      }
-
-      const token = data.access_token;
-      console.log("logged in! Token:", token);
-      login(token);
-    }
-    catch (error: unknown) {
+      await login(email, password);
+    } catch (error) {
       if (error instanceof Error) {
         Alert.alert("Login error", error.message);
-      }
-      else {
+      } else {
         console.error('unknown error', error);
-      }
+      } 
+    } finally {
+      setLoading(false);
     }
   };
 
+  // wrapper debounce per al login
+  const debouncedLogin = createDebouncedAction(handleLogin); 
 
   return (
     <ThemedSafeAreaView style= {{ flex: 1, backgroundColor: "light", paddingTop: '15%'}}>
@@ -84,14 +70,21 @@ export default function HomeScreen() {
         autoCapitalize="none"
         onChangeText={setPassword}
       />
+
       {/* BOTÓ INICI SESSIÓ */}
       <ThemedPressable 
         type="button"
-        onPress={() => handleLogin(email, password)}>
-        <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
-          Iniciar sessió
-        </ThemedText>
+        onPress={() => debouncedLogin(email, password)}
+        disabled={loading}>
+        {loading ? (
+          <ActivityIndicator size="small" color="lightgrey" /> // Spinner Carregant
+        ) : (
+          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
+            Iniciar sessió
+          </ThemedText>
+        )}
       </ThemedPressable>
+
       {/* HR (LÍNIA HORITZONTAL)*/}
       <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 15, marginHorizontal: '5%'}}>
         <View style={{flex: 1, height: 1, backgroundColor: 'lightgrey'}} />
