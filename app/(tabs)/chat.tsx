@@ -554,6 +554,25 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+
+const getMicrophonePermission = async () => {
+  const permissionType = Platform.select({
+    ios: PERMISSIONS.IOS.MICROPHONE,
+    android: PERMISSIONS.ANDROID.RECORD_AUDIO,
+  });
+
+  const status = await check(permissionType!);
+
+  if (status === RESULTS.GRANTED) return true;
+
+  if (status === RESULTS.DENIED || status === RESULTS.LIMITED) {
+    const newStatus = await request(permissionType!);
+    return newStatus === RESULTS.GRANTED;
+  }
+
+  return false;
+};
 
 type Message = {
   id: string;
@@ -627,30 +646,77 @@ export default function ChatScreen() {
       errorSub.remove();
     };
   }, []);
-  
-  
-  
+   
 
+  // const toggleRecording = async () => {
+  //   try {
+  //     if (isRecording) {
+  //       // Stop recording
+  //       await ExpoSpeechRecognitionModule.stop();
+  //       setIsRecording(false);
+  //     } 
+  //     else {
+  //       // Request permissions and start recording
+  //       console.log("Demana permís d'audio")
+
+  //       const micPermission = await ExpoSpeechRecognitionModule.getMicrophonePermissionsAsync();
+  //       // console.log("Micro audio ben creada", micPermission)
+
+  //       const speechPermission = await ExpoSpeechRecognitionModule.getSpeechRecognizerPermissionsAsync();
+  //       // console.log("Granted audio ben creada", speechPermission) 
+
+  //       if (micPermission.status === "granted") {
+  //         console.log("Té permís d'audio")
+  //         await ExpoSpeechRecognitionModule.start({ lang: 'es-ES', interimResults: false, continuous: false });
+  //       } 
+  //       else if (micPermission.status === "undetermined" || micPermission.status === "denied") {
+  //           console.log("Requesting mic permission...");
+  //           const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+  //           if (result.granted) await ExpoSpeechRecognitionModule.start({ lang: 'es-ES', interimResults: false, continuous: false });
+  //           else {
+  //             console.log("Permission denied after request")
+  //             setError("Permís de micòfon no concedit. Activa-ho als ajustaments.")
+  //           }
+  //       } 
+  //       else {        
+  //         setError('Error inesperat de permisos.');
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error('Error al iniciar reconocimiento:', err);
+  //     setIsRecording(false);
+  //   }
+  // };
   const toggleRecording = async () => {
     try {
       if (isRecording) {
-        // Stop recording
         await ExpoSpeechRecognitionModule.stop();
         setIsRecording(false);
       } else {
-        // Request permissions and start recording
-        const { granted } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
-        if (granted) {
-          await ExpoSpeechRecognitionModule.start({ lang: 'es-ES', interimResults: false, continuous: false });
-        } else {
-          setError('Permiso de micrófono no concedido.');
+        console.log("Checking microphone permission...");
+        const hasPermission = await getMicrophonePermission();
+  
+        if (!hasPermission) {
+          setError('Permís de micròfon no concedit. Activa-ho als ajustaments.');
+          return;
         }
+  
+        await ExpoSpeechRecognitionModule.start({
+          lang: 'es-ES',
+          interimResults: false,
+          continuous: false,
+        });
+  
+        setIsRecording(true);
       }
     } catch (err) {
       console.error('Error al iniciar reconocimiento:', err);
+      setError('Error desconegut al iniciar el reconeixement.');
       setIsRecording(false);
     }
   };
+  
+
 
   const sendMessage = () => {
     if (!inputText.trim()) return;
