@@ -12,6 +12,7 @@ type Props = {
 };
 
 const SIZE = 30;
+const mapHeight = 664;
 
 const UserMarker: React.FC<Props> = ({ x, y, scale }) => {
   return (
@@ -20,7 +21,7 @@ const UserMarker: React.FC<Props> = ({ x, y, scale }) => {
         styles.marker,
         {
           left: x * scale - SIZE / 2,
-          top: y * scale - SIZE / 2,
+          top: (mapHeight - y) * scale - SIZE / 2,
           width: SIZE,
           height: SIZE,
           borderRadius: SIZE / 2,
