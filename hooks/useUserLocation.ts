@@ -13,80 +13,11 @@ type Position = {
 };
 
 export function useUserLocation(scanInterval = 3000) {
-  const [location, setLocation] = useState<Position | null>(null);
-
-  const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
-    try {
-      const response = await fetch("http://192.168.162.27:8000/localize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ measure: measurements }),
-      });
-
-      if (!response.ok) {
-        //console.error("API response error");
-        return null;
-      }
-      
-      const data = await response.json();
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.error("Error calling API:", error);
-      return null;
-    }
-  };
   
-  useEffect(() => {
-    const requestPermissions = async () => {
-      if (Platform.OS !== "android") return;
-
-      const permissions = [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
-
-      if (Platform.Version >= 33) {
-        permissions.push(PermissionsAndroid.PERMISSIONS.NEARBY_WIFI_DEVICES);
-      }
-
-      await PermissionsAndroid.requestMultiple(permissions);
-    };
-
-    requestPermissions();
-  }, []);
-
-  useEffect(() => {
-    const scan = async () => {
-      try {
-        const wifiList = await WifiManager.reScanAndLoadWifiList();
-
-        if (wifiList) {
-          const wifiSimplifiedList: Measurement[] = wifiList.map((wifi) => ({
-            bssid: wifi.BSSID.replace(/:/g, ''), // Remove ":"
-            rssi: wifi.level ?? -100,
-          }));
-          
-          const pos = await localizeUser(wifiSimplifiedList);
-          
-          if (pos) 
-            setLocation(pos);
-        
-          console.log("Wifi scan result:", wifiSimplifiedList);
-
-          }
-
-      } catch (error) {
-        //console.error("Wifi scan error:", error);
-      }
-    };
-    // Primer escaneig immediat
-    scan();
-
-    const interval = setInterval(scan, scanInterval); //Cada quan tornem a calcular la posició
-
-    // Netejar interval quan es desmunti
-    return () => clearInterval(interval);
-  }, []);
-
+  const [location, setLocation] = useState<Position | null>({
+    x: 0.49207792207792206,
+    y: 0.05923279428356525,
+  });
+  
   return { location }; // Retornarem les coordenades per poder-ho visualitzar al mapa
 }
