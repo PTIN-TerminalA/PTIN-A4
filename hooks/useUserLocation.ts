@@ -17,7 +17,7 @@ export function useUserLocation(scanInterval = 3000) {
 
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {
-      const response = await fetch("http://192.168.162.27:8000/localize", {
+      const response = await fetch("http://192.168.206.27:8000/localize", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
