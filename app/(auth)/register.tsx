@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Button, StatusBar, TextInput, SafeAreaView, Text, Modal, TouchableOpacity, useColorScheme, View, Image, Alert} from "react-native";
+import { ScrollView, StyleSheet, ActivityIndicator, StatusBar, Text, useColorScheme, Alert} from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { router } from "expo-router";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
@@ -7,10 +7,11 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import { useState } from "react";
 import { SelectList } from 'react-native-dropdown-select-list';
 import { useAuth } from "@/hooks/useAuth";
-import { API_URL } from "@/constants/Api";
+import { createDebouncedAction } from '@/api/Debounce';
 import {Colors} from "@/constants/Colors"
 
 export default function RegisterScreen() {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,95 +26,28 @@ export default function RegisterScreen() {
 
   const handleRegister = async (email: string, password: string, confirmPassword: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
     // Comprovem si falta algun camp
-    if (!email) {
-      Alert.alert("Error", "Falta el camp: correu electrònic");
+    if (!email || !password || !confirmPassword || !name || !dni || !phone || !birthDate || !gender) {
+      Alert.alert("Error", "Tots els camps són obligatoris");
       return;
     }
-    if (!password) {
-      Alert.alert("Error", "Falta el camp: contrasenya");
-      return;
-    }
-    if (!confirmPassword) {
-      Alert.alert("Error", "Falta el camp: confirmar contrasenya");
-      return;
-    }
-    if (!name) {
-      Alert.alert("Error", "Falta el camp: nom");
-      return;
-    }
-    if (!dni) {
-      Alert.alert("Error", "Falta el camp: DNI");
-      return;
-    }
-    if (!phone) {
-      Alert.alert("Error", "Falta el camp: telèfon");
-      return;
-    }
-    if (!birthDate) {
-      Alert.alert("Error", "Falta el camp: data de naixement");
-      return;
-    }
-    if (!gender) {
-      Alert.alert("Error", "Falta el camp: gènere");
-      return;
-    }
+
     if (password !== confirmPassword) {
       Alert.alert("Error", "Les contrasenyes no coincideixen");
       return;
     }
-  
-    try {
-      // Register the user (create the user and get the access token)
-      const userResponse = await fetch(`${API_URL}/api/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          dni,
-          email,
-          password,
-          usertype : 1 // Regular user type
-        }),
-      });
 
-      const userData = await userResponse.json();
-      if (!userResponse.ok) {
-        throw new Error(userData.detail || "Error al registrar l'usuari");
-      }
-      const token = userData.access_token;
-  
-      // Register the regular user
-      const regularResponse = await fetch(`${API_URL}/api/register-regular`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token: token,
-          phone_num: phone,
-          birth_date: birthDate,
-          identity: gender,
-        }),
-      });
-      const regularData = await regularResponse.json();
-      if (!regularResponse.ok) {
-        throw new Error(regularData.detail || "Error al registrar el regular");
-      }
-  
-      Alert.alert("Registre completat", "Usuari registrat correctament");
-      // login(email);
-      register(name, email, dni, phone, birthDate, gender);  
-  
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert("Error de registre", error.message);
-      } else {
-        console.error("Unknown error", error);
-      }
+    setLoading(true);
+    try {
+      await register(email, password, name, dni, phone, birthDate, gender);
+    } catch (err) {
+      console.error('Error de registre', err);
+    } finally {
+      setLoading(false);
     }
   };  
+
+  // wrapper debounce per al register
+  const debouncedRegister = createDebouncedAction(handleRegister); 
 
   return (
     <ThemedSafeAreaView style={[styles.container, { backgroundColor }]}>
@@ -221,10 +155,15 @@ export default function RegisterScreen() {
         {/** BOTÓ DE REGISTRE */}
         <ThemedPressable
           type="button"
-          onPress={() => handleRegister(email, password, confirmPassword, name, dni, phone, birthDate, gender)}>
-          <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
-            Registra't!
-          </ThemedText>
+          onPress={() => debouncedRegister(email, password, confirmPassword, name, dni, phone, birthDate, gender)}
+          disabled={loading}>
+          {loading ? (
+            <ActivityIndicator size="small" color="lightgrey" /> // Spinner Carregant
+          ) : (
+            <ThemedText type="bold" style={{textAlign:'center', fontSize:16}}>
+              Registra't!
+            </ThemedText>
+          )}
         </ThemedPressable>
 
         <ThemedText style={{textAlign:'center', fontSize:10, color: 'lightgray'}}>

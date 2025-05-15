@@ -20,6 +20,8 @@ import { Service } from "@/constants/mocks/mockTypes";
 import { useCarLocation } from "@/hooks/useCarLocation";
 import { useRideRequest } from "@/hooks/useRideRequest";
 import { ThemedView } from "@/components/ThemedView";
+import { useNFCListener } from "@/hooks/useNFCListener";
+
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
@@ -43,6 +45,13 @@ export default function HomeScreen() {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const carLocation = useCarLocation();
   const ride = useRideRequest();
+  const { tagId } = useNFCListener();
+
+  useEffect(() => {
+    if (tagId) {
+      console.log("Tag ID detected:", tagId);
+      // cridem al back
+    }}, [tagId]);
 
   const handlerScannerPress = () => {
     {

@@ -1,22 +1,12 @@
 import { useRouter } from 'expo-router';
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { Alert } from 'react-native';
-import { API_URL } from "@/constants/Api";
-
-interface User {
-  name: string;
-  email: string;
-  dni?: string;
-  phone?: string;
-  birthDate?: string;
-  gender?: string;
-  avatar: string;
-}
+import { registerUser, loginUser, getUserProfile, User } from '@/api/auth';
 
 interface AuthContextType {
   user: User | null;
-  register: (email: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => void,
-  login: (token: string) => void;
+  register: (email: string, password: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => void,
+  login: (email: string, password: string) => void;
   logout: () => void;
   deleteAccount: () => void;
 }
@@ -27,39 +17,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
-  const register = (email: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => {
-    setUser({
-      name,
-      email,
-      dni,
-      phone,
-      birthDate,
-      gender,
-      avatar: 'https://www.lavanguardia.com/peliculas-series/images/all/movie/posters/2009/12/movie-19995/w1280/yev8cuskZiDfzOPzVjSKPnvBnfk.jpg',
-    });
-
-    router.replace('/(tabs)'); // change this to your actual screen
+  const register = async (
+    email: string,
+    password: string,
+    name: string,
+    dni: string,
+    phone: string,
+    birthDate: string,
+    gender: string
+  ) => {
+    try {
+      const token = await registerUser(name, dni, email, password, phone, birthDate, gender);
+      const profile = await getUserProfile(token);
+      setUser(profile);
+      router.replace('/(tabs)');
+    } catch (err) {
+      console.error('Error en el registre', err);
+      Alert.alert('Error', (err as Error).message);
+    }
   };
 
-  const login = async (token: string) => {
-    const response = await fetch(`${API_URL}/api/profile`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}`,},
-    });
 
-    if (!response.ok) throw new Error("Error al obtener el perfil");
-    const profile = await response.json();
-
-    setUser({
-      name: profile.name,
-      email: profile.email,
-      birthDate: profile.birth_date,
-      phone: profile.phone_num,
-      gender: profile.identity,
-      avatar: 'https://www.lavanguardia.com/peliculas-series/images/all/movie/posters/2009/12/movie-19995/w1280/yev8cuskZiDfzOPzVjSKPnvBnfk.jpg',
-    });
-
-    router.replace('/(tabs)'); // change this to your actual screen
+  const login = async (email: string, password: string) => {
+    try {
+      const token = await loginUser(email, password);
+      const profile = await getUserProfile(token);
+      setUser(profile);
+      router.replace('/(tabs)');
+    } catch (err) {
+      console.error('Login failed', err);
+      Alert.alert('Error', 'Credencials incorrectes');
+    } 
   };
 
   const logout = () => {
@@ -69,8 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const deleteAccount = () =>{
     Alert.alert(
-      "Si us plau, confirma el procés",            // Título
-      "Segur que vols esborar el teu compte? Aquesta acció és permanent i no es pot desfer. Totes les teves dades s'esborraran i perdràs accès al teu compte.", // Mensaje
+      "Si us plau, confirma el procés",            // Títol
+      "Segur que vols esborar el teu compte? Aquesta acció és permanent i no es pot desfer. Totes les teves dades s'esborraran i perdràs accès al teu compte.", // Missatge
       [
         {
           text: "Cancelar",
