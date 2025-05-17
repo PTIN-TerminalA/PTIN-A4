@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Platform, PermissionsAndroid } from "react-native";
 import WifiManager from "react-native-wifi-reborn";
+import { API_URL } from '@/api/Api';
+
 
 type Measurement = {
   bssid: string;
@@ -17,24 +19,21 @@ export function useUserLocation(scanInterval = 3000) {
 
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {
-      const response = await fetch("http://192.168.162.27:8000/localize", {
+      console.log("Crida getUserPosition des de A4", measurements)
+      const response = await fetch(`${API_URL}/api/getUserPosition`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ measure: measurements }),
       });
-
-      if (!response.ok) {
-        //console.error("API response error");
-        return null;
-      }
       
       const data = await response.json();
-      console.log(data);
+      console.log("DATA: ", data);
       return data;
+
     } catch (error) {
-      console.error("Error calling API:", error);
+      console.error("No user localized", error);
       return null;
     }
   };
@@ -44,7 +43,7 @@ export function useUserLocation(scanInterval = 3000) {
       if (Platform.OS !== "android") return;
 
       const permissions = [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
-
+      permissions.push(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
       if (Platform.Version >= 33) {
         permissions.push(PermissionsAndroid.PERMISSIONS.NEARBY_WIFI_DEVICES);
       }
@@ -58,11 +57,18 @@ export function useUserLocation(scanInterval = 3000) {
   useEffect(() => {
     const scan = async () => {
       try {
-        const wifiList = await WifiManager.reScanAndLoadWifiList();
+        // const wifiList = await WifiManager.reScanAndLoadWifiList();
+        const wifiListRaw = await WifiManager.reScanAndLoadWifiList();
+        const wifiList = typeof wifiListRaw === 'string' ? JSON.parse(wifiListRaw) : wifiListRaw;
 
-        if (wifiList) {
+        // if (wifiList) {
+        //   const wifiSimplifiedList: Measurement[] = wifiList.map((wifi) => ({
+        //     bssid: wifi.BSSID.replace(/:/g, ''), // Remove ":"
+        //     rssi: wifi.level ?? -100,
+        //   }));
+        if (Array.isArray(wifiList)) {
           const wifiSimplifiedList: Measurement[] = wifiList.map((wifi) => ({
-            bssid: wifi.BSSID.replace(/:/g, ''), // Remove ":"
+            bssid: wifi.BSSID.replace(/:/g, ''),
             rssi: wifi.level ?? -100,
           }));
           
@@ -76,7 +82,7 @@ export function useUserLocation(scanInterval = 3000) {
           }
 
       } catch (error) {
-        //console.error("Wifi scan error:", error);
+        console.error("Wifi scan error:", error);
       }
     };
     // Primer escaneig immediat
