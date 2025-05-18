@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Service } from "@/constants/mocks/mockTypes";
-import { services as mockServices } from "@/constants/mocks/services";
+import { getServices } from "@/api/services";
+
 
 export const useServices = () => {
   const [services, setServices] = useState<Service[] | null>(null);
@@ -9,17 +10,20 @@ export const useServices = () => {
 
   useEffect(() => {
     // Simulem crida amb un timeout per semblar que ve d'una API
-    const timeout = setTimeout(() => {
+    const fetchServices = async () => {
       try {
-        setServices(mockServices);
-        setLoading(false);
+        const fetchedServices = await getServices(); // no te timeout simplement espera
+        setServices(fetchedServices);
       } catch (err) {
+        console.error(err);
         setError("Error carregant els serveis");
+      } finally {
         setLoading(false);
       }
-    }, 500); // mig segon de delay
+    };
 
-    return () => clearTimeout(timeout);
+    fetchServices();
+    
   }, []);
 
   return {
@@ -28,3 +32,21 @@ export const useServices = () => {
     error,
   };
 };
+
+
+/*
+
+    const timeout = setTimeout(() => {
+      try {
+        setServices(services);
+        setLoading(false);
+      } catch (err) {
+        setError("Error carregant els serveis");
+        setLoading(false);
+      }
+    }, 500); // mig segon de delay
+
+
+    
+    return () => clearTimeout(timeout);
+*/
