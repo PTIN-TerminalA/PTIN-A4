@@ -21,6 +21,7 @@ import { useCarLocation } from "@/hooks/useCarLocation";
 import { useRideRequest } from "@/hooks/useRideRequest";
 import { ThemedView } from "@/components/ThemedView";
 import { useNFCListener } from "@/hooks/useNFCListener";
+import { useRouteDestination } from "@/hooks/useRouteDestination";
 
 const localImage = require("@/assets/images/planol.png");
 
@@ -40,12 +41,19 @@ export default function HomeScreen() {
     : require("@/assets/images/Icons/scanner_LightMode.png");
   const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
-  const {location: userLocation} =  useUserLocation(4000);
+  const userLocation =  useUserLocation(30000); // 30 segons per mostrar la ruta més ràpid ja que depèn de userLocation
   const { services } = useServices();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const carLocation = useCarLocation();
+  const [confirmedService, setConfirmedService] = useState<Service | null>(null); // Al donar botó 'Demana' del modal es confirma el servei i es mostra la ruta
   const ride = useRideRequest();
   const { tagId } = useNFCListener();
+
+  // S'agafen els routePoints quan el user està localitzat al mapa i quan es confimra el servei
+  const routePoints = useRouteDestination( 
+    userLocation?.location ?? null,
+    confirmedService ? { x: confirmedService.location_x, y: confirmedService.location_y } : null,
+  );
 
   useEffect(() => {
     if (tagId) {
@@ -79,7 +87,8 @@ export default function HomeScreen() {
           setModalVisible(true);
         }}
         carPos={carLocation.location}
-        userLocation={userLocation} 
+        userLocation={userLocation.location}
+        routePoints={routePoints ?? []}
       />
       
       {/* Botó per escannejar */}
@@ -107,9 +116,7 @@ export default function HomeScreen() {
         onClose={() => setModalVisible(false)}
         onSelect={() => {
           console.log("Has seleccionat:", selectedService?.name);
-          if (selectedService && userLocation) {
-            ride.requestRide(selectedService, userLocation);
-          }
+          setConfirmedService(selectedService); // 
           setModalVisible(false);
         }}
         /** Si no s'ha seleccionat un destí el modal canvia */
