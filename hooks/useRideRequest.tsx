@@ -3,8 +3,10 @@ import { Service } from "@/constants/mocks/mockTypes";
 import { useCarLocation } from "@/hooks/useCarLocation";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { API_URL } from "@/constants/Api";
+import { request } from "react-native-permissions";
+import { useAuth } from "./useAuth";
 
-type RideStatus = "idle" | "requested" | "arriving" | "enroute" | "completed";
+type RideStatus = "idle" | "setted" | "requested" | "arriving" | "enroute" | "completed";
 
 type RoutePoint = {
   x: number;
@@ -16,6 +18,11 @@ interface UserLocation {
   y: number;
 }
 
+type Location = {
+  x: number;
+  y: number;
+};
+
 export interface Ride {
   origin: RoutePoint;
   destination: Service;
@@ -24,7 +31,7 @@ export interface Ride {
 }
 
 export const useRideRequest = () => {
-  const [isRequesting, setIsRequesting] = useState(false);
+  const [isSetting, setIsSetting] = useState(false);
   const [destination, setDestination] = useState<Service | null>(null);
   const [origin, setOrigin] = useState<RoutePoint | null>(null);
   const [status, setStatus] = useState<RideStatus>("idle");
@@ -36,24 +43,20 @@ export const useRideRequest = () => {
     scheduled_time: "2025-05-04T14:00:00Z",
     state: "En curs"
   });
-  const token = "token";
+  const { token } = useAuth();
 
-  const requestRide = async (to: Service, from: RoutePoint) => {
-    if (!to || !from) return; // per seguretat
+  const setRide = async (location: Location, end_location: String) => {
+    if (!location || !end_location) return; // per seguretat
     
-    setIsRequesting(true);
-    setDestination(to);
-    setStatus("requested");
-
     try {
       // Realizar la solicitud HTTP al backend para registrar el viaje
-      const response = await fetch(`${API_URL}/reserves/usuari`, {
+      const response = await fetch(`${API_URL}/reserves/app`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(newBooking),
+        body: JSON.stringify({location, end_location}),
       });
 
       const data = await response.json();
@@ -61,22 +64,106 @@ export const useRideRequest = () => {
       if (!response.ok) {
         throw new Error(data.message || "Error al solicitar el viaje");
       }
-      setStatus("arriving");
       console.log("Viaje solicitado con éxito:", data);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Error al solicitar el viaje:", error.message);
-        setStatus("idle");
       }
     } finally {
-      setIsRequesting(false);
+      setIsSetting(false);
     }
-    // // Simulació de crida a la API
-    // setTimeout(() => {
-    //   setStatus("arriving");
-    //   setIsRequesting(false);
-    // }, 1000);
   }
+
+  const releaseRide = async (cotxe_id: String) => {
+    try {
+      const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/disponible`, {
+        method: "PUT",
+      });
+  
+      if (!response.ok) throw new Error("Error al alliberar el cotxe");
+  
+      const data = await response.json();
+      console.log("Cotxe alliberat:", data);
+      return data;
+    } catch (error) {
+      console.error("Error a releaseRide:", error);
+      return null;
+    }
+  }
+
+  const nearestService = async (location: Location) => {
+    try {
+      const response = await fetch(`${API_URL}/api/getNearestService`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(location),
+      });
+  
+      if (!response.ok) throw new Error("No s'ha pogut obtenir el servei més proper");
+  
+      const data = await response.json();
+      console.log("Servei més proper amb id:", data);
+      return data;
+    } catch (error) {
+      console.error("Error a nearestService:", error);
+      return null;
+    }
+  };
+
+  const services = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/getServices`);
+  
+      if (!response.ok) throw new Error("Error obtenint serveis");
+  
+      const data = await response.json();
+      console.log("Serveis disponibles:", data);
+      return data;
+    } catch (error) {
+      console.error("Error a services:", error);
+      return [];
+    }
+  };
+
+  const runningRide = async (cotxe_id: String) => {
+    try {
+      const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/en_curs`, {
+        method: "PUT",
+      });
+  
+      if (!response.ok) throw new Error("Error al correr el cotxe");
+  
+      const data = await response.json();
+      console.log("Cotxe en curs:", data);
+      return data;
+    } catch (error) {
+      console.error("Error a runningRide:", error);
+      return null;
+    }
+  }
+
+  const requestedRide = async (cotxe_id: String) => {
+    try {
+      const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/solicitat`, {
+        method: "PUT",
+      });
+  
+      if (!response.ok) throw new Error("Error al solicitar el cotxe");
+  
+      const data = await response.json();
+      console.log("Cotxe solicitat:", data);
+      return data;
+    } catch (error) {
+      console.error("Error a requestedRide:", error);
+      return null;
+    }
+  }
+
+
+
+
 
   const cancelRide = () => {
     setDestination(null);
@@ -86,12 +173,17 @@ export const useRideRequest = () => {
   };
 
   return {
-    isRequesting,
+    isSetting,
     status,
     destination,
     origin,
     route,
-    requestRide,
+    setRide,
+    releaseRide,
+    nearestService,
+    services,
+    runningRide,
+    requestedRide,
     cancelRide,
   };
 };

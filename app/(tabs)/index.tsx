@@ -52,6 +52,7 @@ export default function HomeScreen() {
   const ride = useRideRequest();
   const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">("select");
   const { tagId } = useNFCListener();
+  const [car, setCar] = useState("");
 
   useEffect(() => {
     if (tagId) {
@@ -70,7 +71,7 @@ export default function HomeScreen() {
   };
   
   const routePoints = useRouteDestination( //fake route
-     userLocation?.location ?? null,
+     userLocation ?? null,
      confirmedService ? { x: confirmedService.x, y: confirmedService.y } : null,
   );
   
@@ -114,12 +115,18 @@ export default function HomeScreen() {
           } else if (rideStage === "confirm") {
             console.log("Has confirmat el viatge a:", confirmedService?.name);
             setRideStage("inside");
+            // CAMBIAMOS EL COCHE A ESTADO SOLICITADO
+            // PUT /cotxe/{cotxe_id}/solicitat ----------
           } else if (rideStage === "inside") {
             console.log("Ets a dins del vehicle cap a:", confirmedService?.name);
             console.log("Començant viatge");
             setStartingTrip(true);
             if (confirmedService  && userLocation) {
-              ride.requestRide(confirmedService , userLocation);
+              //CAMBIA EL ESTADO DEL COCHE A en curs
+              // PUT /cotxe/{cotxe_id}/en_curs ------------
+              ride.setRide(userLocation, confirmedService.name);
+              // CAMBIA EL ESTADO DEL COCHE A DISPONIBLE DESPUÉS DE 30 SEGUNDOS PORQUE ENTENDEMOS QUE HA LLEGADO YA AL DESTINO
+              // PUT /cotxe/{cotxe_id}/disponible
             }
             setRideStage("select");
             // setConfirmedService(null);
@@ -144,21 +151,116 @@ export default function HomeScreen() {
       <InfoModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onSelect={() => {
-          if (rideStage === "select") {
-            setConfirmedService(selectedService); // confirmamos este como destino real
-            setStartingTrip(false); 
-            console.log("Has seleccionat:", selectedService?.name);
-            setRideStage("confirm");
-          }
-          else if (rideStage === "confirm" || rideStage === "inside") {
-            if (selectedService?.id !== confirmedService?.id) {
+        onSelect={async () => {
+          try {
+            if (rideStage === "select") {
+              setConfirmedService(selectedService); // confirmamos este como destino real
+              setStartingTrip(false); 
               console.log("Has seleccionat:", selectedService?.name);
-              setConfirmedService(selectedService);
               setRideStage("confirm");
+              //HACER EL MUESTREO DE RUTA
+              console.log("MOSTRAR RUTA 1") //Es lo mismo que mostrar ruta 2, solo un log para saber que aquí se tiene que mostrar ya que es antes de confirmar
+              //RESERVA EL COCHE
+                // Si hi havia un cotxe reservat es cancela i torna a posar a disponible
+                
+                if(car !== "") {
+                  console.log("Torna a estar disponible el cotxe: ", car)
+                  // PUT /cotxe/{cotxe_id}/disponible ----------
+                  await ride.releaseRide(car);
+                  setCar("");
+                } 
+                // POST /api/getNearestService -----------
+                // if (!userLocation) { PARA PONER USERLOCATION Y NO LA FAKE. PONGO LA FAKE PQ A MI (LEO) LA USERLOCATION NO ME FUNCIONA, A JOEL SI
+                //   console.error("Ubicació de l'usuari no disponible");
+                //   return;
+                // }
+                const fakeUserLocation = {
+                  x: 0.5, // coordenada X
+                  y: 0.5   // coordenada Y
+                };
+                // const nearest = await ride.nearestService(fakeUserLocation);
+                // const nearestServiceId = nearest?.nearest_service_id;
+
+                // if (!nearestServiceId) {
+                //   console.error("No s'ha pogut obtenir el servei més proper");
+                //   return;
+                // }
+                // // GET /api/getServices -----------
+                // const allServices = await ride.services();
+                // // Miramos el nombre del servicio con el id que hemos obtenido en getNearestService
+                // const serviceFound = allServices.find(
+                //   (service: Service) => service.id === nearestServiceId
+                // );
+                // if (!serviceFound) {
+                //   console.error("No s'ha trobat el servei amb id:", nearestServiceId);
+                //   return;
+                // }
+                // POST /reserves/usuari ---------------
+                if(!confirmedService) {
+                  console.error("No s'ha trobat el servei destí:");
+                  return;
+                }
+                ride.setRide(fakeUserLocation, confirmedService.name);
             }
+            else if (rideStage === "confirm" || rideStage === "inside") {
+              if (selectedService?.id !== confirmedService?.id) {
+                console.log("Has seleccionat:", selectedService?.name);
+                setConfirmedService(selectedService);
+                setRideStage("confirm");
+                //HACER EL MUESTREO DE RUTA
+                console.log("MOSTRAR RUTA 2")
+                //RESERVA EL COCHE
+                // Si hi havia un cotxe reservat es cancela i torna a posar a disponible
+                
+                if(car !== "") {
+                  console.log("Torna a estar disponible el cotxe: ", car)
+                  // PUT /cotxe/{cotxe_id}/disponible ----------
+                  await ride.releaseRide(car);
+                  setCar("");
+                } 
+                // // POST /api/getNearestService -----------
+                // // if (!userLocation) { PARA PONER USERLOCATION Y NO LA FAKE. PONGO LA FAKE PQ A MI (LEO) LA USERLOCATION NO ME FUNCIONA, A JOEL SI
+                // //   console.error("Ubicació de l'usuari no disponible");
+                // //   return;
+                // // }
+                const fakeUserLocation = {
+                  x: 0.5, // coordenada X
+                  y: 0.5   // coordenada Y
+                };
+                // const nearest = await ride.nearestService(fakeUserLocation);
+                // const nearestServiceId = nearest?.nearest_service_id;
+
+                // if (!nearestServiceId) {
+                //   console.error("No s'ha pogut obtenir el servei més proper");
+                //   return;
+                // }
+                // // GET /api/getServices -----------
+                // const allServices = await ride.services();
+                // // Miramos el nombre del servicio con el id que hemos obtenido en getNearestService
+                // const serviceFound = allServices.find(
+                //   (service: Service) => service.id === nearestServiceId
+                // );
+                // if (!serviceFound) {
+                //   console.error("No s'ha trobat el servei amb id:", nearestServiceId);
+                //   return;
+                // }
+                // if(!confirmedService) {
+                //   console.error("No hi ha un servei de destí");
+                //   return;
+                // }
+                // // POST /reserves/usuari ---------------
+                if(!selectedService) {
+                  console.error("No s'ha trobat el servei destí:");
+                  return;
+                }
+                await ride.setRide(fakeUserLocation, selectedService.name);
+              }
+            }
+          } catch (error) {
+            console.error("Error al seleccionar servei: ", error);
+          } finally {
+            setModalVisible(false);
           }
-          setModalVisible(false);
         }}
         
         /** Si no s'ha seleccionat un destí el modal canvia */
