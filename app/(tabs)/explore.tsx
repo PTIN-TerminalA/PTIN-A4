@@ -3,15 +3,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Link } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors'
-import { services } from "@/constants/mocks/services";
-import { tags } from '@/constants/mocks/services';
+//import { services } from "@/constants/mocks/services";
+//import { tags } from '@/constants/mocks/services';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import useAverageValoration from '@/hooks/useAverageValoration';
 import StarRating from '@/components/StarRating';
+import { useServices } from '@/hooks/useServices';
+import { useTags } from '@/hooks/useTags';
 
 export default function ServiceScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() || 'light';
+  const {services} = useServices();
+  const {tags} = useTags();
 
   const handleServicePress = (id: number) => {
     router.push({
@@ -71,7 +75,7 @@ export default function ServiceScreen() {
               />
             </TouchableOpacity>
 
-            {tags.map((tag, index) => (
+            {tags?.map((tag, index) => (
               <TouchableOpacity style={[
                 styles.searchBarTagBtn,
                 { borderColor: Colors[colorScheme].box_border },
@@ -95,7 +99,7 @@ export default function ServiceScreen() {
           contentContainerStyle={styles.scrollContainer}
         >
           <View style={{ height: 15 }} />
-          {services.map((service) => {
+          {services?.map((service) => {
             const { average, count } = useAverageValoration(service.valorations)
             return (
               <View style={styles.scrollContent} key={service.id}>
