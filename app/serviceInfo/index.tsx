@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Fragment, useState, useEffect } from 'react';
 import {Colors} from '@/constants/Colors';
 import { services } from '@/constants/mocks/services';
+import { useServices } from '@/hooks/useServices';
 import StarRating from '@/components/StarRating';
 import useAverageValoration from '@/hooks/useAverageValoration';
 import PriceDisplay from '@/components/PriceAvg';
@@ -14,7 +15,8 @@ import ScheduleStatus from '@/components/ScheduleStatus';
 export default function ServiceInfoScreen() {
   const colorScheme = useColorScheme() || 'light';
   const { id } = useLocalSearchParams<{ id: string }>();
-  const service = services.find(p => p.id === Number(id));
+  const {services} = useServices();
+  const service = services?.find(p => p.id === Number(id));
   const openWebsite = useOpenWebsite();
   
   if (! service) {
@@ -28,7 +30,7 @@ export default function ServiceInfoScreen() {
     Linking.openURL(formattedUrl).catch(console.error);
   };
   
-  const { average, count } = useAverageValoration(service.valorations)
+  const { average, count } = useAverageValoration(service.valorations ?? [])
  
   return (
     <Fragment>

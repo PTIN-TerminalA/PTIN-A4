@@ -6,7 +6,7 @@ import { Colors } from '@/constants/Colors'
 //import { services } from "@/constants/mocks/services";
 //import { tags } from '@/constants/mocks/services';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
-import useAverageValoration from '@/hooks/useAverageValoration';
+import getAverageValoration from '@/hooks/useAverageValoration';
 import StarRating from '@/components/StarRating';
 import { useServices } from '@/hooks/useServices';
 import { useTags } from '@/hooks/useTags';
@@ -100,7 +100,7 @@ export default function ServiceScreen() {
         >
           <View style={{ height: 15 }} />
           {services?.map((service) => {
-            const { average, count } = useAverageValoration(service.valorations)
+            const { average, count } = getAverageValoration(service.valorations ?? [])
             return (
               <View style={styles.scrollContent} key={service.id}>
                 <Link
@@ -123,7 +123,7 @@ export default function ServiceScreen() {
 
                     <View style={styles.serviceInfo}>
                       <View style={styles.serviceTags}>
-                        {service.tags.map((tag, index) => (
+                        {Array.isArray(service.tags) && service.tags.map((tag, index) => (
                           <View style={
                             [styles.tagStyle,
                             { backgroundColor: Colors[colorScheme].background },
