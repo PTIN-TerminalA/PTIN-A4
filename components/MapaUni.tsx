@@ -6,6 +6,7 @@ import { Service } from "@/constants/mocks/mockTypes";
 import CarMarker from "@/components/CarMarker";
 import UserMarker from "@/components/UserMarker";
 import { ThemedView } from "@/components/ThemedView";
+import Svg, { Polyline } from "react-native-svg";
 
 interface Car {
   x: number;
@@ -155,50 +156,22 @@ const MapaUni: React.FC<Props> = ({
 
           { /** Visualització de la ruta en el MapaUni */ }
           {routePoints && routePoints.length > 1 && (
-            <View
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                width: displayedWidth,
-                height: screen.height,
-              }}
-              pointerEvents="none"
+            <Svg
+              width={displayedWidth}
+              height={screen.height}
+              style={{ position: 'absolute', top: 0, left: 0 }}
+              pointerEvents="none" // Per poder seleccionar altres Markers del mapa mentre visualitzo la ruta
             >
-
-              {routePoints.map((point, index) => {
-                if (index === 0) return null;
-                const prev = routePoints[index - 1];
-
-                const x1 = prev.x;
-                const y1 = prev.y;
-                const x2 = point.x;
-                const y2 = point.y;
-
-                const dx = x2 - x1;
-                const dy = y2 - y1;
-                const length = Math.sqrt(dx * dx + dy * dy);
-
-                const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
-
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      position: "absolute",
-                      left: x1 * scale ,
-                      top: y1 * scale,
-                      width: length,
-                      height: 2,
-                      backgroundColor: "dodgerblue",
-                      transform: [{ rotateZ: `${angle}deg` }],
-                    }}
-                  />
-                );
-              })}
-            </View>
+              <Polyline
+                points={routePoints
+                  .map((point) => `${point.x * scale},${point.y * scale}`)
+                  .join(" ")}
+                fill="none"
+                stroke="blue"
+                strokeWidth={3}
+              />
+            </Svg>
           )}
-
 
         </View>
       </ImageZoom>
