@@ -50,15 +50,22 @@ export default function HomeScreen() {
   const [confirmedService, setConfirmedService] = useState<Service | null>(null); 
   const [startingTrip, setStartingTrip] = useState(false);
   const ride = useRideRequest();
+  const {reservationMessage} = ride;
   const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">("select");
   const { tagId } = useNFCListener();
   const [car, setCar] = useState("");
-
+  
   useEffect(() => {
     if (tagId) {
       console.log("Tag ID detected:", tagId);
       // cridem al back
     }}, [tagId]);
+
+  useEffect(() => {
+    if (reservationMessage) {
+      alert(reservationMessage);
+    }
+  }, [reservationMessage]);
 
   const handlerScannerPress = () => {
     {
@@ -87,6 +94,12 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      {reservationMessage && (
+        <View style={styles.messageContainer}>
+          <ThemedText>{reservationMessage}</ThemedText>
+        </View>
+      )}
+
       <MapaUni
         services={services}
         onServicePress={(service) => {
@@ -147,13 +160,15 @@ export default function HomeScreen() {
           </View>
       </ThemedPressable>
 
+
+
       {/* Modal personalizado */}
       <InfoModal
         isVisible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSelect={async () => {
           try {
-            if (rideStage === "select") {
+            if (rideStage === "select" && userLocation) {
               setConfirmedService(selectedService); // confirmamos este como destino real
               setStartingTrip(false); 
               console.log("Has seleccionat:", selectedService?.name);
@@ -196,14 +211,14 @@ export default function HomeScreen() {
                 //   return;
                 // }
                 // POST /reserves/usuari ---------------
-                if(!confirmedService) {
+                if(!selectedService) {
                   console.error("No s'ha trobat el servei destí:");
                   return;
                 }
-                ride.setRide(fakeUserLocation, confirmedService.name);
+                ride.setRide(userLocation, selectedService.name);
             }
             else if (rideStage === "confirm" || rideStage === "inside") {
-              if (selectedService?.id !== confirmedService?.id) {
+              if (selectedService?.id !== confirmedService?.id && userLocation) {
                 console.log("Has seleccionat:", selectedService?.name);
                 setConfirmedService(selectedService);
                 setRideStage("confirm");
@@ -253,7 +268,7 @@ export default function HomeScreen() {
                   console.error("No s'ha trobat el servei destí:");
                   return;
                 }
-                await ride.setRide(fakeUserLocation, selectedService.name);
+                await ride.setRide(userLocation, selectedService.name);
               }
             }
           } catch (error) {
@@ -298,5 +313,19 @@ const styles = StyleSheet.create({
   scannIconButton: {
     width: 40,
     height: 40,
+  },
+  messageContainer: {
+    position: "absolute",
+    bottom: 140,
+    left: 20,
+    right: 20,
+    backgroundColor: "#4CAF50", // Green for success
+    padding: 10,
+    borderRadius: 10,
+  },
+  messageText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });

@@ -44,34 +44,59 @@ export const useRideRequest = () => {
     state: "En curs"
   });
   const { token } = useAuth();
+  const [reservationMessage, setReservationMessage] = useState<string | null>(null);
+
 
   const setRide = async (location: Location, end_location: String) => {
     if (!location || !end_location) return; // per seguretat
-    
+    console.log("Starting testReserve");
     try {
-      // Realizar la solicitud HTTP al backend para registrar el viaje
-      const response = await fetch(`${API_URL}/reserves/app`, {
+      const response = await fetch("http://10.236.232.27:8000/reserves/app", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({location, end_location}),
+        body: JSON.stringify({
+          location: { x: location.x, y: location.y },
+          end_location: end_location,
+        }),
       });
-
+      console.log("Response status:", response.status);
       const data = await response.json();
+      console.log("Response data:", data);
+      if (data.message) {
+        setReservationMessage(data.message)
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } 
+    //try {
+    //  // Realizar la solicitud HTTP al backend para registrar el viaje
+    //  const response = await fetch(`${API_URL}/reserves/app`, {
+    //    method: "POST",
+    //    headers: {
+    //      "Content-Type": "application/json",
+    //      "Authorization": `Bearer ${token}`
+    //    },
+    //    body: JSON.stringify({
+    //      location: {x: location.x, y: location.y}, 
+    //      end_location: end_location}),
+    //  });
 
-      if (!response.ok) {
-        throw new Error(data.message || "Error al solicitar el viaje");
-      }
-      console.log("Viaje solicitado con éxito:", data);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error al solicitar el viaje:", error.message);
-      }
-    } finally {
-      setIsSetting(false);
-    }
+    //  const data = await response.json();
+
+    //  if (!response.ok) {
+    //    throw new Error(data.message || "Error al solicitar el viaje");
+    //  }
+    //  console.log("Viaje solicitado con éxito:", data);
+    //} catch (error: unknown) {
+    //  if (error instanceof Error) {
+    //    console.error("Error al solicitar el viaje:", error.message);
+    //  }
+    //} finally {
+    //  setIsSetting(false);
+    //}
   }
 
   const releaseRide = async (cotxe_id: String) => {
@@ -185,5 +210,6 @@ export const useRideRequest = () => {
     runningRide,
     requestedRide,
     cancelRide,
+    reservationMessage
   };
 };

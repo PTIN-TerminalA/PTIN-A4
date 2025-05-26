@@ -19,7 +19,7 @@ export function useUserLocation(scanInterval = 3000) {
 
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {
-      console.log("Crida getUserPosition des de A4", measurements)
+      //console.log("Crida getUserPosition des de A4", measurements)
       const response = await fetch(`${API_URL}/api/getUserPosition`, {
         method: "POST",
         headers: {
@@ -77,7 +77,7 @@ export function useUserLocation(scanInterval = 3000) {
           if (pos) 
             setLocation(pos);
         
-          console.log("Wifi scan result:", wifiSimplifiedList);
+          //console.log("Wifi scan result:", wifiSimplifiedList);
 
           }
 
