@@ -5,6 +5,7 @@ import { registerUser, loginUser, getUserProfile, User } from '@/api/auth';
 
 interface AuthContextType {
   user: User | null;
+  token: string | null;
   register: (email: string, password: string, name: string, dni: string, phone: string, birthDate: string, gender: string) => void,
   login: (email: string, password: string) => void;
   logout: () => void;
@@ -16,6 +17,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
 
   const register = async (
     email: string,
@@ -28,6 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   ) => {
     try {
       const token = await registerUser(name, dni, email, password, phone, birthDate, gender);
+      setToken(token);
+      console.log("TOKEN: ", token);
       const profile = await getUserProfile(token);
       setUser(profile);
       router.replace('/(tabs)');
@@ -41,6 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const token = await loginUser(email, password);
+      setToken(token);
+      console.log("TOKEN: ", token);
       const profile = await getUserProfile(token);
       setUser(profile);
       router.replace('/(tabs)');
@@ -80,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }; 
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout, deleteAccount }}>
+    <AuthContext.Provider value={{ user, token, register, login, logout, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );
