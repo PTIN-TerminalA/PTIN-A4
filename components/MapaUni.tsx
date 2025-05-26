@@ -6,6 +6,7 @@ import { Service } from "@/constants/mocks/mockTypes";
 import CarMarker from "@/components/CarMarker";
 import UserMarker from "@/components/UserMarker";
 import { ThemedView } from "@/components/ThemedView";
+import Svg, { Polyline } from "react-native-svg";
 
 interface Car {
   x: number;
@@ -27,6 +28,8 @@ type Props = {
     x: number;
     y: number;
   } | null;
+
+  routePoints?: { x: number; y: number }[];
 };
 
 const imageWidth = 1027;
@@ -44,6 +47,7 @@ const MapaUni: React.FC<Props> = ({
   onServicePress,
   carPos,
   userLocation,
+  routePoints
 }) => {
 
   const [carPositions, setCarPositions] = useState<Car[]>([]);
@@ -149,6 +153,26 @@ const MapaUni: React.FC<Props> = ({
               onPress={() => console.log("Cotxe clicat")}
             />
           )}
+
+          { /** Visualització de la ruta en el MapaUni */ }
+          {routePoints && routePoints.length > 1 && (
+            <Svg
+              width={displayedWidth}
+              height={screen.height}
+              style={{ position: 'absolute', top: 0, left: 0 }}
+              pointerEvents="none" // Per poder seleccionar altres Markers del mapa mentre visualitzo la ruta
+            >
+              <Polyline
+                points={routePoints
+                  .map((point) => `${point.x * scale},${point.y * scale}`)
+                  .join(" ")}
+                fill="none"
+                stroke="blue"
+                strokeWidth={3}
+              />
+            </Svg>
+          )}
+
         </View>
       </ImageZoom>
     </ThemedView>
