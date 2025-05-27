@@ -10,15 +10,21 @@ export async function getServices(){
   // Paso 2: Para cada servicio, obtener datos adicionales
   const fullServices = await Promise.all(
     services.map(async (service: Service) => {
-      const [priceRes, schedulesRes, tagsRes, valorationRes] = await Promise.all([
-        fetch(`${API_URL}/api/getPrice`),////
-        fetch(`${API_URL}/api/getSchedules/${service.id}`),
-        fetch(`${API_URL}/api/getServiceTag/${service.id}`),
-        fetch(`${API_URL}/api/getValoration/${service.id}`)
+      const [schedulesRes, tagsRes, valorationRes] = await Promise.all([   //priceRes, 
+        //fetch(`${API_URL}/api/getPrice`),////
+        fetch(`${API_URL}/api/getSchedules?service_id=${service.id}`,{
+          method:"POST",
+        }),
+        fetch(`${API_URL}/api/getServiceTag?service_id=${service.id}`,{
+          method:"POST",
+        }),
+        fetch(`${API_URL}/api/getValoration?service_id=${service.id}`,{
+          method:"POST",
+        })
       ]);
 
-      const [price, schedules, tags, valorations] = await Promise.all([
-        priceRes.json(),///
+      const [ schedules, tags, valorations] = await Promise.all([   //price,
+        //priceRes.json(),///
         schedulesRes.json(),
         tagsRes.json(),
         valorationRes.json()
