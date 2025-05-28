@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Fragment, useState, useEffect } from 'react';
 import {Colors} from '@/constants/Colors';
 import { services } from '@/constants/mocks/services';
-import { useServices } from '@/hooks/useServices';
+import { useServiceContext } from '@/contexts/ServiceContext';
 import StarRating from '@/components/StarRating';
 import useAverageValoration from '@/hooks/useAverageValoration';
 import PriceDisplay from '@/components/PriceAvg';
@@ -15,7 +15,7 @@ import ScheduleStatus from '@/components/ScheduleStatus';
 export default function ServiceInfoScreen() {
   const colorScheme = useColorScheme() || 'light';
   const { id } = useLocalSearchParams<{ id: string }>();
-  const {services} = useServices();
+  const {services} = useServiceContext();
   const service = services?.find(p => p.id === Number(id));
   const openWebsite = useOpenWebsite();
   
@@ -99,7 +99,7 @@ export default function ServiceInfoScreen() {
         contentContainerStyle={[styles.scheduleBox]}
         showsVerticalScrollIndicator={false}
       >
-        <ScheduleStatus schedules={service.schedules}></ScheduleStatus>
+        <ScheduleStatus schedules={service.schedules!}></ScheduleStatus>
         <View style={[styles.imageBox]}>
           <Image 
             style={[styles.imageStyle]}

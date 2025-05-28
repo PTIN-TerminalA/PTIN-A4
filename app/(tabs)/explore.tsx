@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, ScrollView } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Link } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
@@ -8,14 +8,18 @@ import { Colors } from '@/constants/Colors'
 import { ThemedTextInput } from '@/components/ThemedTextInput';
 import getAverageValoration from '@/hooks/useAverageValoration';
 import StarRating from '@/components/StarRating';
-import { useServices } from '@/hooks/useServices';
 import { useTags } from '@/hooks/useTags';
+import { useServiceContext } from '@/contexts/ServiceContext';
 
 export default function ServiceScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() || 'light';
-  const {services} = useServices();
-  const {tags} = useTags();
+  const { services, loading: servicesLoading } = useServiceContext();
+  const { tags, loading: tagsLoading } = useTags();
+
+  if (servicesLoading || tagsLoading) {
+    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+  }
 
   const handleServicePress = (id: number) => {
     router.push({
@@ -23,7 +27,6 @@ export default function ServiceScreen() {
       params: { id },
     })
   }
-
 
   return (
     <View style={[styles.background, { backgroundColor: Colors[colorScheme].box }]}>

@@ -21,6 +21,7 @@ import { useCarLocation } from "@/hooks/useCarLocation";
 import { useRideRequest } from "@/hooks/useRideRequest";
 import { ThemedView } from "@/components/ThemedView";
 import { useNFCListener } from "@/hooks/useNFCListener";
+import { ServiceProvider } from "@/contexts/ServiceContext";
 
 const localImage = require("@/assets/images/planol.png");
 

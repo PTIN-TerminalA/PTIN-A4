@@ -26,13 +26,13 @@ export type Service = {
   name: string;
   description: string;
   link?: string;
-  ad_path: string;
+  ad_path?: string;
   x: number; // Coordenada X al mapa
   y: number; // Coordenada Y al mapa
-  tags: Tag[];
+  tags?: Tag[];
   valorations?: Valoration[];
-  price: Price | null;
-  schedules: Schedule[];
-  status: string;
+  price?: Price;
+  schedules?: Schedule[];
+  status?: string;
   offer?: string;
 };

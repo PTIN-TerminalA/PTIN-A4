@@ -1,65 +1,52 @@
-import { API_URL } from "./Api";
-import { Service } from "@/constants/mocks/mockTypes";
-import { Tag } from "@/constants/mocks/mockTypes";
+// api/services.ts
+import { API_URL } from './Api';
+import { Service, Tag, Valoration, Schedule, Price } from '@/constants/mocks/mockTypes';
 
+const fetchJson = async <T>(url: string, options?: RequestInit): Promise<T> => {
+  const res = await fetch(url, options);
+  //if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.statusText}`);
+  return res.json();
+};
 
-export async function getServices(){
-  const servicesRes = await fetch(`${API_URL}/api/getServices`);
-  const services = await servicesRes.json(); // <- services: Service[]
+export async function getServices(): Promise<Service[]> {
+  const rawServices = await fetchJson<Service[]>(`${API_URL}/api/getServices`);
 
-  // Paso 2: Para cada servicio, obtener datos adicionales
   const fullServices = await Promise.all(
-    services.map(async (service: Service) => {
-      const [schedulesRes, tagsRes, valorationRes] = await Promise.all([   //priceRes, 
-        //fetch(`${API_URL}/api/getPrice`),////
-        fetch(`${API_URL}/api/getSchedules?service_id=${service.id}`,{
-          method:"POST",
-        }),
-        fetch(`${API_URL}/api/getServiceTag?service_id=${service.id}`,{
-          method:"POST",
-        }),
-        fetch(`${API_URL}/api/getValoration?service_id=${service.id}`,{
-          method:"POST",
-        })
+    rawServices.map(async (service) => {
+      const serviceId = service.id;
+
+      const [schedules, tagsRaw, valorations] = await Promise.all([
+        fetchJson<Schedule[]>(`${API_URL}/api/getSchedules?service_id=${serviceId}`, {method: 'POST', }),
+        fetchJson<any>(`${API_URL}/api/getServiceTag?service_id=${serviceId}`, {method: 'POST', }),
+        fetchJson<Valoration[]>(`${API_URL}/api/getValoration?service_id=${serviceId}`, {method: 'POST', }),
       ]);
 
-      const [ schedules, tags, valorations] = await Promise.all([   //price,
-        //priceRes.json(),///
-        schedulesRes.json(),
-        tagsRes.json(),
-        valorationRes.json()
-      ]);
+      let tags: Tag[] = [];
 
+      if (Array.isArray(tagsRaw)) {
+        tags = tagsRaw
+          .filter(Boolean) // remove nulls
+          .map((tag) => ({ name: tag?.tag_name ?? tag?.name ?? "" }))
+          .filter((tag) => tag.name); // remove empty names
+      } else if (tagsRaw && typeof tagsRaw === "object") {
+        const name = tagsRaw.tag_name ?? tagsRaw.name;
+        if (name) tags = [{ name }];
+      }
+      
       return {
-        id: service.id,
-        name: service.name,
-        description: service.description,
-        link: service.link,
-        ad_path: service.ad_path,
-        x: service.x,
-        y: service.y,
-        tags: tags,
-        valorations: valorations,
-        price: service.price,                   ///
-        schedules: schedules,
-        status: service.status,
-        offer: service.offer,
+        ...service,
+        tags,
+        valorations,
+        schedules,
       };
     })
   );
-
+  
+  console.log("FULL SERVICE:", JSON.stringify(fullServices, null, 2));
   return fullServices;
 }
 
-
 export async function getTags(): Promise<Tag[]> {
-  const response = await fetch(`${API_URL}/api/getTags`, {
-    method: 'GET',
-  });
-  if (!response.ok) {
-    throw new Error('Error al obtenir els serveis.');
-  }
-
-  const tags = await response.json();
-  return tags;
+  return fetchJson<Tag[]>(`${API_URL}/api/getTags`);
 }
+

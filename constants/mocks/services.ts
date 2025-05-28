@@ -49,7 +49,7 @@ export const services: Service[] = [
     y: 325,
     tags: [{ name: "Actes" }],
     valorations: [],
-    price: null,
+    price: undefined,
     schedules: [
       { day: "Dilluns", opening_hour: "08:00", closing_hour: "20:00" },
       { day: "Dimarts", opening_hour: "08:00", closing_hour: "20:00" },
@@ -72,7 +72,7 @@ export const services: Service[] = [
     y: 580,
     tags: [{ name: "Roba" }],
     valorations: [],
-    price: null,
+    price: undefined,
     schedules: [
       { day: "Dilluns", opening_hour: "10:00", closing_hour: "21:00" },
       { day: "Dimarts", opening_hour: "10:00", closing_hour: "21:00" },
@@ -117,7 +117,7 @@ export const services: Service[] = [
     y: 260,
     tags: [{ name: "Estudi" }],
     valorations: [],
-    price: null,
+    price: undefined,
     schedules: [
       { day: "Dilluns", opening_hour: "08:00", closing_hour: "22:00" },
       { day: "Dimarts", opening_hour: "08:00", closing_hour: "22:00" },
