@@ -14,21 +14,25 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarInactiveTintColor: colorScheme == 'dark' ? Colors.dark.tabIconDefault : Colors.light.tabIconDefault,
+        tabBarInactiveTintColor:
+          colorScheme == "dark"
+            ? Colors.dark.tabIconDefault
+            : Colors.light.tabIconDefault,
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: "absolute",
           },
           default: {
-            backgroundColor: Colors[colorScheme ?? 'light'].box
+            backgroundColor: Colors[colorScheme ?? "light"].box,
+            position: "absolute",
           },
-          
         }),
       }}
     >
@@ -37,7 +41,10 @@ export default function TabLayout() {
         options={{
           title: "Map",
           tabBarIcon: ({ color }) => (
-            <Image source={require('../../assets/images/Icons/mapa.png')} style={{ width: 24, height: 24, tintColor: color }} />
+            <Image
+              source={require("../../assets/images/Icons/mapa.png")}
+              style={{ width: 24, height: 24, tintColor: color }}
+            />
           ),
         }}
       />
@@ -46,7 +53,10 @@ export default function TabLayout() {
         options={{
           title: "Shopping",
           tabBarIcon: ({ color }) => (
-            <Image source={require('../../assets/images/Icons/shopping.png')} style={{ width: 24, height: 24, tintColor: color }} />
+            <Image
+              source={require("../../assets/images/Icons/shopping.png")}
+              style={{ width: 24, height: 24, tintColor: color }}
+            />
           ),
         }}
       />
@@ -55,7 +65,10 @@ export default function TabLayout() {
         options={{
           title: "Flights",
           tabBarIcon: ({ color }) => (
-            <Image source={require('../../assets/images/Icons/scanner.png')} style={{ width: 24, height: 24, tintColor: color }} />
+            <Image
+              source={require("../../assets/images/Icons/scanner.png")}
+              style={{ width: 24, height: 24, tintColor: color }}
+            />
           ),
         }}
       />
@@ -64,7 +77,10 @@ export default function TabLayout() {
         options={{
           title: "Chat",
           tabBarIcon: ({ color }) => (
-            <Image source={require('../../assets/images/Icons/chatting.png')} style={{ width: 24, height: 24, tintColor: color }} />
+            <Image
+              source={require("../../assets/images/Icons/chatting.png")}
+              style={{ width: 24, height: 24, tintColor: color }}
+            />
           ),
         }}
       />
@@ -73,7 +89,10 @@ export default function TabLayout() {
         options={{
           title: "Perfil",
           tabBarIcon: ({ color }) => (
-            <Image source={require('../../assets/images/Icons/user.png')} style={{ width: 24, height: 24, tintColor: color }} />
+            <Image
+              source={require("../../assets/images/Icons/user.png")}
+              style={{ width: 24, height: 24, tintColor: color }}
+            />
           ),
         }}
       />

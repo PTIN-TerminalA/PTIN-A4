@@ -31,7 +31,7 @@ export type Service = {
   y: number; // Coordenada Y al mapa
   tags?: Tag[];
   valorations?: Valoration[];
-  price?: Price;
+  avg_price?: number;
   schedules?: Schedule[];
   status?: string;
   offer?: string;

@@ -10,7 +10,9 @@ type ServiceContextType = {
 
 const ServiceContext = createContext<ServiceContextType | undefined>(undefined);
 
-export const ServiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ServiceProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [services, setServices] = useState<Service[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,4 +47,3 @@ export const useServiceContext = () => {
   }
   return context;
 };
-
