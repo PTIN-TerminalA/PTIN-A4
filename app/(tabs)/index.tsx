@@ -23,6 +23,9 @@ import { useRouteDestination } from "@/hooks/useRouteDestination"; //fake route
 import { ThemedView } from "@/components/ThemedView";
 import { useNFCListener } from "@/hooks/useNFCListener";
 
+import { RatingModal } from '@/components/RatingModal';
+import { useAuth } from "@/hooks/useAuth";
+
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
@@ -54,6 +57,9 @@ export default function HomeScreen() {
   const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">("select");
   const { tagId } = useNFCListener();
   const [car, setCar] = useState("");
+
+  const { token } = useAuth();
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
   
   useEffect(() => {
     if (tagId) {
@@ -159,8 +165,14 @@ export default function HomeScreen() {
           {rideStage === "inside" && <ThemedText type="bold">Confirma que ets a dins</ThemedText>}
           </View>
       </ThemedPressable>
-
-
+      
+      {/* Modal de valoració */}
+      <RatingModal
+        visible={ratingModalVisible}
+        onClose={() => setRatingModalVisible(false)}
+        token={token? token : ""}
+        scheduledTime={""} // aquesta línia haurà de ser scheduledTime={ride.ride?.scheduled_time || ""} després del merge
+      />
 
       {/* Modal personalizado */}
       <InfoModal
