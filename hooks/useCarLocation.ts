@@ -1,105 +1,41 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "@/api/Api";
 
 interface CarLocation {
-  id: string;
-  x: number;
-  y: number;
-  rotation: number;
-  visible: boolean;
+  car_id: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  state: string;
 }
 
-export function useCarLocation(
-  routePoints: { x: number; y: number }[] | null,
-  startedTrip: boolean,
-  pollingInterval = 100
-) {
-  const [location, setLocation] = useState<CarLocation>({
-    id: "car-1",
-    x: 1027 / 2,
-    y: 664 / 2,
-    rotation: 0,
-    visible: true,
-  });
-
-  const [targetIndex, setTargetIndex] = useState(0);
+export function useCarLocation(carId: string | null) {
+  const [location, setLocation] = useState<CarLocation | null>(null);
 
   useEffect(() => {
-    if (!startedTrip || !routePoints || routePoints.length < 2) return;
+    if (!carId) return;
 
-    const interval = setInterval(() => {
-      setLocation((current) => {
-        const target = routePoints[targetIndex];
-        if (!target) return current;
-
-        const dx = target.x - current.x;
-        const dy = target.y - current.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        const step = 4; // pixels per interval
-
-        if (dist < step) {
-          // Llegó al punto, pasa al siguiente
-          setTargetIndex((prev) =>
-            prev < routePoints.length - 1 ? prev + 1 : prev
-          );
-          return { ...current, x: target.x, y: target.y };
-        } else {
-          // Avanza hacia el objetivo
-          const ratio = step / dist;
-          return {
-            ...current,
-            x: current.x + dx * ratio,
-            y: current.y + dy * ratio,
-          };
+    const fetchLocation = async () => {
+      try {
+        const response = await fetch(`${API_URL}/cotxe/${carId}/status`);
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: No s'ha pogut obtenir la ubicació del cotxe.`);
         }
-      });
-    }, pollingInterval);
 
-    return () => clearInterval(interval);
-  }, [routePoints, targetIndex, pollingInterval]);
+        const data: CarLocation = await response.json();
+        setLocation(data);
+      } catch (err: any) {
+        setLocation(null);
+      }
+
+      const interval = setInterval(fetchLocation, 3000); // cada 3 segons
+      return () => clearInterval(interval);
+    };
+
+    fetchLocation();
+
+  },  [carId]);
   
-  return { location };
+  return location;
 }
-
-// CON ESTA OTRA FUNCIÓN useCarLocation ESTÁ LA GENERACIÓN ALEATORIA DE POSICIONES
-// export function useCarLocation(
-//   pollingInterval = 3000,
-//   carId: string = "car-1"
-// ) {
-//   const [location, setLocation] = useState<CarLocation>({
-//     id: carId,
-//     x: 1027 / 2, // Al mig de la imatge inicialment
-//     y: 664 / 2,
-//     visible: true,
-//   });
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       // TODO: La lògica de moviment del cotxe serà una crida a la api del cloud
-//       setLocation((current) => generateNextPosition(current));
-//     }, pollingInterval);
-
-//     return () => clearInterval(interval);
-//   }, [pollingInterval]);
-
-//   return { location };
-// }
-
-// // Aixo simula un moviment aleatori pel cotxe, quan tinguem la posicio real ens ho carreguem
-// function generateNextPosition(current: CarLocation): CarLocation {
-//   const imageWidth = 1027;
-//   const imageHeight = 664;
-//   const maxStep = 10;
-
-//   const deltaX = (Math.random() - 0.5) * 2 * maxStep;
-//   const deltaY = (Math.random() - 0.5) * 2 * maxStep;
-
-//   const nextX = Math.max(0, Math.min(imageWidth, current.x + deltaX));
-//   const nextY = Math.max(0, Math.min(imageHeight, current.y + deltaY));
-
-//   return {
-//     ...current,
-//     x: nextX,
-//     y: nextY,
-//   };
-// }

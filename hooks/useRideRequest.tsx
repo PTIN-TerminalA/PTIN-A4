@@ -6,31 +6,36 @@ import { API_URL } from "@/constants/Api";
 import { request } from "react-native-permissions";
 import { useAuth } from "./useAuth";
 
-type RideStatus = "idle" | "setted" | "requested" | "arriving" | "enroute" | "completed";
+// Stype RideStatus = "idle" | "setted" | "requested" | "arriving" | "enroute" | "completed";
 
 type RoutePoint = {
   x: number;
   y: number;
 };
 
-interface UserLocation {
-  x: number;
-  y: number;
-}
-
 type Location = {
   x: number;
   y: number;
 };
 
-export interface Ride {
-  origin: RoutePoint;
-  destination: Service;
-  status: RideStatus;
-  route: RoutePoint[]; // O null al principio
+export interface RideData { // doc ruoute a MongoDB
+  _id: string;
+  user_id: number;
+  start_location: string;
+  end_location: string;
+  scheduled_time: string; // ISO string
+  state: string;          // "Solicitat", "Esperant", "En curs", "Disponible"
+  car_id: string;
+}
+
+export interface RideResponse {
+  message: string;
+  data: RideData;
+  car_id: string;
 }
 
 export const useRideRequest = () => {
+  /*
   const [isSetting, setIsSetting] = useState(false);
   const [destination, setDestination] = useState<Service | null>(null);
   const [origin, setOrigin] = useState<RoutePoint | null>(null);
@@ -43,15 +48,17 @@ export const useRideRequest = () => {
     scheduled_time: "2025-05-04T14:00:00Z",
     state: "En curs"
   });
+  */
   const { token } = useAuth();
   const [reservationMessage, setReservationMessage] = useState<string | null>(null); //useState<string | null>(null)
-
+  const [rideResponse, setRideResponse] = useState<RideResponse | null>(null);
 
   const setRide = async (location: Location, end_location: String) => {
     if (!location || !end_location) return; // per seguretat
     console.log("Starting testReserve");
+    
     try {
-      const response = await fetch("http://10.236.232.27:8000/reserves/app", {
+      const response = await fetch(`${API_URL}/reserves/app`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,11 +69,14 @@ export const useRideRequest = () => {
           end_location: end_location,
         }),
       });
+
       console.log("Response status:", response.status);
-      const data = await response.json();
+      const data: RideResponse = await response.json();
       console.log("Response data:", data);
+
       if (data.message) {
-        setReservationMessage(data.message)
+        setReservationMessage(data.message);
+        setRideResponse(data);
       }
     } catch (error) {
       console.error("Fetch error:", error);
@@ -99,6 +109,7 @@ export const useRideRequest = () => {
     //}
   }
 
+  /*
   const releaseRide = async (cotxe_id: String) => {
     try {
       const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/disponible`, {
@@ -115,6 +126,7 @@ export const useRideRequest = () => {
       return null;
     }
   }
+  */
 
   const nearestService = async (location: Location) => {
     try {
@@ -152,6 +164,7 @@ export const useRideRequest = () => {
     }
   };
 
+  /*
   const runningRide = async (cotxe_id: String) => {
     try {
       const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/en_curs`, {
@@ -168,7 +181,9 @@ export const useRideRequest = () => {
       return null;
     }
   }
+  */
 
+  /*
   const requestedRide = async (cotxe_id: String) => {
     try {
       const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/solicitat`, {
@@ -185,31 +200,31 @@ export const useRideRequest = () => {
       return null;
     }
   }
+  */
 
-
-
-
-
+  /*
   const cancelRide = () => {
     setDestination(null);
     setOrigin(null);
     setStatus("idle");
     setRoute(null);
   };
+  */
 
   return {
-    isSetting,
+    // isSetting,
     status,
-    destination,
+    // destination,
     origin,
-    route,
+    // route,
     setRide,
-    releaseRide,
+    // releaseRide,
     nearestService,
     services,
-    runningRide,
-    requestedRide,
-    cancelRide,
-    reservationMessage
+    // runningRide,
+    // requestedRide,
+    // cancelRide,
+    reservationMessage,
+    rideResponse,
   };
 };
