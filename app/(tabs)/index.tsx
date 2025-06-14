@@ -174,6 +174,8 @@ export default function HomeScreen() {
               console.log("Has seleccionat:", selectedService?.name);
               setRideStage("confirm");
               //HACER EL MUESTREO DE RUTA
+              //api nearest
+              //shortespath
               console.log("MOSTRAR RUTA 1") //Es lo mismo que mostrar ruta 2, solo un log para saber que aquí se tiene que mostrar ya que es antes de confirmar
               //RESERVA EL COCHE
                 // Si hi havia un cotxe reservat es cancela i torna a posar a disponible
@@ -193,6 +195,7 @@ export default function HomeScreen() {
                   x: 0.5, // coordenada X
                   y: 0.5   // coordenada Y
                 };
+
                 // const nearest = await ride.nearestService(fakeUserLocation);
                 // const nearestServiceId = nearest?.nearest_service_id;
 
@@ -211,11 +214,14 @@ export default function HomeScreen() {
                 //   return;
                 // }
                 // POST /reserves/usuari ---------------
+                
+                
                 if(!selectedService) {
                   console.error("No s'ha trobat el servei destí:");
                   return;
                 }
                 ride.setRide(userLocation, selectedService.name);
+                //document = ride.setRide(userLocation, selectedService.name);
             }
             else if (rideStage === "confirm" || rideStage === "inside") {
               if (selectedService?.id !== confirmedService?.id && userLocation) {
