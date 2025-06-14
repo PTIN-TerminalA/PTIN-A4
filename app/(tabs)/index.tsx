@@ -9,7 +9,7 @@ import {
 
 import { ThemedText } from "@/components/ThemedText";
 import React, { useEffect, useState } from "react";
-import { router, useRootNavigationState } from "expo-router";
+import { router, useRootNavigationState, useLocalSearchParams } from "expo-router";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { Colors } from "@/constants/Colors";
 import { ThemedPressable } from "@/components/ThemedPressable";
@@ -54,6 +54,36 @@ export default function HomeScreen() {
   const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">("select");
   const { tagId } = useNFCListener();
   const [car, setCar] = useState("");
+
+  const { gate, destinationName, fromNotification } = useLocalSearchParams();
+  const [triggeredFromNotification, setTriggeredFromNotification] = useState(false);
+
+  useEffect(() => {
+    // console.log("services: ", services);
+    // console.log("El servicio: ", gate);
+    // const fakeLocation = {
+    //   x: 0.5, 
+    //   y: 0.5
+    // };
+    // console.log("La ubicacion del usuario: ", userLocation);
+    if (fromNotification === 'true' && destinationName && gate && userLocation && !triggeredFromNotification && services && services.length > 0 ) {
+      // console.log("Iniciant reserva per notificació:", destinationName, gate);
+      setTriggeredFromNotification(true);
+      
+      //Busca un servei amb el mateix nom
+      const matchingService = services.find(s => s.name.toLowerCase() === (typeof gate === 'string' ? gate.toLowerCase() : ''));
+      console.log("El servicio: ", matchingService);
+      if (matchingService) {
+        setSelectedService(matchingService);
+        //setConfirmedService(matchingService);
+        setRideStage("select");
+        ride.setRide(userLocation, matchingService.name);
+        setModalVisible(true); 
+      } else {
+        console.warn("No s'ha trobat un servei coincident per:", destinationName);
+      }
+    }
+  }, [fromNotification, destinationName, gate, services, userLocation, triggeredFromNotification]);
   
   useEffect(() => {
     if (tagId) {
