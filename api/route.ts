@@ -4,10 +4,14 @@ export interface Point {
   x: number;
   y: number;
 }
-
+export interface routeData {
+  length: number;
+  temps: string;
+  path: [number, number][];
+}
 export async function getRoutePoints(
   origin: Point, destination: Point, signal?: AbortSignal): 
-  Promise<[number, number][] | null> {
+  Promise<routeData | null> {
 
   try {
     const response = await fetch(`${API_URL}/api/shortest-path`, {
@@ -26,8 +30,8 @@ export async function getRoutePoints(
       return null;
     }
 
-    const data = await response.json();
-    return data.path ?? null;
+    const data: routeData = await response.json();
+    return data;
 
   } catch (error: any) {
     if (error.name === 'AbortError') {

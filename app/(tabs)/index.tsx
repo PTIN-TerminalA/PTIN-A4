@@ -22,6 +22,7 @@ import { useRideRequest } from "@/hooks/useRideRequest";
 import { useRouteDestination } from "@/hooks/useRouteDestination"; //fake route
 import { ThemedView } from "@/components/ThemedView";
 import { useNFCListener } from "@/hooks/useNFCListener";
+import { getRoutePoints } from "@/api/route";
 
 const localImage = require("@/assets/images/planol.png");
 
@@ -49,11 +50,14 @@ export default function HomeScreen() {
   // un altre servei (canvia el selectedservice però no volem que ho faci el confirmedservice)
   const [confirmedService, setConfirmedService] = useState<Service | null>(null); 
   const [startingTrip, setStartingTrip] = useState(false);
+  const [nearestService, setNearestService] = useState<Service | null>(null); 
+  const [previewService, setPreviewService] = useState<Service | null>(null); 
   const ride = useRideRequest();
   const {reservationMessage} = ride;
-  const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">("select");
+  const [rideStage, setRideStage] = useState<"select" | "preview" | "confirm" | "inside">("select");
   const { tagId } = useNFCListener();
   const [car, setCar] = useState("");
+  
   
   useEffect(() => {
     if (tagId) {
@@ -77,13 +81,28 @@ export default function HomeScreen() {
     });
   };
   
+  let origen = {
+    x: 0, 
+    y: 0
+  }
+
+  let desti = {
+    x: 0,
+    y: 0
+  }
+  if (rideStage=== "preview" && nearestService && previewService){
+    origen = {x: nearestService.x, y: nearestService.y};
+    desti = {x: previewService.x, y: previewService.y};
+  }
+  
   const routePoints = useRouteDestination( //fake route
-     userLocation ?? null,
-     confirmedService ? { x: confirmedService.x, y: confirmedService.y } : null,
+     origen,
+     desti
   );
+
   
   // const carLocation = useCarLocation(); //Usamos la asignació de abajo para que la imagen del coche vaya hasta el destino.
-  const carLocation = useCarLocation(routePoints, startingTrip);
+  const carLocation = useCarLocation(routePoints.route, startingTrip);
 
   useEffect(() => {
     if (!isLoggedIn && rootNavigationState?.key) {
@@ -108,10 +127,14 @@ export default function HomeScreen() {
         }}
         carPos={carLocation.location}
         userLocation={userLocation}
-        routePoints={routePoints ?? []} //fake route
+        routePoints={routePoints.route ?? []} //fake route
 
       />
-      
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+          <ThemedText>
+            {routePoints.temps}
+          </ThemedText>
+      </View>
       {/* Botó per escannejar */}
       <TouchableOpacity
         style={[styles.scannButton, { backgroundColor: buttonColor }]}
@@ -125,6 +148,12 @@ export default function HomeScreen() {
         onPress={() => {
           if (rideStage === "select") {
             setModalVisible(true);
+          } else if (rideStage === "preview") {
+            setConfirmedService(previewService);
+            setRideStage("confirm");
+            if (confirmedService  && userLocation) {
+              ride.setRide(userLocation, confirmedService.name)
+            }
           } else if (rideStage === "confirm") {
             console.log("Has confirmat el viatge a:", confirmedService?.name);
             setRideStage("inside");
@@ -137,9 +166,10 @@ export default function HomeScreen() {
             if (confirmedService  && userLocation) {
               //CAMBIA EL ESTADO DEL COCHE A en curs
               // PUT /cotxe/{cotxe_id}/en_curs ------------
-              ride.setRide(userLocation, confirmedService.name);
+              //ride.setRide(userLocation, confirmedService.name);
               // CAMBIA EL ESTADO DEL COCHE A DISPONIBLE DESPUÉS DE 30 SEGUNDOS PORQUE ENTENDEMOS QUE HA LLEGADO YA AL DESTINO
               // PUT /cotxe/{cotxe_id}/disponible
+              
             }
             setRideStage("select");
             // setConfirmedService(null);
@@ -169,10 +199,15 @@ export default function HomeScreen() {
         onSelect={async () => {
           try {
             if (rideStage === "select" && userLocation) {
-              setConfirmedService(selectedService); // confirmamos este como destino real
-              setStartingTrip(false); 
+              const nearest_service_id = await ride.nearestService(userLocation);
+              const nearest_service = services?.find(nearest_service_id) ?? null;
+              setNearestService(nearest_service);
+              setPreviewService(selectedService);
+              setRideStage("preview");
+              //setConfirmedService(selectedService); // confirmamos este como destino real
+              //setStartingTrip(false); 
               console.log("Has seleccionat:", selectedService?.name);
-              setRideStage("confirm");
+              //setRideStage("confirm");
               //HACER EL MUESTREO DE RUTA
               //api nearest
               //shortespath
@@ -220,7 +255,8 @@ export default function HomeScreen() {
                   console.error("No s'ha trobat el servei destí:");
                   return;
                 }
-                ride.setRide(userLocation, selectedService.name);
+                
+                ride.setRide(fakeUserLocation, selectedService.name);
                 //document = ride.setRide(userLocation, selectedService.name);
             }
             else if (rideStage === "confirm" || rideStage === "inside") {
@@ -286,10 +322,10 @@ export default function HomeScreen() {
         
         /** Si no s'ha seleccionat un destí el modal canvia */
         imageUrl={selectedService?.ad_path || localImage}
-        title={selectedService?.name || "Demana un cotxe"}
-        minutesText={selectedService == null ? "" : "2 min"} // Opcional, si ho calcules
+        title={selectedService?.name || "Demana un cotxe"} // Previsualitza ruta nou nom
+        minutesText={selectedService == null ? "" : "2min"} // Opcional, si ho calcules    ride.time
         distanceText={selectedService == null ? "" : "500 m"} // Opcional, si ho calcules
-        buttonText="Demanar cotxe"
+        buttonText="Previsualitza ruta"
         description={selectedService?.description || "Primer selecciona un destí dins la terminal A"}
       />
     </ThemedView>

@@ -44,7 +44,7 @@ export const useRideRequest = () => {
     state: "En curs"
   });
   const { token } = useAuth();
-  const [reservationMessage, setReservationMessage] = useState<string | null>(null);
+  const [reservationMessage, setReservationMessage] = useState<string | null>(null); //useState<string | null>(null)
 
 
   const setRide = async (location: Location, end_location: String) => {
