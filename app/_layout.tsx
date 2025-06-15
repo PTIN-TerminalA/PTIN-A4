@@ -12,6 +12,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useFlightNotifications } from '@/hooks/useFlightNotifications';
+import { ServiceProvider } from "@/contexts/ServiceContext";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,7 +39,9 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <MainLayout />
+      <ServiceProvider>
+        <MainLayout />
+      </ServiceProvider>
     </AuthProvider>
   );
 }
@@ -50,20 +53,20 @@ function MainLayout() {
   useFlightNotifications();
 
   return (
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{headerShown: false}}
-        >
-          {user ? (
-            // Si el usuario está autenticado, mostrar la navegación con Tabs
-            <Stack.Screen name="(tabs)" />
-          ) : (
-            // Si el usuario NO ha iniciado sesión, mostrar la autenticación
-            <Stack.Screen name="(auth)" />
-          )}
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack
+        screenOptions={{headerShown: false}}
+      >
+        {user ? (
+          // Si el usuario está autenticado, mostrar la navegación con Tabs
+          <Stack.Screen name="(tabs)" />
+        ) : (
+          // Si el usuario NO ha iniciado sesión, mostrar la autenticación
+          <Stack.Screen name="(auth)" />
+        )}
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }

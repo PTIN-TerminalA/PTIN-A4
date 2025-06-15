@@ -22,6 +22,7 @@ import { useRideRequest } from "@/hooks/useRideRequest";
 import { useRouteDestination } from "@/hooks/useRouteDestination"; //fake route
 import { ThemedView } from "@/components/ThemedView";
 import { useNFCListener } from "@/hooks/useNFCListener";
+import { ServiceProvider } from "@/contexts/ServiceContext";
 
 const localImage = require("@/assets/images/planol.png");
 

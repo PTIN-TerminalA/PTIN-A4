@@ -25,16 +25,14 @@ export type Service = {
   id: number;
   name: string;
   description: string;
-  location: string;
-  location_x: number; // coordenades API
-  location_y: number; // coordenades API
   link?: string;
-  ad_path: string;
+  ad_path?: string;
   x: number; // Coordenada X al mapa
   y: number; // Coordenada Y al mapa
-  tags: Tag[];
-  valorations: Valoration[];
-  ticket: Ticket | null;
-  price: Price | null;
-  schedules: Schedule[];
+  tags?: Tag[];
+  valorations?: Valoration[];
+  avg_price?: number;
+  schedules?: Schedule[];
+  status?: string;
+  offer?: string;
 };
