@@ -4,7 +4,7 @@ export default function AuthLayout() {
   return (
     <Stack>
       <Stack.Screen
-        name="login"
+        name="index"
         options={{ title: "Inicia sessió", headerShown: false }}
       />
       <Stack.Screen

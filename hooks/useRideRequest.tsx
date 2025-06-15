@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Service } from "@/constants/mocks/mockTypes";
 import { useCarLocation } from "@/hooks/useCarLocation";
 import { useUserLocation } from "@/hooks/useUserLocation";
-import { API_URL } from "@/constants/Api";
+import { API_URL } from "@/api/Api";
 import { request } from "react-native-permissions";
 import { useAuth } from "./useAuth";
 
@@ -50,8 +50,16 @@ export const useRideRequest = () => {
   const setRide = async (location: Location, end_location: String) => {
     if (!location || !end_location) return; // per seguretat
     console.log("Starting testReserve");
+
+    const payload = {
+      location: { x: location.x, y: location.y },
+      end_location: end_location,
+    };
+
+    console.log("Payload:", JSON.stringify(payload));
+
     try {
-      const response = await fetch("http://10.236.232.27:8000/reserves/app", {
+      const response = await fetch(`${API_URL}/reserves/app`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,32 +79,6 @@ export const useRideRequest = () => {
     } catch (error) {
       console.error("Fetch error:", error);
     } 
-    //try {
-    //  // Realizar la solicitud HTTP al backend para registrar el viaje
-    //  const response = await fetch(`${API_URL}/reserves/app`, {
-    //    method: "POST",
-    //    headers: {
-    //      "Content-Type": "application/json",
-    //      "Authorization": `Bearer ${token}`
-    //    },
-    //    body: JSON.stringify({
-    //      location: {x: location.x, y: location.y}, 
-    //      end_location: end_location}),
-    //  });
-
-    //  const data = await response.json();
-
-    //  if (!response.ok) {
-    //    throw new Error(data.message || "Error al solicitar el viaje");
-    //  }
-    //  console.log("Viaje solicitado con éxito:", data);
-    //} catch (error: unknown) {
-    //  if (error instanceof Error) {
-    //    console.error("Error al solicitar el viaje:", error.message);
-    //  }
-    //} finally {
-    //  setIsSetting(false);
-    //}
   }
 
   const releaseRide = async (cotxe_id: String) => {
