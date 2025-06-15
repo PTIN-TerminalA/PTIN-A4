@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -49,19 +49,14 @@ export default function RootLayout() {
 function MainLayout() {
   const { user } = useAuth();
   const colorScheme = useColorScheme();
-
   useFlightNotifications();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack
-        screenOptions={{headerShown: false}}
-      >
+      <Stack screenOptions={{ headerShown: false }}>
         {user ? (
-          // Si el usuario está autenticado, mostrar la navegación con Tabs
           <Stack.Screen name="(tabs)" />
         ) : (
-          // Si el usuario NO ha iniciado sesión, mostrar la autenticación
           <Stack.Screen name="(auth)" />
         )}
         <Stack.Screen name="+not-found" />

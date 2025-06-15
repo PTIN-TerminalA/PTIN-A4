@@ -31,7 +31,7 @@ const localImage = require("@/assets/images/planol.png");
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
 const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile
 export function login() {
-  router.replace("/(auth)/login");
+  router.replace("/(auth)");
 }
 
 export default function HomeScreen() {

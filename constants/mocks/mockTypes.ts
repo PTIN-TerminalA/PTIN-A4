@@ -52,4 +52,5 @@ export type Service = {
   offer?: string;
   schedules?: Schedule[];
   valorations?: Valoration[];
+  tags?: Tag[];
 };
