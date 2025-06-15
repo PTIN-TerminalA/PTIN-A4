@@ -66,9 +66,13 @@ export const useRideRequest = () => {
   const setRide = async (location: Location, end_location: String) => {
     if (!location || !end_location) return; // per seguretat
     console.log("Starting testReserve");
+    console.log("Request payload:", {
+      location: { x: location.x, y: location.y },
+      end_location: end_location,
+    });
     
     try {
-      const response = await fetch("https://flysy.software/reserves/app", {
+      const response = await fetch("https://flysy.software/api/reserves/app-basic", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,43 +85,37 @@ export const useRideRequest = () => {
       });
 
       console.log("Response status:", response.status);
-      const data: RideResponse = await response.json();
-      console.log("Response data:", data);
+      // const data: RideResponse = await response.json();
+      // console.log("Response data:", data);      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, detail: ${errorData.detail || 'No detail provided'}`);
+      }
+      
+      const text = await response.text();
+      console.log("Raw response:", text);
+      
+      if (!text) {
+        throw new Error("Empty response received");
+      }
+      
+      try {
+        const data: RideResponse = JSON.parse(text);
+        console.log("Response data:", data);
 
-      if (data.message) {
-        setReservationMessage(data.message);
-        setRideResponse(data);
+        if (data.message) {
+          setReservationMessage(data.message);
+          setRideResponse(data);
+        }
+      } catch (parseError) {
+        console.error("JSON Parse error:", parseError);
+        throw new Error(`Invalid JSON response: ${text}`);
       }
     } catch (error) {
       console.error("Fetch error:", error);
+      setReservationMessage("Error al reservar el viatge. Si us plau, torna-ho a provar.");
     } 
-    //try {
-    //  // Realizar la solicitud HTTP al backend para registrar el viaje
-    //  const response = await fetch(`${API_URL}/reserves/app`, {
-    //    method: "POST",
-    //    headers: {
-    //      "Content-Type": "application/json",
-    //      "Authorization": `Bearer ${token}`
-    //    },
-    //    body: JSON.stringify({
-    //      location: {x: location.x, y: location.y}, 
-    //      end_location: end_location}),
-    //  });
-
-    //  const data = await response.json();
-
-    //  if (!response.ok) {
-    //    throw new Error(data.message || "Error al solicitar el viaje");
-    //  }
-    //  console.log("Viaje solicitado con éxito:", data);
-    //} catch (error: unknown) {
-    //  if (error instanceof Error) {
-    //    console.error("Error al solicitar el viaje:", error.message);
-    //  }
-    //} finally {
-    //  setIsSetting(false);
-    //}
-  }
+  };
 
   const startRide = async (destination: Location) => {
     try {

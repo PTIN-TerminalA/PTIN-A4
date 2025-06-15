@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, Redirect } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -17,7 +17,6 @@ import { useFlightNotifications } from '@/hooks/useFlightNotifications';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  
   const [loaded] = useFonts({
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Bold": require("../assets/fonts/Roboto-Bold.ttf"),
@@ -50,20 +49,12 @@ function MainLayout() {
   useFlightNotifications();
 
   return (
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{headerShown: false}}
-        >
-          {user ? (
-            // Si el usuario está autenticado, mostrar la navegación con Tabs
-            <Stack.Screen name="(tabs)" />
-          ) : (
-            // Si el usuario NO ha iniciado sesión, mostrar la autenticación
-            <Stack.Screen name="(auth)" />
-          )}
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }

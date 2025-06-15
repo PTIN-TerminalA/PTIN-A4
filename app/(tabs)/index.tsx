@@ -45,6 +45,7 @@ export default function HomeScreen() {
   const {location: userLocation} =  useUserLocation(4000);
   if (userLocation?.y === 0.8879929798169748) {
     userLocation.y = 0.86;
+    userLocation.x = 0.3066077922077928
   }
   const { services } = useServices();
 
@@ -145,7 +146,7 @@ export default function HomeScreen() {
   // console.log("Desti:", desti);
   // console.log("RideStage:", rideStage);
   // const routeData = { route, temps };
-  const routeData = useRouteDestination(origen, desti);
+  const [routeData, setRouteData] = useState<any>({ route: [], temps: null });
 
   const handlerScannerPress = () => {
     {
@@ -221,6 +222,9 @@ export default function HomeScreen() {
           console.log("PRESSED")
           if (rideStage === "select") {
             setModalVisible(true);
+            // Only calculate route when ThemedPressable is pressed in select stage
+            const newRouteData = useRouteDestination(origen, desti);
+            setRouteData(newRouteData);
           } else if (rideStage === "preview") {
             console.log("Already on preview")
             setConfirmedService(previewService);

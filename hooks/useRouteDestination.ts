@@ -19,6 +19,10 @@ export function useRouteDestination(origin: Point | null, destination: Point | n
   const [route, setRoute] = useState<Point[]>([]);
   const [temps, setTemps] = useState<string | null>(null);
 
+  if (origin?.x !== 0.5066077922077928) {
+    console.log("ORIGIN:", origin);
+    console.log("DESTINATION:", destination);
+  }
   useEffect(() => {
     if (!origin || !destination) {
       setRoute([]);

@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { registerUser, loginUser, getUserProfile, User } from '@/api/auth';
 
@@ -18,6 +18,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
+
+  // Force initial state to be unauthenticated
+  useEffect(() => {
+    setUser(null);
+    setToken(null);
+    router.replace('/(auth)/login');
+  }, []);
 
   const register = async (
     email: string,
