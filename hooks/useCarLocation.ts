@@ -18,7 +18,7 @@ export function useCarLocation(carId: string | null) {
 
     const fetchLocation = async () => {
       try {
-        const response = await fetch(`${API_URL}/cotxe/${carId}/status`);
+        const response = await fetch("https://flysy.software/cotxe/${carId}/status");
         if (!response.ok) {
           throw new Error(`Error ${response.status}: No s'ha pogut obtenir la ubicació del cotxe.`);
         }

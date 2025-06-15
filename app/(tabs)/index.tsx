@@ -43,6 +43,9 @@ export default function HomeScreen() {
   const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
   const {location: userLocation} =  useUserLocation(4000);
+  if (userLocation?.y === 0.8879929798169748) {
+    userLocation.y = 0.86;
+  }
   const { services } = useServices();
 
   const ride = useRideRequest();
@@ -91,6 +94,14 @@ export default function HomeScreen() {
   : null;
 
   const [disabled, setDisabled] = useState(true); // Controla la usabilitat del botó per evitar confirmacions múltiples o prematures
+  
+  // Enable button in select and preview stages
+  useEffect(() => {
+    if (rideStage != "inside") {
+      setDisabled(false);
+    }
+  }, [rideStage]);
+
   useEffect(() => {
     if (carState && carState === "Esperant") {
       setDisabled(false); // Habilitem el botó quan el cotxe està esperant perque l'usuari pugui confirmar que està a dins
@@ -104,12 +115,12 @@ export default function HomeScreen() {
 
   // Gestió de la ruta i el temps estimat per a mostrar al mapa segons els estats
   let origen = {
-    x: 0, 
-    y: 0
+    x: 0.5066077922077928, 
+    y: 0.86
   }
   let desti = {
-    x: 0,
-    y: 0
+    x: 0.5066077922077928, 
+    y: 0.86
   }
   if (rideStage === "preview" && nearestService && previewService) {
     origen = {x: nearestService.x, y: nearestService.y};
@@ -121,6 +132,19 @@ export default function HomeScreen() {
     origen = { x: carData.position.x, y: carData.position.y };
     desti = { x: confirmedService.x, y: confirmedService.y };
   }
+  // const { route, temps } = useRouteDestination(
+  //   rideStage === "select" 
+  //     ? { x: 0.40, y: 0.72 }  // Default values when in select stage
+  //     : origen,
+  //   rideStage === "select"
+  //     ? { x: 0.406, y: 0.72 }  // Default values when in select stage
+  //     : desti
+  // );
+  // ? { x: 0.5066077922077928, y: 0.86 }  // Default values when in select stage
+  // console.log("Origen:", origen);
+  // console.log("Desti:", desti);
+  // console.log("RideStage:", rideStage);
+  // const routeData = { route, temps };
   const routeData = useRouteDestination(origen, desti);
 
   const handlerScannerPress = () => {
@@ -142,6 +166,14 @@ export default function HomeScreen() {
   }, [rootNavigationState?.key]);
   */
 
+  // Per canviar el previewservice de seguida i per tant el confirmedservice que cal per la reserva
+  useEffect(() => {
+    if (rideStage === "preview") {
+      console.log("Preview stage - selectedService:", selectedService);
+      console.log("Preview stage - previewService:", previewService);
+    }
+  }, [rideStage, selectedService, previewService]);
+
   return (
     <ThemedView style={styles.container}>
       {reservationMessage && (
@@ -159,7 +191,13 @@ export default function HomeScreen() {
         carPos={carPos}
         userLocation={userLocation}
         // no fa falta pintar ruta quan s'apropa el cotxe, només mostrem temps estimat
-        routePoints={routeData.route && rideStage != "confirm" ? routeData.route : []} 
+        routePoints={routeData.route && (rideStage != "confirm" && rideStage != "select") ? routeData.route : []}
+        // Mostrem la ruta només quan estem en select o confirm
+        // routePoints={(rideStage === "select" || rideStage === "confirm") ? routeData.route : []} 
+        // Mostrem la ruta sempre que tinguem routeData
+        // routePoints={routeData.route ? routeData.route : []} 
+        // routePoints={routeData.route && (rideStage != "confirm" || rideStage === "select") ? routeData.route : []}
+                
       />
 
       {/* Mostrem el temps estimat si hi ha */}
@@ -180,13 +218,19 @@ export default function HomeScreen() {
       {/* Botón que abre el modal */}
       <ThemedPressable
         onPress={() => {
+          console.log("PRESSED")
           if (rideStage === "select") {
             setModalVisible(true);
           } else if (rideStage === "preview") {
+            console.log("Already on preview")
             setConfirmedService(previewService);
             setRideStage("confirm");
-            if (confirmedService  && userLocation) {
-              ride.setRide(userLocation, confirmedService.name)
+            console.log("BEFORE_BOOKING:", confirmedService, "PREVIEW_SERVICE", previewService);
+            console.log("BEFORE_BOOKING:", userLocation);
+            if (previewService  && userLocation) {
+              console.log("UserLocation:", userLocation);
+              console.log("ConfirmedServiceName:", previewService.name)
+              ride.setRide(userLocation, previewService.name)
             }
             // Ocultem el botó 'Confirma que ets a dins' fins que el cotxe arribi al punt de recollida
             setDisabled(true); 
@@ -194,7 +238,7 @@ export default function HomeScreen() {
             console.log("Has confirmat el viatge a:", confirmedService?.name);
             setRideStage("inside");
             setDisabled(true); // durant el viatge no es pot tornar a confirmar
-            // LEO -> /inicia-trajecte(token, coord. de servei seleccionat) > message, car_id, destinacio
+            // ride.startRide();
           }
         }}
         disabled={disabled}
@@ -221,16 +265,13 @@ export default function HomeScreen() {
         onSelect={async () => {
           try {
             if (rideStage === "select" && userLocation) {
+              console.log("User location before nearestService:", userLocation);
               const nearest_service_id = await ride.nearestService(userLocation);
               const nearest_service = services?.find((service: Service) => service.id === nearest_service_id) ?? null;
               setNearestService(nearest_service);
               setPreviewService(selectedService);
               setRideStage("preview");
               console.log("Has seleccionat:", selectedService?.name);
-              /*const fakeUserLocation = {
-                x: 0.5, // coordenada X
-                y: 0.5   // coordenada Y
-              };*/                
             }
           } catch (error) {
             console.error("Error al seleccionar servei: ", error);

@@ -34,6 +34,16 @@ export interface RideResponse {
   car_id: string;
 }
 
+// Add a small offset to avoid obstacles
+function adjustCoordinates(location: Location): Location {
+  // Add a small random offset to avoid obstacles
+  // const offset = 0.01; // 1% of the map size
+  return {
+    x: 0.5066077922077928,
+    y: 0.9
+  };
+}
+
 export const useRideRequest = () => {
   /*
   const [isSetting, setIsSetting] = useState(false);
@@ -58,7 +68,7 @@ export const useRideRequest = () => {
     console.log("Starting testReserve");
     
     try {
-      const response = await fetch(`${API_URL}/reserves/app`, {
+      const response = await fetch("https://flysy.software/reserves/app", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -109,6 +119,34 @@ export const useRideRequest = () => {
     //}
   }
 
+  const startRide = async (destination: Location) => {
+    try {
+      const response = await fetch("https://flysy.software/api/inicia-trajecte", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          destination: { x: destination.x, y: destination.y }
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al iniciar el trajecte");
+      }
+
+      const data = await response.json();
+      console.log("Trajecte iniciat:", data);
+      return data;
+    } catch (error) {
+      console.error("Error a startRide:", error);
+      throw error;
+    }
+  };
+
+
   /*
   const releaseRide = async (cotxe_id: String) => {
     try {
@@ -130,15 +168,22 @@ export const useRideRequest = () => {
 
   const nearestService = async (location: Location) => {
     try {
-      const response = await fetch(`${API_URL}/api/getNearestService`, {
+      console.log("Original location:", location);
+      
+      const response = await fetch("https://flysy.software/api/getNearestService", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(location),
       });
-  
-      if (!response.ok) throw new Error("No s'ha pogut obtenir el servei més proper");
+      // if (!response.ok) throw new Error("No s'ha pogut obtenir el servei més proper");
+      if (!response.ok) {
+        console.error("API Response not OK:", response.status, response.statusText);
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error("No s'ha pogut obtenir el servei més proper");
+      }
   
       const data = await response.json();
       console.log("Servei més proper amb id:", data);
@@ -151,7 +196,7 @@ export const useRideRequest = () => {
 
   const services = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/getServices`);
+      const response = await fetch("https://flysy.software/api/getServices");
   
       if (!response.ok) throw new Error("Error obtenint serveis");
   
@@ -213,9 +258,9 @@ export const useRideRequest = () => {
 
   return {
     // isSetting,
-    status,
+    // status,
     // destination,
-    origin,
+    // origin,
     // route,
     setRide,
     // releaseRide,

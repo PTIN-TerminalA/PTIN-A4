@@ -12,9 +12,11 @@ export interface RouteData {
 export async function getRoutePoints(
   origin: Point, destination: Point, signal?: AbortSignal): 
   Promise<RouteData | null> {
+  // console.log("Origin:", origin);
+  // console.log("Destination:", destination);
 
   try {
-    const response = await fetch(`${API_URL}/api/shortest-path`, {
+    const response = await fetch("https://flysy.software/api/shortest-path", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +28,9 @@ export async function getRoutePoints(
     });
     
     if (!response.ok) {
-      console.error("Error del servidor:", response.status);
+      // console.error("Error del servidor:", response.status);
+      const errorData = await response.json();
+      console.error("Error del servidor:", response.status, errorData.detail);
       return null;
     }
 
@@ -37,6 +41,8 @@ export async function getRoutePoints(
     if (error.name === 'AbortError') {
       console.log("Petició cancel·lada");
     } else {
+      console.log("Origin:", origin);
+      console.log("Destination:", destination);
       console.error("Error al cridar a la API:", error);
     }
     return null;

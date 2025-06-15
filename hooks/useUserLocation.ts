@@ -20,7 +20,7 @@ export function useUserLocation(scanInterval = 3000) {
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {
       //console.log("Crida getUserPosition des de A4", measurements)
-      const response = await fetch(`${API_URL}/api/getUserPosition`, {
+      const response = await fetch("https://flysy.software/api/getUserPosition", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
