@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -22,7 +23,8 @@ import { useRideRequest } from "@/hooks/useRideRequest";
 import { useRouteDestination } from "@/hooks/useRouteDestination"; //fake route
 import { ThemedView } from "@/components/ThemedView";
 import { useNFCListener } from "@/hooks/useNFCListener";
-import { ServiceProvider } from "@/contexts/ServiceContext";
+import { useServiceContext } from "@/contexts/ServiceContext";
+import { useTags } from "@/hooks/useTags";
 
 const localImage = require("@/assets/images/planol.png");
 
@@ -43,7 +45,8 @@ export default function HomeScreen() {
   const { height } = Dimensions.get("window");
   const [modalVisible, setModalVisible] = useState(false);
   const {location: userLocation} =  useUserLocation(4000);
-  const { services } = useServices();
+  const { services, loading: servicesLoading } = useServiceContext();
+  const { tags, loading: tagsLoading } = useTags();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   //Una nou estat pel servei al que sí volem anar i no seleccionem i prou.
   //Pel cas d'un viatge on demanem cap a un destí i abans de confirmar mirem 
@@ -110,7 +113,7 @@ export default function HomeScreen() {
   
   const routePoints = useRouteDestination( //fake route
      userLocation ?? null,
-     confirmedService ? { x: confirmedService.x, y: confirmedService.y } : null,
+     confirmedService ? { x: confirmedService.location_x, y: confirmedService.location_y } : null,
   );
   
   // const carLocation = useCarLocation(); //Usamos la asignació de abajo para que la imagen del coche vaya hasta el destino.
@@ -123,6 +126,14 @@ export default function HomeScreen() {
     }
   }, [rootNavigationState?.key]);
 
+  if (servicesLoading || tagsLoading) {
+    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+  }
+
+  if (!services) {
+    return <ThemedText>Error loading services</ThemedText>;
+  }
+  console.log("Rendering services:", services?.length);
   return (
     <ThemedView style={styles.container}>
       {reservationMessage && (
@@ -183,7 +194,7 @@ export default function HomeScreen() {
           <Image 
             source={require('../../assets/images/Icons/car.png')} 
             style={{width: 40, height: 40, marginRight: 25, 
-            tintColor: useColorScheme() == 'dark' ? Colors.dark.text : Colors.light.text}}/>
+            tintColor: colorScheme == 'dark' ? Colors.dark.text : Colors.light.text}}/>
           {/* <ThemedText type="bold">Selecciona un destí</ThemedText> */}
           {rideStage === "select" && <ThemedText type="bold">Selecciona un destí</ThemedText>}
           {rideStage === "confirm" && <ThemedText type="bold">Confirma el viatge</ThemedText>}

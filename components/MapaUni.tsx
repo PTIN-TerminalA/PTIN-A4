@@ -49,7 +49,6 @@ const MapaUni: React.FC<Props> = ({
   userLocation,
   routePoints
 }) => {
-
   const [carPositions, setCarPositions] = useState<Car[]>([]);
 
   //Genera coches con posiciones aleatorias alrededor del centro
@@ -84,7 +83,9 @@ const MapaUni: React.FC<Props> = ({
 
     return () => clearInterval(interval);
   }, []);
-
+  {/*services?.forEach(service => {
+    console.log('Service position:', service.location_x, service.location_y);
+  });*/} 
   return (
     <ThemedView style={styles.container}>
       <ImageZoom
@@ -106,17 +107,17 @@ const MapaUni: React.FC<Props> = ({
             style={{ width: displayedWidth, height: screen.height }}
             resizeMode="cover"
           />
-
           {services &&
             services.map((service) => (
               <MapMarker
                 key={service.id}
-                x={service.x}
-                y={service.y}
+                x={service.location_x * imageWidth}
+                y={service.location_y * imageHeight}
                 scale={scale}
                 onPress={() => onServicePress(service)}
               />
             ))}
+
 
           {/* Puntos coches 
           {carPositions.map((car, index) => (

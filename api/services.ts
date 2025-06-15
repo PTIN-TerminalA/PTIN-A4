@@ -5,6 +5,7 @@ import {
   Tag,
   Valoration,
   Schedule,
+  RawService,
 } from "@/constants/mocks/mockTypes";
 
 const fetchJson = async <T>(url: string, options?: RequestInit): Promise<T> => {
@@ -14,7 +15,7 @@ const fetchJson = async <T>(url: string, options?: RequestInit): Promise<T> => {
 };
 
 export async function getServices(): Promise<Service[]> {
-  const rawServices = await fetchJson<Service[]>(`${API_URL}/api/getServices`);
+  const rawServices = await fetchJson<RawService[]>(`${API_URL}/api/getServices`);
 
   const fullServices = await Promise.all(
     rawServices.map(async (service) => {
@@ -48,6 +49,8 @@ export async function getServices(): Promise<Service[]> {
 
       return {
         ...service,
+        location_x: parseFloat(service.location_x),
+        location_y: parseFloat(service.location_y),
         tags,
         valorations,
         schedules,
