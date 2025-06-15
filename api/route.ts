@@ -48,3 +48,37 @@ export async function getRoutePoints(
     return null;
   }
 }
+
+export async function sendRouteRating(
+  scheduled_time: string,
+  rating: number,
+  review: string,
+  token: string
+): Promise<void> {
+  try {
+    const response = await fetch("https://flysy.software/api/route-rate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        scheduled_time,
+        rating,
+        comment: review,
+      }),
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      console.error(response.status, message);
+      return;
+    }
+
+    return;
+
+  } catch (error: any) {
+    console.error("Error al enviar la valoració:", error);
+    throw error;
+  }
+}

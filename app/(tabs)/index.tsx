@@ -24,6 +24,9 @@ import { ThemedView } from "@/components/ThemedView";
 import { useNFCListener } from "@/hooks/useNFCListener";
 import { getRoutePoints } from "@/api/route";
 
+import { RatingModal } from '@/components/RatingModal';
+import { useAuth } from "@/hooks/useAuth";
+
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
@@ -49,19 +52,26 @@ export default function HomeScreen() {
   }
   const { services } = useServices();
 
-  const ride = useRideRequest();
-  const { rideResponse } = useRideRequest();
-  const {reservationMessage} = ride;
+  const {
+    rideResponse,
+    reservationMessage,
+    nearestService,
+    setRide,
+    
+  } = useRideRequest();
 
   const [rideStage, setRideStage] = useState<"select" | "preview" | "confirm" | "inside">("select");
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [previewService, setPreviewService] = useState<Service | null>(null);
   const [confirmedService, setConfirmedService] = useState<Service | null>(null); 
   // const [startingTrip, setStartingTrip] = useState(false);
-  const [nearestService, setNearestService] = useState<Service | null>(null); 
+  const [nearest, setNearestService] = useState<Service | null>(null); 
   
   const { tagId } = useNFCListener();
   const [car, setCar] = useState("");
+
+  const { token } = useAuth();
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
   
   
   useEffect(() => {
@@ -109,7 +119,7 @@ export default function HomeScreen() {
       alert("El cotxe t'espera al punt de recollida.");
     } else if (carState && carState === "Disponible") { // El cotxe està disponible per a un nou viatge PERQUÈ JA HEM ARRIBAT AL NOSTRE DESTÍ
       // LEO -> mostrat missatge de confirmació que hem arribat al destí
-      // MARICARMEN -> avaluar servei de Flysy
+      setRatingModalVisible(true); // valorar ruta
       setDisabled(false); // Tornem a habilitar el botó per a que l'usuari pugui seleccionar un nou destí
     }
   }, [carState]);
@@ -123,12 +133,12 @@ export default function HomeScreen() {
     x: 0.5066077922077928, 
     y: 0.86
   }
-  if (rideStage === "preview" && nearestService && previewService) {
-    origen = {x: nearestService.x, y: nearestService.y};
+  if (rideStage === "preview" && nearest && previewService) {
+    origen = {x: nearest.x, y: nearest.y};
     desti = {x: previewService.x, y: previewService.y};
-  } else if (rideStage === "confirm" && carData && nearestService) {
+  } else if (rideStage === "confirm" && carData && nearest) {
     origen = { x: carData.position.x, y: carData.position.y };
-    desti = { x: nearestService.x, y: nearestService.y };
+    desti = { x: nearest.x, y: nearest.y };
   } else if (rideStage === "inside" && carData && confirmedService) {
     origen = { x: carData.position.x, y: carData.position.y };
     desti = { x: confirmedService.x, y: confirmedService.y };
@@ -234,7 +244,7 @@ export default function HomeScreen() {
             if (previewService  && userLocation) {
               console.log("UserLocation:", userLocation);
               console.log("ConfirmedServiceName:", previewService.name)
-              ride.setRide(userLocation, previewService.name)
+              setRide(userLocation, previewService.name)
             }
             // Ocultem el botó 'Confirma que ets a dins' fins que el cotxe arribi al punt de recollida
             setDisabled(true); 
@@ -259,8 +269,14 @@ export default function HomeScreen() {
           {rideStage === "inside" && <ThemedText type="bold">Confirma que ets a dins</ThemedText>}
           </View>
       </ThemedPressable>
-
-
+      
+      {/* Modal de valoració */}
+      <RatingModal
+        visible={ratingModalVisible}
+        onClose={() => setRatingModalVisible(false)}
+        token={token? token : ""}
+        scheduledTime={rideResponse?.data?.scheduled_time ?? ""}
+      />
 
       {/* Modal personalizado */}
       <InfoModal
@@ -270,7 +286,7 @@ export default function HomeScreen() {
           try {
             if (rideStage === "select" && userLocation) {
               console.log("User location before nearestService:", userLocation);
-              const nearest_service_id = await ride.nearestService(userLocation);
+              const nearest_service_id = await nearestService(userLocation);
               const nearest_service = services?.find((service: Service) => service.id === nearest_service_id) ?? null;
               setNearestService(nearest_service);
               setPreviewService(selectedService);
