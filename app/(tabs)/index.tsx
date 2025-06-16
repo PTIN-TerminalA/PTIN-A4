@@ -156,7 +156,8 @@ export default function HomeScreen() {
   // console.log("Desti:", desti);
   // console.log("RideStage:", rideStage);
   // const routeData = { route, temps };
-  const [routeData, setRouteData] = useState<any>({ route: [], temps: null });
+  // const [routeData, setRouteData] = useState<any>({ route: [], temps: null });
+  const routeData = useRouteDestination(origen, desti);
 
   const handlerScannerPress = () => {
     {
@@ -233,8 +234,8 @@ export default function HomeScreen() {
           if (rideStage === "select") {
             setModalVisible(true);
             // Only calculate route when ThemedPressable is pressed in select stage
-            const newRouteData = useRouteDestination(origen, desti);
-            setRouteData(newRouteData);
+            // const newRouteData = useRouteDestination(origen, desti);
+            // setRouteData(newRouteData);
           } else if (rideStage === "preview") {
             console.log("Already on preview")
             setConfirmedService(previewService);
@@ -291,8 +292,7 @@ export default function HomeScreen() {
               setNearestService(nearest_service);
               setPreviewService(selectedService);
               setRideStage("preview");
-              console.log("Has seleccionat:", selectedService?.name);
-            }
+              console.log("Has seleccionat:", selectedService?.name);                       }
           } catch (error) {
             console.error("Error al seleccionar servei: ", error);
           } finally {
