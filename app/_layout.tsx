@@ -4,7 +4,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, Redirect } from "expo-router";
+import { Slot, Stack, Redirect } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -12,6 +12,8 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useFlightNotifications } from '@/hooks/useFlightNotifications';
+import { ServiceProvider } from "@/contexts/ServiceContext";
+import { useRecommendationNotifications } from "@/hooks/useRecommendationNotifications";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -37,7 +39,9 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <MainLayout />
+      <ServiceProvider>
+        <MainLayout />
+      </ServiceProvider>
     </AuthProvider>
   );
 }
@@ -45,14 +49,18 @@ export default function RootLayout() {
 function MainLayout() {
   const { user } = useAuth();
   const colorScheme = useColorScheme();
-
   useFlightNotifications();
+  useRecommendationNotifications();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
+        {user ? (
+          <Stack.Screen name="(tabs)" />
+        ) : (
+          <Stack.Screen name="(auth)" />
+        )}
+        <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

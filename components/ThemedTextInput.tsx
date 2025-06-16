@@ -1,4 +1,4 @@
-import { TextInput, type TextInputProps} from "react-native";
+import { TextInput, type TextInputProps } from "react-native";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Styles } from "@/constants/Styles";
@@ -28,12 +28,11 @@ export function ThemedTextInput({
         type === "defaultSemiBold" ? FontStyles.defaultSemiBold : undefined,
         type === "subtitle" ? FontStyles.subtitle : undefined,
         type === "link" ? FontStyles.link : undefined,
-        style, 
-        {borderWidth: 1},
-        {borderColor: color}
+        style,
+        { borderWidth: 1 },
+        { borderColor: color },
       ]}
       placeholderTextColor={color}
-      
       {...rest}
     />
   );

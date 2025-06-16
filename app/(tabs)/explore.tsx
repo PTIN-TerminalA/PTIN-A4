@@ -1,17 +1,25 @@
-import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, ScrollView } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, Link } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors'
-import { services } from "@/constants/mocks/services";
-import { tags } from '@/constants/mocks/services';
+//import { services } from "@/constants/mocks/services";
+//import { tags } from '@/constants/mocks/services';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
-import useAverageValoration from '@/hooks/useAverageValoration';
+import getAverageValoration from '@/hooks/useAverageValoration';
 import StarRating from '@/components/StarRating';
+import { useTags } from '@/hooks/useTags';
+import { useServiceContext } from '@/contexts/ServiceContext';
 
 export default function ServiceScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() || 'light';
+  const { services, loading: servicesLoading } = useServiceContext();
+  const { tags, loading: tagsLoading } = useTags();
+
+  if (servicesLoading || tagsLoading) {
+    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+  }
 
   const handleServicePress = (id: number) => {
     router.push({
@@ -19,7 +27,6 @@ export default function ServiceScreen() {
       params: { id },
     })
   }
-
 
   return (
     <View style={[styles.background, { backgroundColor: Colors[colorScheme].box }]}>
@@ -71,7 +78,7 @@ export default function ServiceScreen() {
               />
             </TouchableOpacity>
 
-            {tags.map((tag, index) => (
+            {tags?.map((tag, index) => (
               <TouchableOpacity style={[
                 styles.searchBarTagBtn,
                 { borderColor: Colors[colorScheme].box_border },
@@ -95,8 +102,8 @@ export default function ServiceScreen() {
           contentContainerStyle={styles.scrollContainer}
         >
           <View style={{ height: 15 }} />
-          {services.map((service) => {
-            const { average, count } = useAverageValoration(service.valorations)
+          {services?.map((service) => {
+            const { average, count } = getAverageValoration(service.valorations ?? [])
             return (
               <View style={styles.scrollContent} key={service.id}>
                 <Link
@@ -119,7 +126,7 @@ export default function ServiceScreen() {
 
                     <View style={styles.serviceInfo}>
                       <View style={styles.serviceTags}>
-                        {service.tags.map((tag, index) => (
+                        {Array.isArray(service.tags) && service.tags.map((tag, index) => (
                           <View style={
                             [styles.tagStyle,
                             { backgroundColor: Colors[colorScheme].background },

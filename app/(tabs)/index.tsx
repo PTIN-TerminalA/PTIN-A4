@@ -5,11 +5,12 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import React, { useEffect, useState } from "react";
-import { router, useRootNavigationState } from "expo-router";
+import { router, useRootNavigationState, useLocalSearchParams } from "expo-router";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { Colors } from "@/constants/Colors";
 import { ThemedPressable } from "@/components/ThemedPressable";
@@ -26,13 +27,15 @@ import { getRoutePoints } from "@/api/route";
 
 import { RatingModal } from '@/components/RatingModal';
 import { useAuth } from "@/hooks/useAuth";
+import { useServiceContext } from "@/contexts/ServiceContext";
+import { useTags } from "@/hooks/useTags";
 
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
 const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile
 export function login() {
-  router.replace("/(auth)/login");
+  router.replace("/(auth)"); // /(auth)
 }
 
 export default function HomeScreen() {
@@ -50,7 +53,8 @@ export default function HomeScreen() {
     userLocation.y = 0.86;
     userLocation.x = 0.3066077922077928
   }
-  const { services } = useServices();
+  const { services, loading: servicesLoading } = useServiceContext();
+  const { tags, loading: tagsLoading } = useTags();
 
   const {
     rideResponse,
@@ -69,6 +73,36 @@ export default function HomeScreen() {
   
   const { tagId } = useNFCListener();
   const [car, setCar] = useState("");
+
+  const { gate, destinationName, fromNotification } = useLocalSearchParams();
+  const [triggeredFromNotification, setTriggeredFromNotification] = useState(false);
+
+  useEffect(() => {
+    // console.log("services: ", services);
+    // console.log("El servicio: ", gate);
+    // const fakeLocation = {
+    //   x: 0.5, 
+    //   y: 0.5
+    // };
+    // console.log("La ubicacion del usuario: ", userLocation);
+    if (fromNotification === 'true' && destinationName && gate && userLocation && !triggeredFromNotification && services && services.length > 0 ) {
+      // console.log("Iniciant reserva per notificació:", destinationName, gate);
+      setTriggeredFromNotification(true);
+      
+      //Busca un servei amb el mateix nom
+      const matchingService = services.find(s => s.name.toLowerCase() === (typeof gate === 'string' ? gate.toLowerCase() : ''));
+      console.log("El servicio: ", matchingService);
+      if (matchingService) {
+        setSelectedService(matchingService);
+        //setConfirmedService(matchingService);
+        setRideStage("select");
+        setRide(userLocation, matchingService.name);
+        setModalVisible(true); 
+      } else {
+        console.warn("No s'ha trobat un servei coincident per:", destinationName);
+      }
+    }
+  }, [fromNotification, destinationName, gate, services, userLocation, triggeredFromNotification]);
 
   const { token } = useAuth();
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
@@ -134,14 +168,14 @@ export default function HomeScreen() {
     y: 0.86
   }
   if (rideStage === "preview" && nearest && previewService) {
-    origen = {x: nearest.x, y: nearest.y};
-    desti = {x: previewService.x, y: previewService.y};
+    origen = {x: nearest.location_x, y: nearest.location_y};
+    desti = {x: previewService.location_x, y: previewService.location_y};
   } else if (rideStage === "confirm" && carData && nearest) {
     origen = { x: carData.position.x, y: carData.position.y };
-    desti = { x: nearest.x, y: nearest.y };
+    desti = { x: nearest.location_x, y: nearest.location_y };
   } else if (rideStage === "inside" && carData && confirmedService) {
     origen = { x: carData.position.x, y: carData.position.y };
-    desti = { x: confirmedService.x, y: confirmedService.y };
+    desti = { x: confirmedService.location_x, y: confirmedService.location_y };
   }
   // const { route, temps } = useRouteDestination(
   //   rideStage === "select" 
@@ -169,14 +203,13 @@ export default function HomeScreen() {
     });
   };
 
-  /*
-  useEffect(() => {
-    if (!isLoggedIn && rootNavigationState?.key) {
-      // no crec que sigui el millor approach
-      login();
-    }
-  }, [rootNavigationState?.key]);
-  */
+  
+  // useEffect(() => {
+  //   if (!isLoggedIn && rootNavigationState?.key) {
+  //     // no crec que sigui el millor approach
+  //     login();
+  //   }
+  // }, [rootNavigationState?.key]);
 
   // Per canviar el previewservice de seguida i per tant el confirmedservice que cal per la reserva
   useEffect(() => {
@@ -186,6 +219,14 @@ export default function HomeScreen() {
     }
   }, [rideStage, selectedService, previewService]);
 
+  if (servicesLoading || tagsLoading) {
+    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+  }
+
+  if (!services) {
+    return <ThemedText>Error loading services</ThemedText>;
+  }
+  console.log("Rendering services:", services?.length);
   return (
     <ThemedView style={styles.container}>
       {reservationMessage && (
@@ -263,7 +304,7 @@ export default function HomeScreen() {
           <Image 
             source={require('../../assets/images/Icons/car.png')} 
             style={{width: 40, height: 40, marginRight: 25, 
-            tintColor: useColorScheme() == 'dark' ? Colors.dark.text : Colors.light.text}}/>
+            tintColor: colorScheme == 'dark' ? Colors.dark.text : Colors.light.text}}/>
           {/* <ThemedText type="bold">Selecciona un destí</ThemedText> */}
           {rideStage === "select" && <ThemedText type="bold">Selecciona un destí</ThemedText>}
           {rideStage === "preview" && <ThemedText type="bold">Confirma el viatge</ThemedText>}

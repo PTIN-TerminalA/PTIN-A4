@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
-import { Service } from "@/constants/mocks/mockTypes";
-import { getServices } from "@/api/services";
+import { Tag } from "@/constants/mocks/mockTypes";
+import { getTags } from "@/api/services";
 
 
-export const useServices = () => {
-  const [services, setServices] = useState<Service[] | null>(null);
+export const useTags = () => {
+  const [tags, setTags] = useState<Tag[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Simulem crida amb un timeout per semblar que ve d'una API
-    const fetchServices = async () => {
+    const fetchTags = async () => {
       try {
-        const fetchedServices = await getServices(); // no te timeout simplement espera
-        setServices(fetchedServices);
+        const fetchedTags = await getTags(); // no te timeout simplement espera
+        setTags(fetchedTags);
       } catch (err) {
         console.error(err);
         setError("Error carregant els serveis");
@@ -22,12 +22,12 @@ export const useServices = () => {
       }
     };
 
-    fetchServices();
+    fetchTags();
     
   }, []);
 
   return {
-    services,
+    tags,
     loading,
     error,
   };
@@ -38,7 +38,7 @@ export const useServices = () => {
 
     const timeout = setTimeout(() => {
       try {
-        setServices(services);
+        setTags(Tags);
         setLoading(false);
       } catch (err) {
         setError("Error carregant els serveis");

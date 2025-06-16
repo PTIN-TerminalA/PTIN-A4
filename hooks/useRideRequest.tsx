@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Service } from "@/constants/mocks/mockTypes";
 import { useCarLocation } from "@/hooks/useCarLocation";
 import { useUserLocation } from "@/hooks/useUserLocation";
-import { API_URL } from "@/constants/Api";
+import { API_URL } from "@/api/Api";
 import { request } from "react-native-permissions";
 import { useAuth } from "./useAuth";
 

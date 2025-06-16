@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import { router } from 'expo-router';
 import { BoardingPasses } from '@/flightData/boardingPassesInfoTest';
 
 export function useFlightNotifications() {
@@ -25,7 +26,37 @@ export function useFlightNotifications() {
           importance: Notifications.AndroidImportance.HIGH,
         });
       }
+
+      //Crear categoría de notificación con botón de acción
+      await Notifications.setNotificationCategoryAsync('boarding_notification', [
+        {
+          identifier: 'request_car',
+          buttonTitle: 'Demanar un cotxe',
+          options: {
+            opensAppToForeground: true,
+          },
+        },
+      ]);
     };
+
+    const handleNotificationResponse = (response: Notifications.NotificationResponse) => {
+      if (response.actionIdentifier === 'request_car') {
+        const { gate, destinationName } = response.notification.request.content.data;
+
+        if (gate && destinationName) {
+          router.push({
+            pathname: '/(tabs)',
+            params: {
+              fromNotification: 'true',
+              gate,
+              destinationName,
+            },
+          });
+        }
+      }
+    };
+
+    const responseSubscription = Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
 
     setupNotifications();
 
@@ -43,6 +74,13 @@ export function useFlightNotifications() {
             content: {
               title: "Porta d'embarcament oberta",
               body: `L'embarcament per al teu vol ${pass.route.destinationName} ha començat a la porta ${pass.route.gate}.`,
+              categoryIdentifier: 'boarding_notification',
+              data: {
+                url: `/(tabs)`,
+                gate: pass.route.gate, //gate: 'Starbucks',
+                destinationName: pass.route.destinationName,
+                fromNotification: 'true',
+              },
             },
             trigger: null,
           });
@@ -60,6 +98,9 @@ export function useFlightNotifications() {
       });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      responseSubscription.remove();
+    };
   }, []);
 }

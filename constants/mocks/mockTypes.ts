@@ -21,20 +21,36 @@ export type Schedule = {
   closing_hour: string;
 };
 
+export type RawService = {
+  id: number;
+  name: string;
+  description: string;
+  link?: string;
+  ad_path?: string;
+  avg_price?: number;
+  location_x: string;
+  location_y: string;
+  status?: string;
+  offer?: string;
+};
+
+export type Location = {
+  x: number;
+  y: number;
+};
+
 export type Service = {
   id: number;
   name: string;
   description: string;
-  location: string;
-  location_x: number; // coordenades API
-  location_y: number; // coordenades API
   link?: string;
-  ad_path: string;
-  x: number; // Coordenada X al mapa
-  y: number; // Coordenada Y al mapa
-  tags: Tag[];
-  valorations: Valoration[];
-  ticket: Ticket | null;
-  price: Price | null;
-  schedules: Schedule[];
+  ad_path?: string;
+  avg_price?: number;
+  location_x: number;
+  location_y: number;
+  status?: string;
+  offer?: string;
+  schedules?: Schedule[];
+  valorations?: Valoration[];
+  tags?: Tag[];
 };
