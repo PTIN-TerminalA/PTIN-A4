@@ -1,96 +1,121 @@
-import { View, Image, StyleSheet, TouchableOpacity, useColorScheme, ScrollView, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, Link } from 'expo-router';
-import { ThemedText } from '@/components/ThemedText';
-import { Colors } from '@/constants/Colors'
+import {
+  View,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  useColorScheme,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter, Link } from "expo-router";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
 //import { services } from "@/constants/mocks/services";
 //import { tags } from '@/constants/mocks/services';
-import { ThemedTextInput } from '@/components/ThemedTextInput';
-import getAverageValoration from '@/hooks/useAverageValoration';
-import StarRating from '@/components/StarRating';
-import { useTags } from '@/hooks/useTags';
-import { useServiceContext } from '@/contexts/ServiceContext';
+import { ThemedTextInput } from "@/components/ThemedTextInput";
+import getAverageValoration from "@/hooks/useAverageValoration";
+import StarRating from "@/components/StarRating";
+import { useTags } from "@/hooks/useTags";
+import { useServiceContext } from "@/contexts/ServiceContext";
+import { Searchbar, Chip } from "react-native-paper";
+import { useState } from "react";
 
 export default function ServiceScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme() || 'light';
+  const colorScheme = useColorScheme() || "light";
   const { services, loading: servicesLoading } = useServiceContext();
   const { tags, loading: tagsLoading } = useTags();
+  const [searchQuery, setSearchQuery] = useState(""); // Add search state
+  const [activeTag, setActiveTag] = useState<string | null>(null); // Add active tag state
 
   if (servicesLoading || tagsLoading) {
-    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+    return (
+      <ActivityIndicator
+        size="large"
+        style={{ flex: 1, justifyContent: "center" }}
+      />
+    );
   }
+
+  const filteredServices = services?.filter((service) => {
+    const matchesSearch =
+      service.name?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false;
+    const matchesTag =
+      !activeTag ||
+      (service.tags?.some((tag) => tag.name === activeTag) ?? false);
+    return matchesSearch && matchesTag;
+  });
 
   const handleServicePress = (id: number) => {
     router.push({
-      pathname: '/serviceInfo',
+      pathname: "/serviceInfo",
       params: { id },
-    })
-  }
+    });
+  };
 
   return (
-    <View style={[styles.background, { backgroundColor: Colors[colorScheme].box }]}>
-      <SafeAreaView style={[styles.container]}>
-
+    <View
+      style={[styles.background, { backgroundColor: Colors[colorScheme].box }]}
+    >
+      <SafeAreaView edges={["top"]} style={[styles.container]}>
         {/* TOP BAR */}
-        <View style={[styles.topBarContainter]}>
+        <View
+          style={[
+            styles.searchContainer,
+            { backgroundColor: Colors[colorScheme].box },
+          ]}
+        >
+          <Searchbar
+            placeholder="Search services..."
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            style={[
+              styles.searchBar,
+              { backgroundColor: Colors[colorScheme].background },
+              { borderRadius: 30 },
+            ]}
+            iconColor={Colors[colorScheme].text}
+            placeholderTextColor={Colors.input_text}
+            inputStyle={{ color: Colors[colorScheme].text }}
+            elevation={2}
+          />
 
-          {/* TOP ROW */}
-          <View style={[styles.topBarStyle]}>
-            <ThemedTextInput
-              style={[styles.serchBarInput, { backgroundColor: Colors[colorScheme].background }]}
-              placeholder='Serveis'
-              placeholderTextColor={Colors.input_text}
-              autoCorrect={false}
-              autoCapitalize="none"
-            ></ThemedTextInput>
-            <TouchableOpacity style={[styles.searchBarIconBtn, { backgroundColor: Colors[colorScheme].button }]}>
-              <Image
-                source={colorScheme === 'dark' ?
-                  require('@/assets/images/Icons/search_darkmode.png') :
-                  require('@/assets/images/Icons/search_lightmode.png')
-                }
-                style={[styles.searchBarIcon]}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* BOTTOM ROW */}
+          {/* Tags filter row */}
           <ScrollView
-            style={styles.bottomBarScroll}
-            contentContainerStyle={[styles.bottomBarStyle]}
+            horizontal
             showsHorizontalScrollIndicator={false}
-            horizontal={true}
-            scrollEventThrottle={16}
+            contentContainerStyle={styles.tagsContainer}
           >
-            <TouchableOpacity
-              style={[
-                styles.searchBarFilterBtn,
-                { backgroundColor: Colors.primari }
-              ]}
-            >
-              <Image
-                source={colorScheme === 'dark' ?
-                  require('@/assets/images/Icons/filter_darkmode.png') :
-                  require('@/assets/images/Icons/filter_lightmode.png')
-                }
-                style={styles.searchBarFilterIcon}
-              />
-            </TouchableOpacity>
-
-            {tags?.map((tag, index) => (
-              <TouchableOpacity style={[
-                styles.searchBarTagBtn,
-                { borderColor: Colors[colorScheme].box_border },
-                { backgroundColor: Colors.secundari }
-              ]}
-                key={index}
-              >
-                <ThemedText style={[{ color: Colors.accent_primari }, { fontSize: 16 }]} type='bold'>{tag.name}</ThemedText>
-              </TouchableOpacity>
-
-            ))}
-
+            {tags
+              ?.filter((tag) => tag.name !== "sense preferencia")
+              ?.map((tag) => (
+                <Chip
+                  key={tag.name}
+                  mode="outlined"
+                  selected={activeTag === tag.name}
+                  onPress={() =>
+                    setActiveTag(activeTag === tag.name ? null : tag.name)
+                  }
+                  style={[
+                    styles.tagChip,
+                    {
+                      backgroundColor:
+                        activeTag === tag.name
+                          ? Colors.primari
+                          : Colors[colorScheme].background,
+                      borderColor: Colors[colorScheme].box_border,
+                      borderRadius: 16,
+                    },
+                  ]}
+                  textStyle={{
+                    color:
+                      activeTag === tag.name ? "#fff" : Colors.accent_primari,
+                  }}
+                >
+                  {tag.name}
+                </Chip>
+              ))}
           </ScrollView>
         </View>
 
@@ -102,122 +127,136 @@ export default function ServiceScreen() {
           contentContainerStyle={styles.scrollContainer}
         >
           <View style={{ height: 15 }} />
-          {services?.map((service) => {
-            const { average, count } = getAverageValoration(service.valorations ?? [])
+          {filteredServices?.map((service) => {
+            const { average, count } = getAverageValoration(
+              service.valorations ?? []
+            );
             return (
               <View style={styles.scrollContent} key={service.id}>
                 <Link
-                  href={{ pathname: '/serviceInfo', params: { id: service.id } }}
+                  href={{
+                    pathname: "/serviceInfo",
+                    params: { id: service.id },
+                  }}
                 >
                   <TouchableOpacity
-                    style={[styles.serviceBox, { backgroundColor: Colors[colorScheme].box }]}
+                    style={[
+                      styles.serviceBox,
+                      { backgroundColor: Colors[colorScheme].box },
+                    ]}
                     onPress={() => handleServicePress(service.id)}
                   >
-                    <View style={[styles.serviceImageBox, { backgroundColor: Colors.primari }]}>
+                    <View
+                      style={[
+                        styles.serviceImageBox,
+                        { backgroundColor: Colors.primari },
+                      ]}
+                    >
                       <Image
                         style={styles.serviceImage}
                         source={
-                          typeof service.ad_path === "string" ?
-                            { uri: service.ad_path } :
-                            service.ad_path
+                          typeof service.ad_path === "string"
+                            ? { uri: service.ad_path }
+                            : service.ad_path
                         }
                       />
                     </View>
 
                     <View style={styles.serviceInfo}>
                       <View style={styles.serviceTags}>
-                        {Array.isArray(service.tags) && service.tags.map((tag, index) => (
-                          <View style={
-                            [styles.tagStyle,
-                            { backgroundColor: Colors[colorScheme].background },
-                            { borderColor: Colors[colorScheme].box_border }
-                            ]} key={index}>
-
-                            <ThemedText
-                              style={[{ color: Colors.accent_primari }, { fontSize: 12 }]}
-                              type={'bold'}>{tag.name}
-                            </ThemedText>
-                          </View>
-                        ))}
+                        {Array.isArray(service.tags) &&
+                          service.tags.map((tag, index) => (
+                            <View
+                              style={[
+                                styles.tagStyle,
+                                {
+                                  backgroundColor:
+                                    Colors[colorScheme].background,
+                                },
+                                { borderColor: Colors[colorScheme].box_border },
+                              ]}
+                              key={index}
+                            >
+                              <ThemedText
+                                style={[
+                                  { color: Colors.accent_primari },
+                                  { fontSize: 12 },
+                                ]}
+                                type={"bold"}
+                              >
+                                {tag.name}
+                              </ThemedText>
+                            </View>
+                          ))}
                       </View>
 
                       {/* Name */}
-                      <ThemedText
-                        style={styles.serviceNameStyle}
-                        type={'bold'}>{service.name}
+                      <ThemedText style={styles.serviceNameStyle} type={"bold"}>
+                        {service.name}
                       </ThemedText>
 
                       {/* Rating */}
-                      <View
-                        style={[styles.serviceRateStyle]}
-                      >
+                      <View style={[styles.serviceRateStyle]}>
                         <StarRating rating={average}></StarRating>
-                        <ThemedText type='default' style={styles.ratingCount}>
+                        <ThemedText type="default" style={styles.ratingCount}>
                           ({count || 0})
                         </ThemedText>
                       </View>
-
                     </View>
-
                   </TouchableOpacity>
-
                 </Link>
-
               </View>
-
-            )
-
+            );
           })}
         </ScrollView>
       </SafeAreaView>
     </View>
-
   );
 }
 
 const styles = StyleSheet.create({
   background: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 
   topBarContainter: {
-    width: '100%',
+    width: "100%",
     height: 90,
-    alignSelf: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
+    alignSelf: "center",
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-evenly",
     elevation: 5,
   },
 
   topBarStyle: {
-    width: '90%',
-    height: '40%',
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    width: "90%",
+    height: "40%",
+    alignItems: "center",
+    alignSelf: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
 
   bottomBarScroll: {
-    width: '90%',
-    height: '40%',
-    alignSelf: 'center',
-    flexDirection: 'row',
+    width: "90%",
+    height: "40%",
+    alignSelf: "center",
+    flexDirection: "row",
   },
 
   bottomBarStyle: {
-    height: '70%',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    alignSelf: 'center',
-    flexDirection: 'row',
+    height: "70%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    alignSelf: "center",
+    flexDirection: "row",
   },
 
   serchBarInput: {
     flex: 1,
-    height: '90%',
+    height: "90%",
     borderRadius: 10,
     paddingStart: 16,
     marginRight: 8,
@@ -225,94 +264,94 @@ const styles = StyleSheet.create({
 
   searchBarIconBtn: {
     flex: 0,
-    height: '90%',
+    height: "90%",
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   searchBarIcon: {
-    resizeMode: 'contain',
-    height: '100%',
+    resizeMode: "contain",
+    height: "100%",
   },
 
   searchBarFilterBtn: {
     width: 46,
-    height: '90%',
+    height: "90%",
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 16,
   },
 
   searchBarTagBtn: {
-    height: '90%',
+    height: "90%",
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 4,
     marginRight: 8,
     borderWidth: 1,
   },
 
   searchBarFilterIcon: {
-    resizeMode: 'contain',
-    height: '100%',
+    resizeMode: "contain",
+    height: "100%",
   },
 
   container: {
     flex: 1,
-    width: '100%',
+    width: "100%",
   },
 
   scrollContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingBottom: 150,
   },
 
   linkStyle: {
-    width: '100%'
+    width: "100%",
   },
 
   scrollContent: {
     marginVertical: 16,
-    alignItems: 'center',
-    alignContent: 'center',
-    width: '90%'
+    alignItems: "center",
+    alignContent: "center",
+    width: "90%",
   },
 
   serviceBox: {
     height: 120,
-    width: '100%',
-    flexDirection: 'row',
+    width: "100%",
+    flexDirection: "row",
     borderRadius: 20,
   },
 
   serviceImageBox: {
-    width: '33%',
+    width: "33%",
     borderStartStartRadius: 20,
     borderBottomStartRadius: 20,
     padding: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden'
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   },
 
   serviceImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     borderTopLeftRadius: 20,
     borderBottomLeftRadius: 20,
   },
 
   serviceInfo: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
+    flexDirection: "column",
+    alignItems: "flex-start",
   },
 
   serviceTags: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
+    flexDirection: "row",
+    alignItems: "baseline",
   },
 
   tagStyle: {
@@ -320,8 +359,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     paddingHorizontal: 8,
     borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
   },
 
@@ -332,13 +371,30 @@ const styles = StyleSheet.create({
   },
 
   serviceRateStyle: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingStart: 8,
   },
   ratingCount: {
     fontSize: 12,
     marginLeft: 8,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
+  },
+
+  searchContainer: {
+    width: "100%",
+    padding: 16,
+    paddingBottom: 8,
+  },
+  searchBar: {
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  tagsContainer: {
+    paddingVertical: 4,
+  },
+  tagChip: {
+    marginRight: 8,
+    borderWidth: 1,
   },
 });
