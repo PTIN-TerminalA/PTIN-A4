@@ -25,7 +25,6 @@ export default function FlightsScreen() {
   const boxColor = isDarkMode ? Colors.dark.box : Colors.light.box;
   const textColor = isDarkMode ? Colors.dark.text : Colors.light.text;
   const borderColor = isDarkMode ? Colors.dark.box : Colors.light.box;
-  const buttonIcon = Colors[colorScheme ?? "light"].tint;
   const [showText, setShowText] = useState(true);
 
   const onPressScanner = () => {
@@ -87,19 +86,12 @@ export default function FlightsScreen() {
         <View style={{ height: 150 }} />
       </ScrollView>
       {/* Botó per escannejar */}
-      {/*<FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: buttonColor }]}
-        onPress={() => onPressScanner()}
-        color={buttonIcon}
-        size={"large"}
-        visible={showText}
-      />*/}
+      
       <AnimatedFAB
         icon={"plus"}
         label={"Afegeix un pase"}
         extended={showText}
-        onPress={() => console.log("Pressed")}
+        onPress={() => onPressScanner()}
         animateFrom={"right"}
         style={[styles.fab, { backgroundColor: buttonColor }]}
       />
