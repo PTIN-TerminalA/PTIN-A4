@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { View, StyleSheet, Image, Pressable } from "react-native";
 
@@ -8,7 +9,7 @@ type Props = {
   onPress?: () => void;
 };
 
-const ICON_SIZE = 64;
+const ICON_SIZE = 48;
 
 const MapMarker: React.FC<Props> = ({ x, y, scale, onPress }) => {
   return (
@@ -22,11 +23,7 @@ const MapMarker: React.FC<Props> = ({ x, y, scale, onPress }) => {
         },
       ]}
     >
-      <Image
-        source={require("@/assets/images/Icons/marker.png")}
-        style={styles.icon}
-        resizeMode="contain"
-      />
+      <MaterialCommunityIcons name="map-marker" size={ICON_SIZE} />
     </Pressable>
   );
 };

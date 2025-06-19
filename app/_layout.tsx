@@ -16,8 +16,9 @@ import { ServiceProvider } from "@/contexts/ServiceContext";
 import { useRecommendationNotifications } from "@/hooks/useRecommendationNotifications";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider as PaperProvider } from "react-native-paper";
-import * as NavigationBar from 'expo-navigation-bar';
+import * as NavigationBar from "expo-navigation-bar";
 import { setStatusBarHidden } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -36,7 +37,7 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
       NavigationBar.setPositionAsync("absolute");
       NavigationBar.setVisibilityAsync("visible");
-      NavigationBar.setBackgroundColorAsync("transparent")
+      NavigationBar.setBackgroundColorAsync("transparent");
       NavigationBar.setBehaviorAsync("inset-swipe");
       setStatusBarHidden(true, "none");
     }
@@ -45,18 +46,19 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
-  
- 
+
   return (
-    <SafeAreaProvider>
-      <PaperProvider>
-        <AuthProvider>
-          <ServiceProvider>
-            <MainLayout />
-          </ServiceProvider>
-        </AuthProvider>
-      </PaperProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <PaperProvider>
+          <AuthProvider>
+            <ServiceProvider>
+              <MainLayout />
+            </ServiceProvider>
+          </AuthProvider>
+        </PaperProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 

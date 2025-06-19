@@ -20,6 +20,7 @@ import { useTags } from "@/hooks/useTags";
 import { useServiceContext } from "@/contexts/ServiceContext";
 import { Searchbar, Chip } from "react-native-paper";
 import { useState } from "react";
+import Color from "color";
 
 export default function ServiceScreen() {
   const router = useRouter();
@@ -56,29 +57,31 @@ export default function ServiceScreen() {
 
   return (
     <View
-      style={[styles.background, { backgroundColor: Colors[colorScheme].box }]}
+      style={[
+        styles.background,
+        { backgroundColor: Colors[colorScheme].background },
+      ]}
     >
       <SafeAreaView edges={["top"]} style={[styles.container]}>
         {/* TOP BAR */}
         <View
           style={[
             styles.searchContainer,
-            { backgroundColor: Colors[colorScheme].box },
+            { backgroundColor: Colors[colorScheme].background },
           ]}
         >
           <Searchbar
-            placeholder="Search services..."
+            placeholder="Busca serveis..."
             onChangeText={setSearchQuery}
             value={searchQuery}
             style={[
               styles.searchBar,
-              { backgroundColor: Colors[colorScheme].background },
-              { borderRadius: 30 },
+              { backgroundColor: Colors[colorScheme].box },
+              { borderRadius: 40 },
             ]}
             iconColor={Colors[colorScheme].text}
-            placeholderTextColor={Colors.input_text}
+            placeholderTextColor={Colors[colorScheme].tint}
             inputStyle={{ color: Colors[colorScheme].text }}
-            elevation={2}
           />
 
           {/* Tags filter row */}
@@ -92,7 +95,7 @@ export default function ServiceScreen() {
               ?.map((tag) => (
                 <Chip
                   key={tag.name}
-                  mode="outlined"
+                  mode="flat"
                   selected={activeTag === tag.name}
                   onPress={() =>
                     setActiveTag(activeTag === tag.name ? null : tag.name)
@@ -102,15 +105,23 @@ export default function ServiceScreen() {
                     {
                       backgroundColor:
                         activeTag === tag.name
-                          ? Colors.primari
-                          : Colors[colorScheme].background,
-                      borderColor: Colors[colorScheme].box_border,
-                      borderRadius: 16,
+                          ? Color(Colors.primari)
+                              .mix(Color(Colors[colorScheme].box), 0.5)
+                              .rgb()
+                              .string()
+                          : Colors[colorScheme].box,
+                      borderRadius: 30,
                     },
                   ]}
                   textStyle={{
                     color:
-                      activeTag === tag.name ? "#fff" : Colors.accent_primari,
+                      activeTag === tag.name
+                        ? Color(Colors.primari)
+                            .mix(Color(Colors[colorScheme].text), 0.5)
+                            .rgb()
+                            .string()
+                        : Colors[colorScheme].text,
+                    fontSize: 12,
                   }}
                 >
                   {tag.name}
@@ -383,15 +394,18 @@ const styles = StyleSheet.create({
 
   searchContainer: {
     width: "100%",
-    padding: 16,
     paddingBottom: 8,
   },
   searchBar: {
+    marginLeft: 16,
+    marginRight: 16,
     borderRadius: 8,
     marginBottom: 12,
+    elevation: 2,
   },
   tagsContainer: {
-    paddingVertical: 4,
+    padding: 16,
+    paddingVertical: 2,
   },
   tagChip: {
     marginRight: 8,

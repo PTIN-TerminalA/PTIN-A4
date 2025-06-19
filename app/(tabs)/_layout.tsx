@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Platform } from "react-native";
 import { BottomNavigation } from "react-native-paper";
 import { CommonActions } from "@react-navigation/native";
@@ -7,86 +7,96 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import Color from "color";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
   const themeColors = Colors[colorScheme ?? "light"];
+  const translucentButton = Color(themeColors.button).alpha(0.5).rgb().string();
+  const iconColor = Color(themeColors.box)
+    .mix(Color(themeColors.text), 0.5)
+    .rgb()
+    .string();
+  const routes = [
+    { key: "explore", title: "Shopping" },
+    { key: "flights", title: "Flights" },
+    { key: "index", title: "Mapa" },
+    { key: "chat", title: "Chat" },
+    { key: "profile", title: "Profile" },
+  ];
 
   return (
     <Tabs
+      initialRouteName="index"
+      backBehavior="initialRoute"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: themeColors.tint,
-        tabBarInactiveTintColor: themeColors.tabIconDefault,
+        tabBarActiveTintColor: themeColors.text,
+        tabBarInactiveTintColor: themeColors.tabIconSelected,
         tabBarStyle: {
           position: "absolute",
           borderTopWidth: 0,
           elevation: 0,
         },
       }}
-      tabBar={({ navigation, state, descriptors }) => (
-        <BottomNavigation.Bar
-          navigationState={state}
-          style={[
-            styles.bottomBar,
-            {
-              backgroundColor: themeColors.box,
-              paddingBottom: insets.bottom,
-              height: 80 + insets.bottom,
-            },
-          ]}
-          activeIndicatorStyle={[
-            styles.activeIndicator,
-            { backgroundColor: themeColors.button },
-          ]}
-          labeled={true}
-          onTabPress={({ route, preventDefault }) => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
+      tabBar={({ navigation, state, descriptors }) => {
+        const navigationState = state;
 
-            if (!event.defaultPrevented) {
-              navigation.dispatch({
-                ...CommonActions.navigate(route.name),
-                target: state.key,
-              });
-            }
-          }}
-          renderIcon={({ route, focused, color }) => {
-            const { options } = descriptors[route.key];
-            return options.tabBarIcon?.({ focused, color, size: 24 }) || null;
-          }}
-          getLabelText={({ route }) => {
-            const { options } = descriptors[route.key];
-            return options.title || route.name;
-          }}
-        />
-      )}
+        return (
+          <BottomNavigation.Bar
+            navigationState={navigationState}
+            shifting={false}
+            style={[
+              styles.bottomBar,
+              {
+                backgroundColor: themeColors.box,
+                paddingBottom: insets.bottom,
+                height: 80 + insets.bottom,
+              },
+            ]}
+            activeIndicatorStyle={[
+              styles.activeIndicator,
+              { backgroundColor: translucentButton },
+            ]}
+            labeled={true}
+            onTabPress={({ route }) => {
+              const tabIndex = navigationState.routes.findIndex(
+                (r) => r.key === route.key
+              );
+              if (tabIndex !== -1 && tabIndex !== state.index) {
+                // update index is unnecessary because React Navigation controls index internally
+                navigation.navigate(route.name); // <-- Use route.name, not route.key here
+              }
+            }}
+            renderIcon={({ route, focused }) => {
+              const { options } = descriptors[route.key];
+              const color = themeColors.tint;
+              return options.tabBarIcon?.({ focused, color, size: 24 }) || null;
+            }}
+            getLabelText={({ route }) => {
+              const { options } = descriptors[route.key];
+              return options.title || route.name;
+            }}
+          />
+        );
+      }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Map",
-          tabBarIcon: ({ color, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? "map" : "map-outline"}
-              color={color}
-              size={24}
-            />
-          ),
-        }}
-      />
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Shopping",
+          title: "Serveis",
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               name={focused ? "shopping" : "shopping-outline"}
-              color={color}
+              color={
+                focused
+                  ? Color(color)
+                      .mix(Color(themeColors.button), 0.3)
+                      .rgb()
+                      .string()
+                  : color
+              }
               size={24}
             />
           ),
@@ -95,11 +105,38 @@ export default function TabLayout() {
       <Tabs.Screen
         name="flights"
         options={{
-          title: "Flights",
+          title: "Vols",
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               name={focused ? "shield-airplane" : "shield-airplane-outline"}
-              color={color}
+              color={
+                focused
+                  ? Color(color)
+                      .mix(Color(themeColors.button), 0.3)
+                      .rgb()
+                      .string()
+                  : color
+              }
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Mapa",
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? "map" : "map-outline"}
+              color={
+                focused
+                  ? Color(color)
+                      .mix(Color(themeColors.button), 0.3)
+                      .rgb()
+                      .string()
+                  : color
+              }
               size={24}
             />
           ),
@@ -112,7 +149,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               name={focused ? "chat" : "chat-outline"}
-              color={color}
+              color={
+                focused
+                  ? Color(color)
+                      .mix(Color(themeColors.button), 0.3)
+                      .rgb()
+                      .string()
+                  : color
+              }
               size={24}
             />
           ),
@@ -121,11 +165,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Perfil",
           tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
               name={focused ? "account" : "account-outline"}
-              color={color}
+              color={
+                focused
+                  ? Color(color)
+                      .mix(Color(themeColors.button), 0.3)
+                      .rgb()
+                      .string()
+                  : color
+              }
               size={24}
             />
           ),

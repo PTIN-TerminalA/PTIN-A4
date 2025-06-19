@@ -10,14 +10,12 @@ import {
   NativeScrollEvent,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter, Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Colors } from "@/constants/Colors";
 import { BoardingPasses } from "@/flightData/boardingPassesInfoTest";
-import { AnimatedFAB } from "react-native-paper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ThemedFAB from "@/components/ThemedFAB";
+import { AnimatedFAB, FAB } from "react-native-paper";
 
 export default function FlightsScreen() {
   const router = useRouter();
@@ -55,30 +53,22 @@ export default function FlightsScreen() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        <View style={{ height: 15 }}></View>
-        {/* 
-          Renderitzat del historial de tickets. Si la posició del contenidor es parella,
-          es renderitzarà amb el fons tranparent. En canvi, si es imparella, es renderitzarà
-          amb el fons de color primari o secundari (depenent de si es light o dark theme)
-        */}
-        {BoardingPasses.map((boardingPass, index) => (
-          <Link
-            style={styles.scrollContent}
-            key={boardingPass.id}
-            href={{ pathname: "/flightInfo", params: { id: boardingPass.id } }}
-          >
+        <View style={{ height: 15 }} />
+
+        <View style={styles.boardingPassList}>
+          {BoardingPasses.map((boardingPass) => (
             <TouchableOpacity
+              key={boardingPass.id}
               onPress={() => handlerBoardingPassPress(boardingPass.id)}
               style={[
                 styles.flightBox,
-                { backgroundColor: index % 2 == 0 ? "transparent" : boxColor },
-                { borderColor: borderColor },
+                { backgroundColor: boxColor, borderColor },
               ]}
             >
               <Image
                 source={boardingPass.airlineImage}
                 style={[styles.airlineImage, { borderColor: boxColor }]}
-              ></Image>
+              />
               <View style={styles.flightTextInfo}>
                 <ThemedText
                   style={[{ color: textColor }, { fontSize: 20 }]}
@@ -91,22 +81,27 @@ export default function FlightsScreen() {
                 </ThemedText>
               </View>
             </TouchableOpacity>
-          </Link>
-        ))}
-        {/* Marge extra per sota del ScrollView */}
-        <View style={{ height: 150 }}></View>
+          ))}
+        </View>
+
+        <View style={{ height: 150 }} />
       </ScrollView>
       {/* Botó per escannejar */}
-      <ThemedFAB
-        visible={true}
-        animateFrom="right"
-        extended={showText}
-        label="Escaneja"
-        iconMode="dynamic"
-        style={[{ backgroundColor: buttonColor }]}
-        size={40}
+      {/*<FAB
+        icon="plus"
+        style={[styles.fab, { backgroundColor: buttonColor }]}
+        onPress={() => onPressScanner()}
         color={buttonIcon}
-        onPress={onPressScanner}
+        size={"large"}
+        visible={showText}
+      />*/}
+      <AnimatedFAB
+        icon={"plus"}
+        label={"Afegeix un pase"}
+        extended={showText}
+        onPress={() => console.log("Pressed")}
+        animateFrom={"right"}
+        style={[styles.fab, { backgroundColor: buttonColor }]}
       />
     </SafeAreaView>
   );
@@ -120,33 +115,26 @@ const styles = StyleSheet.create({
 
   scrollContent: {
     alignItems: "center",
-    flexGrow: 1,
     alignSelf: "center",
+    width: "100%",
     padding: 15,
   },
 
   flightBox: {
-    width: 345,
+    width: "90%",
     height: 85,
     borderWidth: 1,
     marginBottom: 30,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 20,
+    borderRadius: 30,
   },
 
   fab: {
     position: "absolute",
-    bottom: 30,
-    right: 20,
-    height: 56,
-    borderRadius: 28,
-    minWidth: 56,
-    maxWidth: 200,
-    justifyContent: "center", // Ensure contents are centered vertically
-    alignItems: "center", // Center horizontally
-    paddingHorizontal: 16,
-    flexDirection: "row", // Important for icon+text layout
+    margin: 16,
+    right: 0,
+    bottom: 16,
   },
 
   airlineImage: {
@@ -161,5 +149,10 @@ const styles = StyleSheet.create({
   flightTextInfo: {
     flexDirection: "column",
     justifyContent: "center",
+  },
+
+  boardingPassList: {
+    alignItems: "center",
+    width: "100%",
   },
 });

@@ -9,19 +9,19 @@ type Props = {
   x: number;
   y: number;
   scale: number;
+  imageHeight: number;
 };
 
 const SIZE = 30;
-const mapHeight = 664;
 
-const UserMarker: React.FC<Props> = ({ x, y, scale }) => {
+const UserMarker: React.FC<Props> = ({ x, y, scale, imageHeight }) => {
   return (
     <View
       style={[
         styles.marker,
         {
           left: x * scale - SIZE / 2,
-          top: (mapHeight - y) * scale - SIZE / 2,
+          top: (imageHeight - y) * scale - SIZE / 2,
           width: SIZE,
           height: SIZE,
           borderRadius: SIZE / 2,
