@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    router.replace('/(auth)/login');
+    router.replace('/(auth)');
   };
 
   const deleteAccount = () =>{
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.log("Compte eliminat"),
               /** API delete account */
               setUser(null);
-              router.replace('/(auth)/login');
+              router.replace('/(auth)');
           },
           style: "destructive" // Rojo en iOS
         }
