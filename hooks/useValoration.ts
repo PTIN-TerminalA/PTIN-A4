@@ -6,39 +6,28 @@ import { useAuth } from "./useAuth";
 
 
 
-export async function makeValoration (service_id: number, rating: number, comment: string) { //service_id: number, rating: number, comment: string
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const token = useAuth;
-  setLoading(true);
-  setError(null);
+export async function makeValoration (service_id: number, rating: number, comment: string, token: string | null) { //service_id: number, rating: number, comment: string
   try {
-    /*
-    const formData = new FormData();
-    formData.append('service_id', service_id);
-    formData.append('rating', rating);
+    const formData = new URLSearchParams();;
+    formData.append('service_id', service_id.toString());
+    formData.append('rating', rating.toString());
     formData.append('comment', comment);
-    */
+    
     const res = await fetch(`${API_URL}/api/rate-service`, {
       method: "POST",
       headers: {
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/x-www-form-urlencoded",//x-www-form-urlencoded
+        "Authorization": `Bearer ${token}`,
       },
-      //body: formData
-      
-      body: JSON.stringify({ // la API del A3 accepta arrays no Points
-        service_id : service_id,
-        rating: rating,
-        comment: comment
-      }),
+      body: formData.toString()
       
     });
-    if (!res.ok) throw new Error("Error enviant la valoració");
-    setLoading(false);
-    
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Error enviant la valoració o Error de login");
+    else {console.log("ok")}
   } catch (error: any) {
-    setError(error.message);
-    setLoading(false);
+    console.error('Login failed', error);
+    throw error
   }
 };
 

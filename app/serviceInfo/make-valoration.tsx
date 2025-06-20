@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 
 
-import {makeValoration} from '@/hooks/useValoration';
+import { makeValoration } from '@/hooks/useValoration';
 import { useServiceContext } from '@/contexts/ServiceContext';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ThemedPressable } from '@/components/ThemedPressable';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedTextInput } from '@/components/ThemedTextInput';
+import { useAuth } from '@/hooks/useAuth';
 
 const RatingScreen = () => {
   const [stars, setStars] = useState('');
@@ -15,20 +16,28 @@ const RatingScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { services } = useServiceContext();
   const service = services?.find((p) => p.id === Number(id));
+  const { token } = useAuth();
 
-
-  const handleSubmit = () => {
+  const handleSubmitValoracio = async()  =>  {
     const starNum = parseInt(stars);
     if (isNaN(starNum) || starNum < 1 || starNum > 5) {
       Alert.alert('Error', 'Siusplau ingreseu un nombre entre 1 i 5.');
       return;
     }
-
-    Alert.alert('Valoració enviada', `Estrelles: ${starNum}\nComentaris: ${comment}`);
-    if (service){
-      makeValoration(service?.id, starNum, comment)
+    
+    if (service) {
+      try {
+        await makeValoration(service.id, starNum, comment, token); 
+        Alert.alert('Valoració enviada', `Estrelles: ${starNum}\nComentaris: ${comment}`);
+        router.push("..");
+      } catch (err: any) {
+        const errMesg = err.message;
+        Alert.alert("Error", errMesg ); //"No s'ha pogut enviar la valoració."
+      }
+    } else {
+      console.log("alerta");
+      Alert.alert("Error", "Servei no trobat");
     }
-    router.push("..");
   };
 
   return (
@@ -56,7 +65,7 @@ const RatingScreen = () => {
         numberOfLines={4}
       />
 
-      <ThemedPressable  onPress={handleSubmit} >
+      <ThemedPressable  onPress={handleSubmitValoracio} >
         <ThemedText type="bold">
           Confirmar valoració
         </ThemedText>

@@ -21,12 +21,14 @@ import PriceDisplay from "@/components/PriceAvg";
 import DirectionButton from "@/components/DirectionButton";
 import ScheduleStatus from "@/components/ScheduleStatus";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ServiceInfoScreen() {
   const colorScheme = useColorScheme() || "light";
   const { id } = useLocalSearchParams<{ id: string }>();
   const { services } = useServiceContext();
   const service = services?.find((p) => p.id === Number(id));
+  const { user } = useAuth();
 
   if (!service) {
     return <Text>Servei no trobat</Text>;
@@ -43,11 +45,17 @@ export default function ServiceInfoScreen() {
 
 
   const handleValorationPress= (id: number) => {
+    /*
+    if (id ){
+      service.valorations?.find(user.)
+    }
+    */
     router.push({
       pathname: "/serviceInfo/make-valoration",
       params: { id },
     })
   }
+  
   return (
     <Fragment>
       {/* Titol de la pantalla */}
