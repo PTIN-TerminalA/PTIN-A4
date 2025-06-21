@@ -30,7 +30,7 @@ export function useUserLocation(scanInterval = 3000) {
       });
 
       const data = await response.json();
-      console.log("DATA: ", data);
+      // console.log("DATA: ", data);
       return data;
     } catch (error) {
       console.error("No user localized", error);
