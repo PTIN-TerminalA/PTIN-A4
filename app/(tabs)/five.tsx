@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, Image, } from "react-native";
+import { Dimensions, Image, Text, Button, Modal } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
@@ -12,106 +12,124 @@ import {
 import { zones } from "@/constants/mocks/zones";
 import { useServiceContext } from "@/contexts/ServiceContext";
 import { InfoModal } from "@/components/InfoModal";
-
-
-
+import { set } from "date-fns";
 export default function MVPMapaInteractiu() {
   const [selectedService, setSelectedService] = React.useState<any>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const onServicePress = (service: any) => {
+    console.log("Opening modal for service:", service);
     setSelectedService(service);
     setModalVisible(true);
   };
+
   const { services, loading: servicesLoading } = useServiceContext();
+  const normalizedZones = normalizeRotatedZones(zones);
+  
+  const mapImage = require("@/assets/images/planol.png");
+  const imageInfo = Image.resolveAssetSource(mapImage);
 
-    const normalizedZones = normalizeRotatedZones(zones);
-    
-    const mapImage = require("@/assets/images/planol.png");
-const imageInfo = Image.resolveAssetSource(mapImage);
+  const imageWidth = imageInfo.width;
+  const imageHeight = imageInfo.height;
+  const screen = Dimensions.get("window");
 
-const imageWidth = imageInfo.width;
-const imageHeight = imageInfo.height;
-const NUM_CARS = 10;
-console.log("Image info:", imageInfo);
-const screen = Dimensions.get("window");
+  // Scale to fit vertically
+  const scale = screen.height / imageHeight;
+  const displayedWidth = imageWidth * scale;
+  const { gesture, animatedStyle, isPanning } = useCanvasGestures();
 
-//Escala para que la imagen encaje verticalmente
-const scale = screen.height / imageHeight;
-const displayedWidth = imageWidth * scale;
-const { gesture, animatedStyle, isPanning } = useCanvasGestures();
-console.log(services, "Services from context");
-return (
-    <ThemedView style={{ flex: 1 }}>
-     <InfoModal
-        isVisible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSelect={() => {
-          console.log("Service selected:", selectedService);
-          // Aquí podrías navegar a una pantalla de confirmació o demanar el cotxe
-          setModalVisible(false);
-        }}
-        /** Si no s'ha seleccionat un destí el modal canvia */
-        imageUrl={selectedService?.ad_path || "@/assets/images/planol.png"}
-        title={selectedService?.name || "Demana un cotxe"}
-        minutesText={selectedService == null ? "" : "2 min"} // Opcional, si ho calcules
-        distanceText={selectedService == null ? "" : "500 m"} // Opcional, si ho calcules
-        buttonText="Demanar cotxe"
-        description={
-          selectedService?.description ||
-          "Primer selecciona un destí dins la terminal A"
-        }
-      />
-  <GestureDetector gesture={gesture}>
-    <Animated.View style={[{ flex: 1 }, animatedStyle]}>
-      <Image
-        source={require("@/assets/images/planol.png")}
-        
+  console.log("Modal visible:", modalVisible);
+  console.log("Selected service:", selectedService);
+
+  return (
+    <>
+        <GestureDetector gesture={gesture}>
+
+      <ThemedView style={{ flex: 1 }}>
+          <Animated.View style={[{ flex: 1 }, animatedStyle]}>
+            <Image
+              source={require("@/assets/images/planol.png")}
+              style={{
+                width: displayedWidth,
+                height: screen.height,
+                resizeMode: 'cover'
+              }}
             />
 
             <Svg
-                            pointerEvents="box-none"
-                            width='500%'
-                            height='200%'
-                            style={{ position: "absolute", top: 0, left: 0 }}
-                          >
-                            {normalizedZones.map((zone, idx) => {
-                              const pointsStr = zone.positions
-                                .map(
-                                  ([x, y]) => `${x * imageWidth},${y * imageHeight}`
-                                )
-                                .join(" ");
-            
-                              return (
-                                <Polygon
-                                  key={idx}
-                                  pointerEvents="box-none"
-                                  points={pointsStr}
-                                  fill="none"
-                                  stroke="none"
-                                  strokeWidth={2}
-                                  onPressIn={() => {
-                                    console.log("pressed polygon",zone.name);
-                                    const service = services?.find(
-                                        (s) => s.name === zone.name
-                                        );
-                                    
-                                        if (service) {
-                                            setTimeout(() => {
-                                                if (!isPanning.value) {
-                                                    onServicePress(service);
-                                                }
-                                            }, 100); // Delay to ensure the modal opens after the gesture ends
-                                        }
-                                    
-                                  }}
-                                />
-                              );
-                            })}
-                          </Svg>
+              // Remove pointerEvents="box-none" to allow touch events
+              width={displayedWidth}
+              height={screen.height}
+              style={{ position: "absolute", top: 0, left: 0 }}
+            >
+              {normalizedZones.map((zone, idx) => {
+                const pointsStr = zone.positions
+                  .map(
+                    ([x, y]) => `${x * displayedWidth},${y * screen.height}`
+                  )
+                  .join(" ");
 
-    </Animated.View>
-  </GestureDetector>
-  </ThemedView>
-);
+                return (
+                  <Polygon
+                    key={idx}
+                    // Remove pointerEvents="box-none" to allow touch events
+                    points={pointsStr}
+                    fill="rgba(255, 0, 0, 0.1)" // Add a semi-transparent fill for debugging
+                    stroke="red"
+                    strokeWidth={1}
+                    onPressIn={() => {
+                      setTimeout(() => {
+                        if (!isPanning.value) {
+                          setModalVisible(true);
+                      console.log("Polygon pressed:", zone.name);
+                        }}, 100); // Delay to allow for panning
+                      /*const service = services?.find(
+                        (s) => s.name === zone.name
+                      );
+                      
+                      if (service) {
+                        // Remove the setTimeout and isPanning check for now
+                        onServicePress(service);
+                      } else {
+                        console.log("No service found for zone:", zone.name);
+                      }*/
+                    }}
+                  />
+                );
+              })}
+            </Svg>
+          </Animated.View>
+      </ThemedView>
+        </GestureDetector>
+
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => {
+          console.log("Modal closed");
+          setModalVisible(false);
+        }}
+      >
+        <ThemedView style={{
+          backgroundColor: 'white',
+          padding: 20,
+          borderRadius: 10,
+          margin: 20,
+          minHeight: 200,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flex: 1,
+        }}>
+          <Text style={{ fontSize: 18, marginBottom: 20 }}>
+            Hola
+          </Text>
+          <Button onPress={() => {
+            console.log("Button pressed");
+            setModalVisible(false);
+          }} title="Tancar" />
+        </ThemedView>
+      </Modal>
+    </>
+  );
 }
