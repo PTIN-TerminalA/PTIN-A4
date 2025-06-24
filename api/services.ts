@@ -15,7 +15,7 @@ const fetchJson = async <T>(url: string, options?: RequestInit): Promise<T> => {
 };
 
 export async function getServices(): Promise<Service[]> {
-  const rawServices = await fetchJson<RawService[]>(`${API_URL}/api/getServices`);
+  const rawServices = await fetchJson<RawService[]>("https://flysy.software/api/getServices");
 
   const fullServices = await Promise.all(
     rawServices.map(async (service) => {
@@ -23,14 +23,14 @@ export async function getServices(): Promise<Service[]> {
 
       const [schedules, tagsRaw, valorations] = await Promise.all([
         fetchJson<Schedule[]>(
-          `${API_URL}/api/getSchedules?service_id=${serviceId}`,
+          "https://flysy.software/api/getSchedules?service_id=${serviceId}",
           { method: "POST" }
         ),
-        fetchJson<any>(`${API_URL}/api/getServiceTag?service_id=${serviceId}`, {
+        fetchJson<any>("https://flysy.software/api/getServiceTag?service_id=${serviceId}", {
           method: "POST",
         }),
         fetchJson<Valoration[]>(
-          `${API_URL}/api/getValoration?service_id=${serviceId}`,
+          "https://flysy.software/api/getValoration?service_id=${serviceId}",
           { method: "POST" }
         ),
       ]);
@@ -58,10 +58,10 @@ export async function getServices(): Promise<Service[]> {
     })
   );
 
-  console.log("FULL SERVICE:", JSON.stringify(fullServices, null, 2));
+  // console.log("FULL SERVICE:", JSON.stringify(fullServices, null, 2));
   return fullServices;
 }
 
 export async function getTags(): Promise<Tag[]> {
-  return fetchJson<Tag[]>(`${API_URL}/api/getTags`);
+  return fetchJson<Tag[]>("https://flysy.software/api/getTags");
 }

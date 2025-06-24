@@ -50,7 +50,7 @@ const MapaUni: React.FC<Props> = ({
   routePoints
 }) => {
   const [carPositions, setCarPositions] = useState<Car[]>([]);
-
+  if (carPos) console.log("carPos -->", carPos);
   //Genera coches con posiciones aleatorias alrededor del centro
   const generatePositions = (): Car[] => {
     const cars: Car[] = [];
@@ -146,6 +146,7 @@ const MapaUni: React.FC<Props> = ({
           )}
 
           {carPos && carPos.visible && (
+            console.log("car: ", carPos),
             <CarMarker
               x={carPos.x}
               y={carPos.y}

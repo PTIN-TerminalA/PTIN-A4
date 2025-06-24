@@ -166,7 +166,7 @@ export const useRideRequest = () => {
 
   const nearestService = async (location: Location) => {
     try {
-      console.log("Original location:", location);
+      console.log("Original location on nearest analysis:", location);
       
       const response = await fetch("https://flysy.software/api/getNearestService", {
         method: "POST",

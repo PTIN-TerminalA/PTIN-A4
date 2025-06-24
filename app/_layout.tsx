@@ -28,7 +28,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      console.log("Fontrs carregades");
+      console.log("Fonts carregades");
       SplashScreen.hideAsync();
     }
   }, [loaded]);
@@ -55,12 +55,8 @@ function MainLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        {user ? (
-          <Stack.Screen name="(tabs)" />
-        ) : (
-          <Stack.Screen name="(auth)" />
-        )}
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

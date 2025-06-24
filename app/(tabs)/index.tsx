@@ -33,7 +33,7 @@ import { useTags } from "@/hooks/useTags";
 const localImage = require("@/assets/images/planol.png");
 
 // const isLoggedIn = false; // ho haurem de canviar amb la logica d'autenticacio
-const isLoggedIn = true; //Momentani per l'entry point cap al home (index) i no cap a profile
+const isLoggedIn = false; //Momentani per l'entry point cap al home (index) i no cap a profile
 export function login() {
   router.replace("/(auth)"); // /(auth)
 }
@@ -123,10 +123,12 @@ export default function HomeScreen() {
   useEffect(() => { // Quan fem la reserva guardem l'id del cotxe assignat
     if (rideResponse) {
       setCar(rideResponse.car_id);
+      console.log("CAR és: ", rideResponse.car_id);
     }
   }, [rideResponse]);
 
   const carData = useCarLocation(car);
+  if(carData) console.log("carData: ", carData);
   const carState = carData?.state; // estats del cotxe: "Solicitat", "En curs", "Esperant", "Disponible"
   const carPos = carData // ubicació del cotxe
   ? {
@@ -159,38 +161,41 @@ export default function HomeScreen() {
   }, [carState]);
 
   // Gestió de la ruta i el temps estimat per a mostrar al mapa segons els estats
-  let origen = {
-    x: 0.5066077922077928, 
-    y: 0.86
-  }
-  let desti = {
-    x: 0.5066077922077928, 
-    y: 0.86
-  }
-  if (rideStage === "preview" && nearest && previewService) {
-    origen = {x: nearest.location_x, y: nearest.location_y};
-    desti = {x: previewService.location_x, y: previewService.location_y};
-  } else if (rideStage === "confirm" && carData && nearest) {
-    origen = { x: carData.position.x, y: carData.position.y };
-    desti = { x: nearest.location_x, y: nearest.location_y };
-  } else if (rideStage === "inside" && carData && confirmedService) {
-    origen = { x: carData.position.x, y: carData.position.y };
-    desti = { x: confirmedService.location_x, y: confirmedService.location_y };
-  }
-  // const { route, temps } = useRouteDestination(
-  //   rideStage === "select" 
-  //     ? { x: 0.40, y: 0.72 }  // Default values when in select stage
-  //     : origen,
-  //   rideStage === "select"
-  //     ? { x: 0.406, y: 0.72 }  // Default values when in select stage
-  //     : desti
-  // );
-  // ? { x: 0.5066077922077928, y: 0.86 }  // Default values when in select stage
-  // console.log("Origen:", origen);
-  // console.log("Desti:", desti);
-  // console.log("RideStage:", rideStage);
-  // const routeData = { route, temps };
-  // const [routeData, setRouteData] = useState<any>({ route: [], temps: null });
+  const [origen, setOrigen] = useState({ x: -1, y: 0.86 });
+  const [desti, setDesti] = useState({ x: 0.5066077922077928, y: 0.86 });
+  
+  // useEffect(() => {
+  //   if (rideStage === "preview" && nearest && previewService) {
+  //     console.log("S'HA CANVIAT --------")
+  //     setOrigen({ x: nearest.location_x, y: nearest.location_y });
+  //     setDesti({ x: previewService.location_x, y: previewService.location_y });
+  //   } else if (rideStage === "confirm" && carData && nearest) {
+  //     setOrigen({ x: carData.position.x, y: carData.position.y });
+  //     setDesti({ x: nearest.location_x, y: nearest.location_y });
+  //   } else if (rideStage === "inside" && carData && confirmedService) {
+  //     setOrigen({ x: carData.position.x, y: carData.position.y });
+  //     setDesti({ x: confirmedService.location_x, y: confirmedService.location_y });
+  //   }
+  // }, [rideStage, nearest, previewService, carData, confirmedService]);
+
+  useEffect(() => {
+    console.log("[DEBUG] rideStage:", rideStage);
+    console.log("[DEBUG] nearest:", nearest?.name);
+    console.log("[DEBUG] previewService:", previewService?.name);
+  }, [rideStage, nearest, previewService]);
+
+  useEffect(() => {
+    if (
+      rideStage === "preview" &&
+      nearest &&
+      previewService
+    ) {
+      console.log("Canvien origen i destí i s'obté la ruta amb useRouteDestination");
+      setOrigen({ x: nearest.location_x, y: nearest.location_y });
+      setDesti({ x: previewService.location_x, y: previewService.location_y });
+    }
+  }, [rideStage, nearest, previewService]);  
+
   const routeData = useRouteDestination(origen, desti);
 
   const handlerScannerPress = () => {
@@ -212,12 +217,13 @@ export default function HomeScreen() {
   // }, [rootNavigationState?.key]);
 
   // Per canviar el previewservice de seguida i per tant el confirmedservice que cal per la reserva
-  useEffect(() => {
-    if (rideStage === "preview") {
-      console.log("Preview stage - selectedService:", selectedService);
-      console.log("Preview stage - previewService:", previewService);
-    }
-  }, [rideStage, selectedService, previewService]);
+  // useEffect(() => {
+  //   if (rideStage === "preview") {
+  //     console.log("nearest:", nearest);
+  //     console.log("selectedService:", selectedService);
+  //     console.log("previewService:", previewService);
+  //   }
+  // }, [rideStage, selectedService, previewService]);
 
   if (servicesLoading || tagsLoading) {
     return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
@@ -226,7 +232,7 @@ export default function HomeScreen() {
   if (!services) {
     return <ThemedText>Error loading services</ThemedText>;
   }
-  console.log("Rendering services:", services?.length);
+  //console.log("Rendering services:", services?.length); No cal mostrar tantes vegades el rendering services perquè omple el log d'això
   return (
     <ThemedView style={styles.container}>
       {reservationMessage && (
@@ -244,7 +250,7 @@ export default function HomeScreen() {
         carPos={carPos}
         userLocation={userLocation}
         // no fa falta pintar ruta quan s'apropa el cotxe, només mostrem temps estimat
-        routePoints={routeData.route && (rideStage != "confirm" && rideStage != "select") ? routeData.route : []}
+        routePoints={routeData?.route && (rideStage != "confirm" && rideStage != "select") ? routeData.route : []}
         // Mostrem la ruta només quan estem en select o confirm
         // routePoints={(rideStage === "select" || rideStage === "confirm") ? routeData.route : []} 
         // Mostrem la ruta sempre que tinguem routeData
@@ -327,13 +333,14 @@ export default function HomeScreen() {
         onSelect={async () => {
           try {
             if (rideStage === "select" && userLocation) {
-              console.log("User location before nearestService:", userLocation);
-              const nearest_service_id = await nearestService(userLocation);
+              const { nearest_service_id } = await nearestService(userLocation);
               const nearest_service = services?.find((service: Service) => service.id === nearest_service_id) ?? null;
               setNearestService(nearest_service);
               setPreviewService(selectedService);
-              setRideStage("preview");
-              console.log("Has seleccionat:", selectedService?.name);                       }
+              Promise.resolve().then(() => setRideStage("preview")); //Per que s'esperi a l'assignació de nearest i selected
+              console.log("Nearest service:", nearest_service?.name, " amb posicions: ", nearest_service?.location_x, nearest_service?.location_y);
+              console.log("Has seleccionat:", selectedService?.name, " amb posicions: ", selectedService?.location_x, selectedService?.location_y);                       
+            }
           } catch (error) {
             console.error("Error al seleccionar servei: ", error);
           } finally {

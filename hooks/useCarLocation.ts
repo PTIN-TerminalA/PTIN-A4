@@ -15,17 +15,19 @@ export function useCarLocation(carId: string | null) {
 
   useEffect(() => {
     if (!carId) return;
-
+    else console.log('CAR_ID:', carId);
     const fetchLocation = async () => {
       try {
-        const response = await fetch("https://flysy.software/cotxe/${carId}/status");
+        const response = await fetch(`https://flysy.software/cotxe/${carId}/status`);
         if (!response.ok) {
           throw new Error(`Error ${response.status}: No s'ha pogut obtenir la ubicació del cotxe.`);
         }
 
         const data: CarLocation = await response.json();
+        console.log("La data que s'assigna a la ubicació del cotxe és: ", data);
         setLocation(data);
       } catch (err: any) {
+        // console.log("Assignem a la ubicació del cotxe NULL")
         setLocation(null);
       }
 
@@ -36,6 +38,6 @@ export function useCarLocation(carId: string | null) {
     fetchLocation();
 
   },  [carId]);
-  
+  console.log("La localització del cotxe és: ", location);
   return location;
 }
