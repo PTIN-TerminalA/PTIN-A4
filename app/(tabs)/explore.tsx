@@ -80,7 +80,7 @@ export default function ServiceScreen() {
               { borderRadius: 40 },
             ]}
             iconColor={Colors[colorScheme].text}
-            placeholderTextColor={Colors[colorScheme].tint}
+            placeholderTextColor={Colors[colorScheme].tabIconDefault}
             inputStyle={{ color: Colors[colorScheme].text }}
           />
 
@@ -202,7 +202,8 @@ export default function ServiceScreen() {
                       </View>
 
                       {/* Name */}
-                      <ThemedText style={styles.serviceNameStyle} type={"bold"}>
+                      <ThemedText numberOfLines={1}
+                      style={styles.serviceNameStyle} type={"bold"}>
                         {service.name}
                       </ThemedText>
 
@@ -339,7 +340,7 @@ const styles = StyleSheet.create({
   },
 
   serviceImageBox: {
-    width: "33%",
+    flex: 1,
     borderStartStartRadius: 20,
     borderBottomStartRadius: 20,
     padding: 4,
@@ -356,6 +357,7 @@ const styles = StyleSheet.create({
   },
 
   serviceInfo: {
+    flex: 2,
     flexDirection: "column",
     alignItems: "flex-start",
   },
@@ -379,6 +381,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingLeft: 8,
     paddingTop: 8,
+    width: 200
   },
 
   serviceRateStyle: {

@@ -46,9 +46,9 @@ export default function PriceDisplay({
   // Determine price category
   const getPriceCategory = () => {
     if (!avgPrice) return '';
-    if (avgPrice < 10) return 'Econòmic';
-    if (avgPrice < 15) return 'Moderat';
-    if (avgPrice < 20) return 'Premium';
+    if (avgPrice < 15) return 'Econòmic';
+    if (avgPrice < 35) return 'Moderat';
+    if (avgPrice < 120) return 'Premium';
     return 'Luxe';
   };
 
