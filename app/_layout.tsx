@@ -19,11 +19,15 @@ import { Provider as PaperProvider } from "react-native-paper";
 import * as NavigationBar from "expo-navigation-bar";
 import { setStatusBarHidden } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-
+import { ChatProvider } from "@/contexts/ChatContext";
+import * as SystemUI from "expo-system-ui";
+import { Colors } from "@/constants/Colors";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme() || "light";
+
   const [loaded] = useFonts({
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Bold": require("../assets/fonts/Roboto-Bold.ttf"),
@@ -35,10 +39,11 @@ export default function RootLayout() {
     if (loaded) {
       console.log("Fontrs carregades");
       SplashScreen.hideAsync();
+      SystemUI.setBackgroundColorAsync("transparent");
       NavigationBar.setPositionAsync("absolute");
       NavigationBar.setVisibilityAsync("visible");
-      NavigationBar.setBackgroundColorAsync("transparent");
-      NavigationBar.setBehaviorAsync("inset-swipe");
+      NavigationBar.setBackgroundColorAsync(Colors[colorScheme].box);
+      NavigationBar.setBehaviorAsync("inset-touch");
       setStatusBarHidden(true, "none");
     }
   }, [loaded]);
@@ -53,7 +58,9 @@ export default function RootLayout() {
         <PaperProvider>
           <AuthProvider>
             <ServiceProvider>
-              <MainLayout />
+              <ChatProvider>
+                <MainLayout />
+              </ChatProvider>
             </ServiceProvider>
           </AuthProvider>
         </PaperProvider>

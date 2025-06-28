@@ -64,10 +64,12 @@
     ],
     "androidStatusBar": {
       "translucent": true,
-      "backgroundColor": "#00000000"
+      "backgroundColor": "transparent"
     },
     "androidNavigationBar": {
-      "visible": true
+      "visible": "immersive",
+      "barStyle": "light-content",
+      "backgroundColor": "transparent"
     },
     "experiments": {
       "typedRoutes": true
