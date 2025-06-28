@@ -1,9 +1,3 @@
-import { useState } from "react";
-import { Service } from "@/constants/mocks/mockTypes";
-import { API_URL } from "@/constants/Api";
-import { request } from "react-native-permissions";
-import { useAuth } from "./useAuth";
-
 
 
 export async function makeValoration (service_id: number, rating: number, comment: string, token: string | null) { //service_id: number, rating: number, comment: string
@@ -13,7 +7,7 @@ export async function makeValoration (service_id: number, rating: number, commen
     formData.append('rating', rating.toString());
     formData.append('comment', comment);
     
-    const res = await fetch(`${API_URL}/api/rate-service`, {
+    const res = await fetch(`https://flysy.software/api/rate-service`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -23,7 +17,13 @@ export async function makeValoration (service_id: number, rating: number, commen
       
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Error enviant la valoració o Error de login");
+    if (!res.ok) 
+      if (res.status === 409) {
+        throw new Error(data.detail);
+      }
+      else{
+        throw new Error(data.detail || "Error enviant la valoració o Error de login");
+      }
     else {console.log("ok")}
   } catch (error: any) {
     console.error('Login failed', error);
