@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { Fragment } from "react";
 import { Colors } from "@/constants/Colors";
@@ -19,6 +19,7 @@ import useAverageValoration from "@/hooks/useAverageValoration";
 import PriceDisplay from "@/components/PriceAvg";
 import DirectionButton from "@/components/DirectionButton";
 import ScheduleStatus from "@/components/ScheduleStatus";
+import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function ServiceInfoScreen() {
   const colorScheme = useColorScheme() || "light";
@@ -38,6 +39,14 @@ export default function ServiceInfoScreen() {
   };
 
   const { average, count } = useAverageValoration(service.valorations ?? []);
+
+  const handleValorationPress= (id: number) => {
+    router.push({
+      pathname: '/serviceInfo/make-valoration',
+      params: { id },
+    })
+  }
+
 
   return (
     <Fragment>
@@ -113,6 +122,13 @@ export default function ServiceInfoScreen() {
             }
           ></Image>
         </View>
+        <ThemedPressable 
+          style={[{ alignSelf:"center", width: "50%", height:50}]}
+          onPress={() => handleValorationPress(service.id)}>
+          <ThemedText style= {[{fontSize: 20}]} type = "bold">
+            Valorar
+          </ThemedText>
+        </ThemedPressable>
       </ScrollView>
     </Fragment>
   );
