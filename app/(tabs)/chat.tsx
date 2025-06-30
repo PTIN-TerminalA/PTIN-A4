@@ -507,7 +507,7 @@ export default function ChatScreen() {
             outlineStyle={{ borderRadius: 24 }}
             outlineColor="transparent"
             activeOutlineColor={Colors[colorScheme].button}
-            style={styles.input}
+            style={[styles.input, { backgroundColor: Colors[colorScheme].box }]}
           />
           <IconButton
             icon={isRecording ? "microphone" : "microphone-outline"}

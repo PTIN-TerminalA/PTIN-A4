@@ -202,8 +202,11 @@ export default function ServiceScreen() {
                       </View>
 
                       {/* Name */}
-                      <ThemedText numberOfLines={1}
-                      style={styles.serviceNameStyle} type={"bold"}>
+                      <ThemedText
+                        numberOfLines={1}
+                        style={styles.serviceNameStyle}
+                        type={"bold"}
+                      >
                         {service.name}
                       </ThemedText>
 
@@ -336,13 +339,13 @@ const styles = StyleSheet.create({
     height: 120,
     width: "100%",
     flexDirection: "row",
-    borderRadius: 20,
+    borderRadius: 30,
   },
 
   serviceImageBox: {
     flex: 1,
-    borderStartStartRadius: 20,
-    borderBottomStartRadius: 20,
+    borderStartStartRadius: 30,
+    borderBottomStartRadius: 30,
     padding: 4,
     alignItems: "center",
     justifyContent: "center",
@@ -352,8 +355,8 @@ const styles = StyleSheet.create({
   serviceImage: {
     width: "100%",
     height: "100%",
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
+    borderTopLeftRadius: 30,
+    borderBottomLeftRadius: 30,
   },
 
   serviceInfo: {
@@ -381,7 +384,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingLeft: 8,
     paddingTop: 8,
-    width: 200
+    width: 200,
   },
 
   serviceRateStyle: {

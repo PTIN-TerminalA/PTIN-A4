@@ -26,8 +26,6 @@ import { Colors } from "@/constants/Colors";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme() || "light";
-
   const [loaded] = useFonts({
     "Roboto-Regular": require("../assets/fonts/Roboto-Regular.ttf"),
     "Roboto-Bold": require("../assets/fonts/Roboto-Bold.ttf"),
@@ -42,7 +40,7 @@ export default function RootLayout() {
       SystemUI.setBackgroundColorAsync("transparent");
       NavigationBar.setPositionAsync("absolute");
       NavigationBar.setVisibilityAsync("visible");
-      NavigationBar.setBackgroundColorAsync(Colors[colorScheme].box);
+      NavigationBar.setBackgroundColorAsync("transparent");
       NavigationBar.setBehaviorAsync("inset-touch");
       setStatusBarHidden(true, "none");
     }
