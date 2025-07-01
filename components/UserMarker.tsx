@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, StyleSheet, Animated } from "react-native";
 import { Colors } from "@/constants/Colors";
 import Color from "color";
 
@@ -11,14 +11,48 @@ type Props = {
   heading: number;
 };
 
-const CIRCLE_SIZE = 30;
+const CIRCLE_SIZE = 20;
 const TRIANGLE_HEIGHT = 20;
-const mapRotationOffset = 45; // degrees your map is rotated clockwise from North
-
-// Corrected heading for your marker rotation:
 
 const UserMarker: React.FC<Props> = ({ x, y, scale, imageHeight, heading }) => {
-  const correctedHeading = (heading - mapRotationOffset + 360) % 360;
+  // Use a ref for the animated rotation value
+  const rotationAnim = useRef(new Animated.Value(0)).current;
+
+  // Keep track of previous heading to animate from there
+  const prevHeading = useRef(0);
+
+  useEffect(() => {
+    // Calculate shortest rotation direction to avoid large spins
+    let start = prevHeading.current;
+    let end = heading;
+
+    // Normalize angles to [0, 360)
+    start = start % 360;
+    end = end % 360;
+
+    // Calculate shortest rotation distance (-180 to 180)
+    let diff = end - start;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+
+    const finalHeading = start + diff;
+
+    // Animate rotation from current to new heading
+    Animated.timing(rotationAnim, {
+      toValue: finalHeading,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+
+    prevHeading.current = finalHeading;
+  }, [heading]);
+
+  // Interpolate rotationAnim to rotation string with deg
+  const rotate = rotationAnim.interpolate({
+    inputRange: [-360, 360],
+    outputRange: ["-360deg", "360deg"],
+  });
+
   return (
     <View
       style={[
@@ -31,14 +65,9 @@ const UserMarker: React.FC<Props> = ({ x, y, scale, imageHeight, heading }) => {
     >
       <View style={styles.circle} />
       {/* Rotation happens around the circle center only */}
-      <View
-        style={[
-          styles.rotator,
-          { transform: [{ rotate: `${correctedHeading}deg` }] },
-        ]}
-      >
+      <Animated.View style={[styles.rotator, { transform: [{ rotate }] }]}>
         <View style={styles.triangle} />
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -64,19 +93,19 @@ const styles = StyleSheet.create({
     borderRadius: CIRCLE_SIZE / 2,
     backgroundColor: Colors.primari,
     borderColor: "white",
-    borderWidth: 2,
+    borderWidth: 1,
   },
   triangle: {
     position: "absolute",
-    top: CIRCLE_SIZE,
+    top: CIRCLE_SIZE / 1.5,
     width: 0,
     height: 0,
-    borderLeftWidth: CIRCLE_SIZE / 2.5,
-    borderRightWidth: CIRCLE_SIZE / 2.5,
-    borderTopWidth: TRIANGLE_HEIGHT,
+    borderLeftWidth: CIRCLE_SIZE / 1.5,
+    borderRightWidth: CIRCLE_SIZE / 1.5,
+    borderBottomWidth: TRIANGLE_HEIGHT * 2,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    borderTopColor: Color(Colors.primari).alpha(0.3).rgb().string(),
+    borderBottomColor: Color(Colors.primari).alpha(0.6).rgb().string(),
   },
 });
 
