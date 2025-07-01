@@ -18,19 +18,21 @@ type Location = {
   y: number;
 };
 
-export interface RideData { // doc ruoute a MongoDB
+export interface RideData { // doc route a MongoDB
   _id: string;
   user_id: number;
   start_location: string;
   end_location: string;
   scheduled_time: string; // ISO string
-  state: string;          // "Solicitat", "Esperant", "En curs", "Disponible"
+  state: string;          
   car_id: string;
 }
 
 export interface RideResponse {
   message: string;
-  data: RideData;
+  controller_status: string; // status de la crida al controller, e.g. "ok" or "error"
+  controller_data: string; // { vehicle_id, ruta = {lenght, path, temps} }
+  reservation: RideData;
   car_id: string;
 }
 
@@ -84,7 +86,7 @@ export const useRideRequest = () => {
         }),
       });
 
-      console.log("Response status:", response.status);
+      console.log("Response status:", response.status, response.statusText);
       // const data: RideResponse = await response.json();
       // console.log("Response data:", data);      
       if (!response.ok) {
@@ -93,7 +95,7 @@ export const useRideRequest = () => {
       }
       
       const text = await response.text();
-      console.log("Raw response:", text);
+      // console.log("Raw response:", text);
       
       if (!text) {
         throw new Error("Empty response received");
@@ -117,7 +119,7 @@ export const useRideRequest = () => {
     } 
   };
 
-  const startRide = async (destination: Location) => {
+  const startRide = async (/*destination: Location*/) => {
     try {
       const response = await fetch("https://flysy.software/api/inicia-trajecte", {
         method: "POST",
@@ -125,9 +127,9 @@ export const useRideRequest = () => {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          destination: { x: destination.x, y: destination.y }
-        }),
+        // body: JSON.stringify({
+        //   destination: { x: destination.x, y: destination.y }
+        // }),
       });
 
       if (!response.ok) {
@@ -136,7 +138,8 @@ export const useRideRequest = () => {
       }
 
       const data = await response.json();
-      console.log("Trajecte iniciat:", data);
+      // console.log("Trajecte iniciat:", data);
+      alert("Trajecte iniciat.");
       return data;
     } catch (error) {
       console.error("Error a startRide:", error);
@@ -264,6 +267,7 @@ export const useRideRequest = () => {
     // releaseRide,
     nearestService,
     services,
+    startRide,
     // runningRide,
     // requestedRide,
     // cancelRide,

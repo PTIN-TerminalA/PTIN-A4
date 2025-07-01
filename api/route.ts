@@ -22,7 +22,7 @@ export async function getRoutePoints(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ // la API del A3 accepta arrays no Points
-        start : [origin.x, origin.y],
+        start : [origin.x, (1-origin.y)],
         goal: [destination.x, (1-destination.y)]
       }),
     });
