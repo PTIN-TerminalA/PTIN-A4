@@ -14,6 +14,7 @@ import {
   normalizeZones,
 } from "@/hooks/useNormalizedZones";
 import { ZoneViewer } from "./ZoneOverlays";
+import { useHeading } from "@/hooks/useHeading";
 
 interface Car {
   x: number;
@@ -46,9 +47,7 @@ const imageWidth = imageInfo.width;
 const imageHeight = imageInfo.height;
 const NUM_CARS = 10;
 
-const screen = Dimensions.get("window");
-
-//Escala para que la imagen encaje verticalmente
+const screen = Dimensions.get("window"); //Escala para que la imagen encaje verticalmente
 const scale = screen.height / imageHeight;
 const displayedWidth = imageWidth * scale;
 
@@ -62,6 +61,7 @@ const MapaUni: React.FC<Props> = ({
   routePoints,
 }) => {
   const [carPositions, setCarPositions] = useState<Car[]>([]);
+  const heading = useHeading();
 
   //Genera coches con posiciones aleatorias alrededor del centro
   const generatePositions = (): Car[] => {
@@ -131,121 +131,6 @@ const MapaUni: React.FC<Props> = ({
                 onPress={() => onServicePress(service)}
               />
             ))}
-
-          {/* Draw polygon zones */}
-          {/*
-            <Svg
-              width={displayedWidth}
-              height={screen.height}
-              style={{ position: "absolute", top: 0, left: 0 }}
-              pointerEvents="box-none"
-            >
-              {normalizedZones.map((zone, idx) => {
-                const pointsStr = zone.positions
-                  .map(([x, y]) => `${x * displayedWidth},${y * screen.height}`)
-                  .join(" ");
-
-                const handlePress = () => {
-                  console.log("pressed");
-                  const service = services?.find((s) => s.name === zone.name);
-                  if (service) onServicePress(service);
-                };
-
-                return (
-                  <G key={idx} onPress={handlePress}>
-                    <Polygon
-                      points={pointsStr}
-                      fill="rgba(160, 160, 240, 0.05)"
-                      stroke="blue"
-                      strokeWidth={2}
-                    />
-                  </G>
-                );
-              })}
-            </Svg>
-          */}
-          {/*
-          <ZoneViewer
-            zones={zones}
-            onZonePress={(zone) => {
-              console.log("Zone pressed:", zone.name);
-              const service = services?.find(
-                (service) =>
-                  service.name
-                    .toLowerCase()
-                    .includes(zone.name.toLowerCase()) ||
-                  zone.name.toLowerCase().includes(service.name.toLowerCase())
-              );
-
-              if (service) {
-                console.log(
-                  `Found service: ${service.name} for zone: ${zone.name}`
-                );
-                onServicePress(service);
-              } else {
-                console.warn(`No service found for zone: ${zone.name}`);
-              }
-            }}
-            width={displayedWidth}
-            height={screen.height}
-            debug={true}
-          />
-          */}
-          {/*
-            <View
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: displayedWidth,
-                height: screen.height,
-              }}
-              pointerEvents="box-none"
-            >
-              <Svg
-                width={displayedWidth}
-                height={screen.height}
-                style={{ position: "absolute", top: 0, left: 0 }}
-                pointerEvents="box-none"
-              >
-                {normalizedZones.map((zone, idx) => {
-                  const pointsStr = zone.positions
-                    .map(
-                      ([x, y]) => `${x * displayedWidth},${y * screen.height}`
-                    )
-                    .join(" ");
-
-                  const handleTap = () => {
-                    console.log("pressed polygon");
-                    const service = services?.find((s) => s.name === zone.name);
-                    if (service) onServicePress(service);
-                  };
-
-                  return (
-                    <TapGestureHandler key={idx} onActivated={handleTap}>
-                      <Polygon
-                        points={pointsStr}
-                        fill="rgba(160, 160, 240, 0.05)"
-                        stroke="blue"
-                        strokeWidth={2}
-                        pointerEvents="auto"
-                        onPress={() => {
-                          console.log("pressed polygon");
-                          const service = services?.find(
-                            (s) => s.name === zone.name
-                          );
-                          if (service) {
-                            console.log(`${service.name}, ${zone.name}`);
-                            onServicePress(service);
-                          }
-                        }}
-                      />
-                    </TapGestureHandler>
-                  );
-                })}
-              </Svg>
-            </View>
-          */}
           {
             <View
               pointerEvents="box-none"
@@ -298,6 +183,7 @@ const MapaUni: React.FC<Props> = ({
               y={userLocation.y * imageHeight}
               scale={scale}
               imageHeight={imageHeight}
+              heading={heading}
             />
           )}
 
