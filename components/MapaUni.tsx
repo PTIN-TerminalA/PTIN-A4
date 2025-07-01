@@ -50,7 +50,7 @@ const MapaUni: React.FC<Props> = ({
   routePoints
 }) => {
   const [carPositions, setCarPositions] = useState<Car[]>([]);
-
+  // if (carPos) console.log("carPos -->", carPos);
   //Genera coches con posiciones aleatorias alrededor del centro
   const generatePositions = (): Car[] => {
     const cars: Car[] = [];
@@ -64,7 +64,7 @@ const MapaUni: React.FC<Props> = ({
   };
 
   //Movimiento de los coches
-  useEffect(() => {
+  /*useEffect(() => {
     setCarPositions(generatePositions());
     const interval = setInterval(() => {
       setCarPositions((cars) =>
@@ -82,7 +82,7 @@ const MapaUni: React.FC<Props> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, []);*/
   {/*services?.forEach(service => {
     console.log('Service position:', service.location_x, service.location_y);
   });*/} 
@@ -146,9 +146,10 @@ const MapaUni: React.FC<Props> = ({
           )}
 
           {carPos && carPos.visible && (
+            // console.log("car: ", carPos),
             <CarMarker
-              x={carPos.x}
-              y={carPos.y}
+              x={carPos.x * imageWidth}
+              y={carPos.y * imageHeight}
               rotation={carPos.rotation}
               scale={scale}
               onPress={() => console.log("Cotxe clicat")}

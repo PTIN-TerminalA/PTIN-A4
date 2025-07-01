@@ -1,1 +1,1 @@
-export const API_URL = "https://flysy.software";
+export const API_URL = "http://192.168.15.4:8000";

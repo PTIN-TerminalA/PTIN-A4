@@ -20,7 +20,7 @@ export function useUserLocation(scanInterval = 3000) {
   const localizeUser = async (measurements: Measurement[]): Promise<Position | null> => {
     try {
       //console.log("Crida getUserPosition des de A4", measurements)
-      const response = await fetch(`${API_URL}/api/getUserPosition`, {
+      const response = await fetch("https://flysy.software/api/getUserPosition", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export function useUserLocation(scanInterval = 3000) {
       });
       
       const data = await response.json();
-      console.log("DATA: ", data);
+      // console.log("DATA: ", data);
       return data;
 
     } catch (error) {
@@ -60,7 +60,6 @@ export function useUserLocation(scanInterval = 3000) {
         // const wifiList = await WifiManager.reScanAndLoadWifiList();
         const wifiListRaw = await WifiManager.reScanAndLoadWifiList();
         const wifiList = typeof wifiListRaw === 'string' ? JSON.parse(wifiListRaw) : wifiListRaw;
-
         // if (wifiList) {
         //   const wifiSimplifiedList: Measurement[] = wifiList.map((wifi) => ({
         //     bssid: wifi.BSSID.replace(/:/g, ''), // Remove ":"
@@ -71,9 +70,9 @@ export function useUserLocation(scanInterval = 3000) {
             bssid: wifi.BSSID.replace(/:/g, ''),
             rssi: wifi.level ?? -100,
           }));
-          
+
           const pos = await localizeUser(wifiSimplifiedList);
-          
+
           if (pos) 
             setLocation(pos);
         
