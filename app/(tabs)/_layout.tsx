@@ -110,6 +110,19 @@ export default function TabLayout() {
           href: null,
         }}
       />
+      {/* <Tabs.Screen
+        name="edit-profile"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="edit-dni"
+        options={{
+          href: null,
+        }}
+      /> */}
+      
     </Tabs>
   );
 }
