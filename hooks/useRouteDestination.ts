@@ -17,20 +17,28 @@ function arrayToPoints(arr: [number, number][]): Point[] {
 
 export function useRouteDestination(origin: Point | null, destination: Point | null) {
   const [route, setRoute] = useState<Point[]>([]);
+  const [temps, setTemps] = useState<string | null>(null);
+
+
 
   useEffect(() => {
-    if (!origin || !destination) {
+    if (!origin || !destination || origin.x === -1) {
       setRoute([]);
       return;
+    }
+    if (origin?.x !== 0.5066077922077928) {
+      console.log("ORIGIN:", origin);
+      console.log("DESTINATION:", destination);
     }
 
     const controller = new AbortController();
     const fetchRoute = async () => {
-      const wayPoints = await getRoutePoints(origin, destination, controller.signal);
-      if (wayPoints && wayPoints.length > 0) {
-        const points: Point[] = arrayToPoints(wayPoints); // la API treballa amb arrays però el fronten amb Points
+      const res = await getRoutePoints(origin, destination, controller.signal);
+      if (res?.path && res?.length > 0) {
+        const points: Point[] = arrayToPoints(res.path); // la API treballa amb arrays
         const normalized = normalizePointsRoute(points); // adaptem coordenades a les del nostre mapa
         setRoute(normalized);
+        setTemps(res.temps)
       }
     };
 
@@ -41,5 +49,5 @@ export function useRouteDestination(origin: Point | null, destination: Point | n
     };
   }, [origin, destination]);
 
-  return route;
+  return {route, temps};
 }

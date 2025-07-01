@@ -36,7 +36,7 @@ export function useRecommendationNotifications() {
       const response = await getRecommendation({
         x: location.x,
         y: location.y,
-        id: 2960,
+        id: 44,
       });
       //response.recommendation = "test";
       if (response.recommendation) {

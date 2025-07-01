@@ -1,4 +1,4 @@
-const RECOMMENDATION_API_URL = "http://10.60.0.3:4444";
+const RECOMMENDATION_API_URL = "http://10.60.0.3:4443";
 
 export interface RecommendationRequest {
   x: number;
@@ -19,6 +19,7 @@ export async function getRecommendation(
   requestData: RecommendationRequest
 ): Promise<RecommendationResponse> {
   try {
+    // console.log("Calling getRecommendation with:", requestData);
     const response = await fetch(`${RECOMMENDATION_API_URL}/recommendation`, {
       method: "POST",
       headers: {
@@ -32,7 +33,7 @@ export async function getRecommendation(
     }
 
     const data = await response.json();
-
+    console.log("S'ha agafat bé la recomanació");
     return {
       recommendation: data.recommendation ?? null,
     };

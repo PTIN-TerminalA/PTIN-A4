@@ -20,7 +20,7 @@ export async function registerUser(
   gender: string
 ): Promise<string> {
   // Primer pas: registrar usuari base (taula user) i obtenir token
-  const userResponse = await fetch(`${API_URL}/api/register`, {
+  const userResponse = await fetch("https://flysy.software/api/register", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export async function registerUser(
   const token = userData.access_token;
 
   // Segon pas: registrar info addicional de l'usuari (taula regular)
-  const regularResponse = await fetch(`${API_URL}/api/register-regular`, {
+  const regularResponse = await fetch("https://flysy.software/api/register-regular", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export async function registerUser(
 }
 
 export async function loginUser(email: string, password: string): Promise<string> {
-  const response = await fetch(`${API_URL}/api/login`, {
+  const response = await fetch("https://flysy.software/api/login", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export async function loginUser(email: string, password: string): Promise<string
 }
 
 export async function getUserProfile(token: string): Promise<User> {
-  const response = await fetch(`${API_URL}/api/profile`, {
+  const response = await fetch("https://flysy.software/api/profile", {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,

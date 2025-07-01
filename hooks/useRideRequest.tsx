@@ -6,31 +6,48 @@ import { API_URL } from "@/api/Api";
 import { request } from "react-native-permissions";
 import { useAuth } from "./useAuth";
 
-type RideStatus = "idle" | "setted" | "requested" | "arriving" | "enroute" | "completed";
+// Stype RideStatus = "idle" | "setted" | "requested" | "arriving" | "enroute" | "completed";
 
 type RoutePoint = {
   x: number;
   y: number;
 };
 
-interface UserLocation {
-  x: number;
-  y: number;
-}
-
 type Location = {
   x: number;
   y: number;
 };
 
-export interface Ride {
-  origin: RoutePoint;
-  destination: Service;
-  status: RideStatus;
-  route: RoutePoint[]; // O null al principio
+export interface RideData { // doc route a MongoDB
+  _id: string;
+  user_id: number;
+  start_location: string;
+  end_location: string;
+  scheduled_time: string; // ISO string
+  state: string;          
+  car_id: string;
+}
+
+export interface RideResponse {
+  message: string;
+  controller_status: string; // status de la crida al controller, e.g. "ok" or "error"
+  controller_data: string; // { vehicle_id, ruta = {lenght, path, temps} }
+  reservation: RideData;
+  car_id: string;
+}
+
+// Add a small offset to avoid obstacles
+function adjustCoordinates(location: Location): Location {
+  // Add a small random offset to avoid obstacles
+  // const offset = 0.01; // 1% of the map size
+  return {
+    x: 0.5066077922077928,
+    y: 0.9
+  };
 }
 
 export const useRideRequest = () => {
+  /*
   const [isSetting, setIsSetting] = useState(false);
   const [destination, setDestination] = useState<Service | null>(null);
   const [origin, setOrigin] = useState<RoutePoint | null>(null);
@@ -43,23 +60,21 @@ export const useRideRequest = () => {
     scheduled_time: "2025-05-04T14:00:00Z",
     state: "En curs"
   });
+  */
   const { token } = useAuth();
-  const [reservationMessage, setReservationMessage] = useState<string | null>(null);
-
+  const [reservationMessage, setReservationMessage] = useState<string | null>(null); //useState<string | null>(null)
+  const [rideResponse, setRideResponse] = useState<RideResponse | null>(null);
 
   const setRide = async (location: Location, end_location: String) => {
     if (!location || !end_location) return; // per seguretat
     console.log("Starting testReserve");
-
-    const payload = {
+    console.log("Request payload:", {
       location: { x: location.x, y: location.y },
       end_location: end_location,
-    };
-
-    console.log("Payload:", JSON.stringify(payload));
-
+    });
+    
     try {
-      const response = await fetch(`${API_URL}/reserves/app`, {
+      const response = await fetch("https://flysy.software/api/reserves/app-basic", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,17 +85,70 @@ export const useRideRequest = () => {
           end_location: end_location,
         }),
       });
-      console.log("Response status:", response.status);
-      const data = await response.json();
-      console.log("Response data:", data);
-      if (data.message) {
-        setReservationMessage(data.message)
+
+      console.log("Response status:", response.status, response.statusText);
+      // const data: RideResponse = await response.json();
+      // console.log("Response data:", data);      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, detail: ${errorData.detail || 'No detail provided'}`);
+      }
+      
+      const text = await response.text();
+      // console.log("Raw response:", text);
+      
+      if (!text) {
+        throw new Error("Empty response received");
+      }
+      
+      try {
+        const data: RideResponse = JSON.parse(text);
+        console.log("Response data:", data);
+
+        if (data.message) {
+          setReservationMessage(data.message);
+          setRideResponse(data);
+        }
+      } catch (parseError) {
+        console.error("JSON Parse error:", parseError);
+        throw new Error(`Invalid JSON response: ${text}`);
       }
     } catch (error) {
       console.error("Fetch error:", error);
+      setReservationMessage("Error al reservar el viatge. Si us plau, torna-ho a provar.");
     } 
-  }
+  };
 
+  const startRide = async (/*destination: Location*/) => {
+    try {
+      const response = await fetch("https://flysy.software/api/inicia-trajecte", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        // body: JSON.stringify({
+        //   destination: { x: destination.x, y: destination.y }
+        // }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al iniciar el trajecte");
+      }
+
+      const data = await response.json();
+      // console.log("Trajecte iniciat:", data);
+      alert("Trajecte iniciat.");
+      return data;
+    } catch (error) {
+      console.error("Error a startRide:", error);
+      throw error;
+    }
+  };
+
+
+  /*
   const releaseRide = async (cotxe_id: String) => {
     try {
       const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/disponible`, {
@@ -97,18 +165,26 @@ export const useRideRequest = () => {
       return null;
     }
   }
+  */
 
   const nearestService = async (location: Location) => {
     try {
-      const response = await fetch(`${API_URL}/api/getNearestService`, {
+      console.log("Original location on nearest analysis:", location);
+      
+      const response = await fetch("https://flysy.software/api/getNearestService", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(location),
       });
-  
-      if (!response.ok) throw new Error("No s'ha pogut obtenir el servei més proper");
+      // if (!response.ok) throw new Error("No s'ha pogut obtenir el servei més proper");
+      if (!response.ok) {
+        console.error("API Response not OK:", response.status, response.statusText);
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error("No s'ha pogut obtenir el servei més proper");
+      }
   
       const data = await response.json();
       console.log("Servei més proper amb id:", data);
@@ -121,7 +197,7 @@ export const useRideRequest = () => {
 
   const services = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/getServices`);
+      const response = await fetch("https://flysy.software/api/getServices");
   
       if (!response.ok) throw new Error("Error obtenint serveis");
   
@@ -134,6 +210,7 @@ export const useRideRequest = () => {
     }
   };
 
+  /*
   const runningRide = async (cotxe_id: String) => {
     try {
       const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/en_curs`, {
@@ -150,7 +227,9 @@ export const useRideRequest = () => {
       return null;
     }
   }
+  */
 
+  /*
   const requestedRide = async (cotxe_id: String) => {
     try {
       const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/solicitat`, {
@@ -167,31 +246,32 @@ export const useRideRequest = () => {
       return null;
     }
   }
+  */
 
-
-
-
-
+  /*
   const cancelRide = () => {
     setDestination(null);
     setOrigin(null);
     setStatus("idle");
     setRoute(null);
   };
+  */
 
   return {
-    isSetting,
-    status,
-    destination,
-    origin,
-    route,
+    // isSetting,
+    // status,
+    // destination,
+    // origin,
+    // route,
     setRide,
-    releaseRide,
+    // releaseRide,
     nearestService,
     services,
-    runningRide,
-    requestedRide,
-    cancelRide,
-    reservationMessage
+    startRide,
+    // runningRide,
+    // requestedRide,
+    // cancelRide,
+    reservationMessage,
+    rideResponse,
   };
 };

@@ -64,8 +64,7 @@ const MapaUni: React.FC<Props> = ({
   routePoints,
 }) => {
   const [carPositions, setCarPositions] = useState<Car[]>([]);
-const { gesture, animatedStyle, isPanning } = useCanvasGestures();
-
+  // if (carPos) console.log("carPos -->", carPos);
   //Genera coches con posiciones aleatorias alrededor del centro
   const generatePositions = (): Car[] => {
     const cars: Car[] = [];
@@ -79,7 +78,7 @@ const { gesture, animatedStyle, isPanning } = useCanvasGestures();
   };
 
   //Movimiento de los coches
-  useEffect(() => {
+  /*useEffect(() => {
     setCarPositions(generatePositions());
     const interval = setInterval(() => {
       setCarPositions((cars) =>
@@ -97,7 +96,7 @@ const { gesture, animatedStyle, isPanning } = useCanvasGestures();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, []);*/
   {
     /*services?.forEach(service => {
     console.log('Service position:', service.location_x, service.location_y);
@@ -105,56 +104,93 @@ const { gesture, animatedStyle, isPanning } = useCanvasGestures();
   }
   return (
     <ThemedView style={styles.container}>
-       <GestureDetector gesture={gesture}>
-          <Animated.View style={[{ flex: 1 }, animatedStyle]}>
-            <Image
-              source={require("@/assets/images/planol.png")}
-              
-                  />
-      
-                  <Svg
-                                  pointerEvents="box-none"
-                                  width='500%'
-                                  height='200%'
-                                  style={{ position: "absolute", top: 0, left: 0 }}
-                                >
-                                  {normalizedZones.map((zone, idx) => {
-                                    const pointsStr = zone.positions
-                                      .map(
-                                        ([x, y]) => `${x * imageWidth},${y * imageHeight}`
-                                      )
-                                      .join(" ");
-                  
-                                    return (
-                                      <Polygon
-                                        key={idx}
-                                        pointerEvents="box-none"
-                                        points={pointsStr}
-                                        fill="none"
-                                        stroke="none"
-                                        strokeWidth={2}
-                                        onPressIn={() => {
-                                          console.log("pressed polygon",zone.name);
-                                          const service = services?.find(
-                                              (s) => s.name === zone.name
-                                              );
-                                          
-                                              if (service) {
-                                                  setTimeout(() => {
-                                                      if (!isPanning.value) {
-                                                          onServicePress(service);
-                                                      }
-                                                  }, 100); // Delay to ensure the modal opens after the gesture ends
-                                              }
-                                          
-                                        }}
-                                      />
-                                    );
-                                  })}
-                                </Svg>
-      
-          </Animated.View>
-        </GestureDetector>
+      <ImageZoom
+        {...({
+          cropWidth: screen.width,
+          cropHeight: screen.height,
+          imageWidth: displayedWidth,
+          imageHeight: screen.height,
+          minScale: 0.3,
+          maxScale: 3,
+          enableCenterFocus: false,
+          useNativeDriver: true,
+        } as any)} // Patch perquè no dongui error amb el tipus
+      >
+        <View style={{ width: displayedWidth, height: screen.height }}>
+          {/* Imagen de fondo */}
+          <Image
+            source={require("@/assets/images/planol.png")}
+            style={{ width: displayedWidth, height: screen.height }}
+            resizeMode="cover"
+          />
+          {services &&
+            services.map((service) => (
+              <MapMarker
+                key={service.id}
+                x={service.location_x * imageWidth}
+                y={service.location_y * imageHeight}
+                scale={scale}
+                onPress={() => onServicePress(service)}
+              />
+            ))}
+
+          {/* Puntos coches 
+          {carPositions.map((car, index) => (
+            <View
+              key={index}
+              style={{
+                position: "absolute",
+                left: car.x * scale - 7.5,
+                top: car.y * scale - 7.5,
+                width: 15,
+                height: 15,
+                borderRadius: 7.5,
+                backgroundColor: "red",
+                borderColor: "white",
+                borderWidth: 1,
+              }}
+            />
+          ))}*/}
+
+          {userLocation && (
+            <UserMarker
+              x={userLocation.x * imageWidth}
+              y={userLocation.y * imageHeight}
+              scale={scale}
+            />
+          )}
+
+          {carPos && carPos.visible && (
+            // console.log("car: ", carPos),
+            <CarMarker
+              x={carPos.x * imageWidth}
+              y={carPos.y * imageHeight}
+              rotation={carPos.rotation}
+              scale={scale}
+              onPress={() => console.log("Cotxe clicat")}
+            />
+          )}
+
+          {/** Visualització de la ruta en el MapaUni */}
+          {routePoints && routePoints.length > 1 && (
+            <Svg
+              width={displayedWidth}
+              height={screen.height}
+              style={{ position: "absolute", top: 0, left: 0 }}
+              pointerEvents="none" // Per poder seleccionar altres Markers del mapa mentre visualitzo la ruta
+            >
+              <Polyline
+                points={routePoints
+                  .map((point) => `${point.x * scale},${point.y * scale}`)
+                  .join(" ")}
+                fill="none"
+                stroke="blue"
+                strokeWidth={3}
+              />
+            </Svg>
+          )}
+        </View>
+      </ImageZoom>
     </ThemedView>
   );
 };
