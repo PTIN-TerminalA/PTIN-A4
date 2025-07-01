@@ -271,70 +271,24 @@ export default function HomeScreen() {
           </View>
         )}
 
-      <MapaUni
-        services={services}
-        onServicePress={(service) => {
-          setSelectedService(service);
-          setModalVisible(true);
-        }}
-        carPos={carPos}
-        userLocation={inversUserLocation}
-        // no fa falta pintar ruta quan s'apropa el cotxe, només mostrem temps estimat
-        routePoints={
-          routeData?.route && rideStage != "confirm" && rideStage != "select"
-            ? routeData.route
-            : []
-        }
-      />
-
-      {/* Mostrem el temps estimat si hi ha */}
-      {routeData?.temps && rideStage != "select" && (
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
+        <MapaUni
+          services={services}
+          onServicePress={(service) => {
+            setSelectedService(service);
+            setModalVisible(true);
           }}
-        >
-          <ThemedText>{routeData.temps}</ThemedText>
-        </View>
-      )}
+          carPos={carPos}
+          userLocation={inversUserLocation}
+          // no fa falta pintar ruta quan s'apropa el cotxe, només mostrem temps estimat
+          routePoints={
+            routeData?.route && rideStage != "confirm" && rideStage != "select"
+              ? routeData.route
+              : []
+          }
+        />
 
-      {/* Botó per escannejar */}
-      <TouchableOpacity
-        style={[styles.scannButton, { backgroundColor: buttonColor }]}
-        onPress={handlerScannerPress}
-      >
-        <Image source={buttonIcon} style={[styles.scannIconButton]}></Image>
-      </TouchableOpacity>
-
-      {/* Botón que abre el modal */}
-      {!disabled && (
-        <ThemedPressable // Botó només visible quan estigui habilitat
-          onPress={() => {
-            // console.log("PRESSED")
-            if (rideStage === "select") {
-              setModalVisible(true);
-            } else if (rideStage === "preview") {
-              setConfirmedService(previewService);
-              setRideStage("confirm");
-
-              if (previewService && userLocation) {
-                setRide(userLocation, previewService.name);
-              }
-              // Ocultem el botó 'Confirma que ets a dins' fins que el cotxe arribi al punt de recollida
-              // setDisabled(true);
-              setDisabled(false);
-            } else if (rideStage === "confirm") {
-              console.log("Has confirmat el viatge a:", confirmedService?.name);
-              setRideStage("inside");
-              setDisabled(true); // durant el viatge no es pot tornar a confirmar
-              startRide();
-            }
-          }}
-          disabled={disabled}
-          type="button"
-        >
+        {/* Mostrem el temps estimat si hi ha */}
+        {routeData?.temps && rideStage != "select" && (
           <View
             style={{
               flexDirection: "row",
@@ -342,75 +296,128 @@ export default function HomeScreen() {
               justifyContent: "center",
             }}
           >
-            <Image
-              source={require("../../assets/images/Icons/car.png")}
-              style={{
-                width: 40,
-                height: 40,
-                marginRight: 25,
-                tintColor:
-                  colorScheme == "dark" ? Colors.dark.text : Colors.light.text,
-              }}
-            />
-            {/* <ThemedText type="bold">Selecciona un destí</ThemedText> */}
-            {rideStage === "select" && (
-              <ThemedText type="bold">Selecciona un destí</ThemedText>
-            )}
-            {rideStage === "preview" && (
-              <ThemedText type="bold">Confirma el viatge</ThemedText>
-            )}
-            {rideStage === "confirm" && (
-              <ThemedText type="bold">Confirma que ets a dins</ThemedText>
-            )}
+            <ThemedText>{routeData.temps}</ThemedText>
           </View>
-        </ThemedPressable>
-      )}
+        )}
 
-      {/* Modal de valoració */}
-      <RatingModal
-        visible={ratingModalVisible}
-        onClose={() => setRatingModalVisible(false)}
-        token={token ? token : ""}
-        scheduledTime={rideResponse?.reservation?.scheduled_time ?? ""}
-      />
+        {/* Botó per escannejar */}
+        <TouchableOpacity
+          style={[styles.scannButton, { backgroundColor: buttonColor }]}
+          onPress={handlerScannerPress}
+        >
+          <Image source={buttonIcon} style={[styles.scannIconButton]}></Image>
+        </TouchableOpacity>
 
-      {/* Modal personalizado */}
-      <InfoModal
-        isVisible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSelect={async () => {
-          try {
-            if (
-              (rideStage === "select" || rideStage === "preview") &&
-              userLocation
-            ) {
-              const { nearest_service_id } = await nearestService(userLocation);
-              const nearest_service =
-                services?.find(
-                  (service: Service) => service.id === nearest_service_id
-                ) ?? null;
-              setNearestService(nearest_service);
-              setPreviewService(selectedService);
-              Promise.resolve().then(() => setRideStage("preview")); //Per que s'esperi a l'assignació de nearest i selected
+        {/* Botón que abre el modal */}
+        {!disabled && (
+          <ThemedPressable // Botó només visible quan estigui habilitat
+            onPress={() => {
+              // console.log("PRESSED")
+              if (rideStage === "select") {
+                setModalVisible(true);
+              } else if (rideStage === "preview") {
+                setConfirmedService(previewService);
+                setRideStage("confirm");
+
+                if (previewService && userLocation) {
+                  setRide(userLocation, previewService.name);
+                }
+                // Ocultem el botó 'Confirma que ets a dins' fins que el cotxe arribi al punt de recollida
+                // setDisabled(true);
+                setDisabled(false);
+              } else if (rideStage === "confirm") {
+                console.log(
+                  "Has confirmat el viatge a:",
+                  confirmedService?.name
+                );
+                setRideStage("inside");
+                setDisabled(true); // durant el viatge no es pot tornar a confirmar
+                startRide();
+              }
+            }}
+            disabled={disabled}
+            type="button"
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Image
+                source={require("../../assets/images/Icons/car.png")}
+                style={{
+                  width: 40,
+                  height: 40,
+                  marginRight: 25,
+                  tintColor:
+                    colorScheme == "dark"
+                      ? Colors.dark.text
+                      : Colors.light.text,
+                }}
+              />
+              {/* <ThemedText type="bold">Selecciona un destí</ThemedText> */}
+              {rideStage === "select" && (
+                <ThemedText type="bold">Selecciona un destí</ThemedText>
+              )}
+              {rideStage === "preview" && (
+                <ThemedText type="bold">Confirma el viatge</ThemedText>
+              )}
+              {rideStage === "confirm" && (
+                <ThemedText type="bold">Confirma que ets a dins</ThemedText>
+              )}
+            </View>
+          </ThemedPressable>
+        )}
+
+        {/* Modal de valoració */}
+        <RatingModal
+          visible={ratingModalVisible}
+          onClose={() => setRatingModalVisible(false)}
+          token={token ? token : ""}
+          scheduledTime={rideResponse?.reservation?.scheduled_time ?? ""}
+        />
+
+        {/* Modal personalizado */}
+        <InfoModal
+          isVisible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onSelect={async () => {
+            try {
+              if (
+                (rideStage === "select" || rideStage === "preview") &&
+                userLocation
+              ) {
+                const { nearest_service_id } =
+                  await nearestService(userLocation);
+                const nearest_service =
+                  services?.find(
+                    (service: Service) => service.id === nearest_service_id
+                  ) ?? null;
+                setNearestService(nearest_service);
+                setPreviewService(selectedService);
+                Promise.resolve().then(() => setRideStage("preview")); //Per que s'esperi a l'assignació de nearest i selected
+              }
+            } catch (error) {
+              console.error("Error al seleccionar servei: ", error);
+            } finally {
+              setModalVisible(false);
             }
-          } catch (error) {
-            console.error("Error al seleccionar servei: ", error);
-          } finally {
-            setModalVisible(false);
+          }}
+          /** Si no s'ha seleccionat un destí el modal canvia */
+          imageUrl={selectedService?.ad_path || localImage}
+          title={selectedService?.name || "Demana un cotxe"} // Previsualitza ruta nou nom
+          minutesText={selectedService == null ? "" : "2min"} // Opcional, si ho calcules    ride.time
+          distanceText={selectedService == null ? "" : "500 m"} // Opcional, si ho calcules
+          buttonText="Previsualitza ruta"
+          description={
+            selectedService?.description ||
+            "Primer selecciona un destí dins la terminal A"
           }
-        }}
-        /** Si no s'ha seleccionat un destí el modal canvia */
-        imageUrl={selectedService?.ad_path || localImage}
-        title={selectedService?.name || "Demana un cotxe"} // Previsualitza ruta nou nom
-        minutesText={selectedService == null ? "" : "2min"} // Opcional, si ho calcules    ride.time
-        distanceText={selectedService == null ? "" : "500 m"} // Opcional, si ho calcules
-        buttonText="Previsualitza ruta"
-        description={
-          selectedService?.description ||
-          "Primer selecciona un destí dins la terminal A"
-        }
-      />
-    </ThemedView>
+        />
+      </ThemedView>
+    </>
   );
 }
 

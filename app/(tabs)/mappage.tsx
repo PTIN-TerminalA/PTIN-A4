@@ -24,10 +24,22 @@ import { useNFCListener } from "@/hooks/useNFCListener";
 import { InfoModal } from "@/components/InfoModal";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { useServiceContext } from "@/contexts/ServiceContext";
+import { useCarLocation } from "@/hooks/useCarLocation";
+import UserMarker from "@/components/UserMarker";
+import CarMarker from "@/components/CarMarker";
+import { Colors } from "@/constants/Colors";
 
 const localImage = require("@/assets/images/planol.png");
 
-export default function Six() {
+export default function MapPage() {
+  const {
+    rideResponse,
+    reservationMessage,
+    nearestService,
+    setRide,
+    startRide,
+  } = useRideRequest();
+  const [car, setCar] = useState("");
   const mapImage = require("@/assets/images/planol.png");
   const { gesture, animatedStyle, isPanning, zoomTo } = useCanvasGestures();
   const [modalVisible, setModalVisible] = useState(false);
@@ -39,17 +51,31 @@ export default function Six() {
   const [confirmedService, setConfirmedService] = useState<Service | null>(
     null
   );
+  const [nearest, setNearestService] = useState<Service | null>(null);
+  const [rideStage, setRideStage] = useState<
+    "select" | "preview" | "confirm" | "inside"
+  >("select");
   const { services, loading: servicesLoading } = useServiceContext();
   const { location: userLocation } = useUserLocation(4000);
   const ride = useRideRequest();
-  const { reservationMessage } = ride;
-  const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">(
-    "select"
+  const carData = useCarLocation(
+    rideStage == "confirm" || rideStage == "inside" ? car : null
   );
+  const carState = carData?.state; // estats del cotxe: "stopped" o "moving"
+  const carPos = carData // ubicació del cotxe
+    ? {
+        id: carData?.car_id,
+        x: carData?.position.x,
+        y: 1 - carData?.position.y,
+        rotation: 0, // o el valor real si ho tenim
+        visible: true, // o alguna lògica per mostrar/ocultar
+      }
+    : null;
   const { tagId } = useNFCListener();
-  const [car, setCar] = useState("");
   const [startingTrip, setStartingTrip] = useState(false);
   const screen = Dimensions.get("window");
+  const [previewService, setPreviewService] = useState<Service | null>(null);
+
   // Scale to fit vertically
   //const scale = screen.height / imageHeight;
   const scale = 6.8;
@@ -71,7 +97,7 @@ export default function Six() {
     const len = zone.positions.length;
     return [sum[0] / len, sum[1] / len];
   };
-
+  console.log(userLocation, "User Location");
   return (
     <>
       <AutocompleteSearch
@@ -130,61 +156,19 @@ export default function Six() {
             onClose={() => setModalVisible(false)}
             onSelect={async () => {
               try {
-                if (rideStage === "select" && userLocation) {
-                  setConfirmedService(selectedService); // confirmamos este como destino real
-                  setStartingTrip(false);
-                  console.log("Has seleccionat:", selectedService?.name);
-                  setRideStage("confirm");
-                  //HACER EL MUESTREO DE RUTA
-                  console.log("MOSTRAR RUTA 1"); //Es lo mismo que mostrar ruta 2, solo un log para saber que aquí se tiene que mostrar ya que es antes de confirmar
-                  //RESERVA EL COCHE
-
-                  if (car !== "") {
-                    console.log("Torna a estar disponible el cotxe: ", car);
-                    await ride.releaseRide(car);
-                    setCar("");
-                  }
-                  const fakeUserLocation = {
-                    x: 0.5, // coordenada X
-                    y: 0.5, // coordenada Y
-                  };
-
-                  if (!selectedService) {
-                    console.error("No s'ha trobat el servei destí:");
-                    return;
-                  }
-                  ride.setRide(userLocation, selectedService.name);
-                } else if (rideStage === "confirm" || rideStage === "inside") {
-                  if (
-                    selectedService?.id !== confirmedService?.id &&
-                    userLocation
-                  ) {
-                    console.log("Has seleccionat:", selectedService?.name);
-                    setConfirmedService(selectedService);
-                    setRideStage("confirm");
-                    //HACER EL MUESTREO DE RUTA
-                    console.log("MOSTRAR RUTA 2");
-                    //RESERVA EL COCHE
-                    // Si hi havia un cotxe reservat es cancela i torna a posar a disponible
-
-                    if (car !== "") {
-                      console.log("Torna a estar disponible el cotxe: ", car);
-                      // PUT /cotxe/{cotxe_id}/disponible ----------
-                      await ride.releaseRide(car);
-                      setCar("");
-                    }
-
-                    const fakeUserLocation = {
-                      x: 0.5, // coordenada X
-                      y: 0.5, // coordenada Y
-                    };
-
-                    if (!selectedService) {
-                      console.error("No s'ha trobat el servei destí:");
-                      return;
-                    }
-                    await ride.setRide(userLocation, selectedService.name);
-                  }
+                if (
+                  (rideStage === "select" || rideStage === "preview") &&
+                  userLocation
+                ) {
+                  const { nearest_service_id } =
+                    await nearestService(userLocation);
+                  const nearest_service =
+                    services?.find(
+                      (service: Service) => service.id === nearest_service_id
+                    ) ?? null;
+                  setNearestService(nearest_service);
+                  setPreviewService(selectedService);
+                  Promise.resolve().then(() => setRideStage("preview")); //Per que s'esperi a l'assignació de nearest i selected
                 }
               } catch (error) {
                 console.error("Error al seleccionar servei: ", error);
@@ -194,10 +178,10 @@ export default function Six() {
             }}
             /** Si no s'ha seleccionat un destí el modal canvia */
             imageUrl={selectedService?.ad_path || localImage}
-            title={selectedService?.name || "Demana un cotxe"}
-            minutesText={selectedService == null ? "" : "2 min"} // Opcional, si ho calcules
+            title={selectedService?.name || "Demana un cotxe"} // Previsualitza ruta nou nom
+            minutesText={selectedService == null ? "" : "2min"} // Opcional, si ho calcules    ride.time
             distanceText={selectedService == null ? "" : "500 m"} // Opcional, si ho calcules
-            buttonText="Demanar cotxe"
+            buttonText="Previsualitza ruta"
             description={
               selectedService?.description ||
               "Primer selecciona un destí dins la terminal A"
@@ -240,6 +224,38 @@ export default function Six() {
                     resizeMode: "cover",
                   }}
                 />
+                {userLocation && (
+                  <View
+                    style={{
+                      left: userLocation.x * 600 * 0.68 - 12 / 2,
+                      top: -400 * 0.68 + userLocation.y * 400 * 0.68 - 12 / 2,
+                      width: 12,
+                      height: 12,
+                      borderRadius: 12 / 2,
+                      backgroundColor: Colors.basic,
+                      borderColor: Colors.primari,
+                      borderWidth: 2,
+                    }}
+                  ></View>
+                )}
+
+                {carPos && carPos.visible && (
+                  // console.log("car: ", carPos),
+
+                  <Pressable
+                    onPress={() => console.log("Cotxe clicat")}
+                    style={{
+                      left: carPos.x * 600 * 0.68,
+                      top: -400 * 0.68 + carPos.y * 400 * 0.68,
+                      transform: [{ rotate: `${carPos.rotation ?? 0}deg` }],
+                    }}
+                  >
+                    <Image
+                      source={require("@/assets/images/Icons/carIcon.png")} // <-- Aquesta hauria de ser la icona del cotxe
+                      resizeMode="contain"
+                    />
+                  </Pressable>
+                )}
                 <Svg
                   width={600 * 0.68}
                   height={400 * 0.68}
