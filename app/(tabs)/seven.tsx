@@ -18,6 +18,15 @@ import Svg, { Polygon } from "react-native-svg";
 import { zones } from "@/constants/mocks/zones";
 import { normalizeRotatedZones } from "@/hooks/useNormalizedZones";
 import AutocompleteSearch from "./five";
+import { Service } from "@/constants/mocks/mockTypes";
+import { useRideRequest } from "@/hooks/useRideRequest";
+import { useNFCListener } from "@/hooks/useNFCListener";
+import { InfoModal } from "@/components/InfoModal";
+import { useUserLocation } from "@/hooks/useUserLocation";
+import { useServiceContext } from "@/contexts/ServiceContext";
+
+const localImage = require("@/assets/images/planol.png");
+
 export default function Six() {
   const mapImage = require("@/assets/images/planol.png");
   const { gesture, animatedStyle, isPanning, zoomTo } = useCanvasGestures();
@@ -26,6 +35,20 @@ export default function Six() {
   const constant = 0.1;
   const imageWidth = 600 * constant;
   const imageHeight = 400 * constant;
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [confirmedService, setConfirmedService] = useState<Service | null>(
+    null
+  );
+  const { services, loading: servicesLoading } = useServiceContext();
+  const { location: userLocation } = useUserLocation(4000);
+  const ride = useRideRequest();
+  const { reservationMessage } = ride;
+  const [rideStage, setRideStage] = useState<"select" | "confirm" | "inside">(
+    "select"
+  );
+  const { tagId } = useNFCListener();
+  const [car, setCar] = useState("");
+  const [startingTrip, setStartingTrip] = useState(false);
   const screen = Dimensions.get("window");
   // Scale to fit vertically
   //const scale = screen.height / imageHeight;
@@ -48,9 +71,21 @@ export default function Six() {
     const len = zone.positions.length;
     return [sum[0] / len, sum[1] / len];
   };
+
   return (
     <>
-      <AutocompleteSearch />
+      <AutocompleteSearch
+        options={services?.map((s) => s.name) || []}
+        setModalVisible={setModalVisible}
+        setService={(name: string) => {
+          // busca el Service amb aquest nom
+          const svc =
+            services?.find(
+              (s) => s.name.toLowerCase() === name.toLowerCase()
+            ) ?? null;
+          setSelectedService(svc);
+        }}
+      />
       <Button
         style={{
           marginTop: 200,
@@ -90,28 +125,84 @@ export default function Six() {
               setModalVisible(false);
             }}
           />
-          <Modal
+          <InfoModal
             isVisible={modalVisible}
-            onDismiss={() => setModalVisible(false)}
-            onBackdropPress={() => setModalVisible(false)}
-            onSwipeComplete={() => setModalVisible(false)}
-            swipeDirection="down"
-            propagateSwipe
-            style={styles.modal}
-          >
-            <ThemedView style={{ padding: 20 }}>
-              <ThemedText type="title">Modal Title</ThemedText>
-              <ThemedText type="default">This is a modal content.</ThemedText>
-              <Button
-                onPress={() => {
-                  console.log("Modal Button Pressed");
-                  setModalVisible(false);
-                }}
-              >
-                <ThemedText>Close Modal</ThemedText>
-              </Button>
-            </ThemedView>
-          </Modal>
+            onClose={() => setModalVisible(false)}
+            onSelect={async () => {
+              try {
+                if (rideStage === "select" && userLocation) {
+                  setConfirmedService(selectedService); // confirmamos este como destino real
+                  setStartingTrip(false);
+                  console.log("Has seleccionat:", selectedService?.name);
+                  setRideStage("confirm");
+                  //HACER EL MUESTREO DE RUTA
+                  console.log("MOSTRAR RUTA 1"); //Es lo mismo que mostrar ruta 2, solo un log para saber que aquí se tiene que mostrar ya que es antes de confirmar
+                  //RESERVA EL COCHE
+
+                  if (car !== "") {
+                    console.log("Torna a estar disponible el cotxe: ", car);
+                    await ride.releaseRide(car);
+                    setCar("");
+                  }
+                  const fakeUserLocation = {
+                    x: 0.5, // coordenada X
+                    y: 0.5, // coordenada Y
+                  };
+
+                  if (!selectedService) {
+                    console.error("No s'ha trobat el servei destí:");
+                    return;
+                  }
+                  ride.setRide(userLocation, selectedService.name);
+                } else if (rideStage === "confirm" || rideStage === "inside") {
+                  if (
+                    selectedService?.id !== confirmedService?.id &&
+                    userLocation
+                  ) {
+                    console.log("Has seleccionat:", selectedService?.name);
+                    setConfirmedService(selectedService);
+                    setRideStage("confirm");
+                    //HACER EL MUESTREO DE RUTA
+                    console.log("MOSTRAR RUTA 2");
+                    //RESERVA EL COCHE
+                    // Si hi havia un cotxe reservat es cancela i torna a posar a disponible
+
+                    if (car !== "") {
+                      console.log("Torna a estar disponible el cotxe: ", car);
+                      // PUT /cotxe/{cotxe_id}/disponible ----------
+                      await ride.releaseRide(car);
+                      setCar("");
+                    }
+
+                    const fakeUserLocation = {
+                      x: 0.5, // coordenada X
+                      y: 0.5, // coordenada Y
+                    };
+
+                    if (!selectedService) {
+                      console.error("No s'ha trobat el servei destí:");
+                      return;
+                    }
+                    await ride.setRide(userLocation, selectedService.name);
+                  }
+                }
+              } catch (error) {
+                console.error("Error al seleccionar servei: ", error);
+              } finally {
+                setModalVisible(false);
+              }
+            }}
+            /** Si no s'ha seleccionat un destí el modal canvia */
+            imageUrl={selectedService?.ad_path || localImage}
+            title={selectedService?.name || "Demana un cotxe"}
+            minutesText={selectedService == null ? "" : "2 min"} // Opcional, si ho calcules
+            distanceText={selectedService == null ? "" : "500 m"} // Opcional, si ho calcules
+            buttonText="Demanar cotxe"
+            description={
+              selectedService?.description ||
+              "Primer selecciona un destí dins la terminal A"
+            }
+          />
         </View>
       )}
       <ThemedView
@@ -176,6 +267,17 @@ export default function Six() {
                         onPressIn={() => {
                           setTimeout(() => {
                             if (!isPanning.value) {
+                              // busca si zonee esta a services
+                              // Versió segura i senzilla
+                              const service =
+                                services?.find(
+                                  (s) =>
+                                    s.name.toLowerCase() ===
+                                    zone.name.toLowerCase()
+                                ) ?? null;
+                              console.log("Service found:", service);
+                              setSelectedService(service);
+
                               setModalVisible(true);
                               console.log("Polygon pressed:", zone.name);
                             }

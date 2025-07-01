@@ -1,55 +1,43 @@
 import React, { useState } from "react";
 import { View, TextInput, FlatList, Text, Pressable } from "react-native";
 
-type AutocompleteSearchProps = {
-  options: string[];
-  setModalVisible?: (visible: boolean) => void;
-  setService?: (service: string) => void;
-};
+const options = ["Barcelona", "Tarragona", "Girona", "Lleida", "València"];
 
-export default function AutocompleteSearch({
-  options,
-  setService,
-  setModalVisible,
-}: AutocompleteSearchProps) {
+export default function AutocompleteSearch() {
   const [query, setQuery] = useState("");
   const [filtered, setFiltered] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleChange = (text: string) => {
     setQuery(text);
-    console.log("Text input:", text);
-    if (text.length === 0) {
+    if (text.length > 0) {
+      const matches = options.filter((o) =>
+        o.toLowerCase().includes(text.toLowerCase())
+      );
+      setFiltered(matches);
+      setShowDropdown(true);
+    } else {
       setShowDropdown(false);
-      return;
     }
-
-    const matches = options.filter((o) =>
-      o.toLowerCase().includes(text.toLowerCase())
-    );
-    setFiltered(matches);
-    setShowDropdown(matches.length > 0);
   };
 
   const handleSelect = (item: string) => {
     setQuery(item);
     setShowDropdown(false);
-
-    // només cridem si existeixen
-    setModalVisible?.(true);
-    setService?.(item);
   };
 
   return (
     <View
       style={{
-        marginHorizontal: 20,
+        marginLeft: 20,
+        marginRight: 20,
         backgroundColor: "white",
         position: "absolute",
-        top: 60,
+        top: 0,
         left: 0,
         right: 0,
-        zIndex: 1999,
+        marginTop: 60,
+        zIndex: 999,
       }}
     >
       <TextInput
@@ -58,17 +46,15 @@ export default function AutocompleteSearch({
         onChangeText={handleChange}
         style={{
           borderWidth: 1,
-          borderColor: "grey",
+          borderColor: "gray",
           padding: 10,
           borderRadius: 5,
         }}
       />
-
       {showDropdown && (
         <FlatList
           data={filtered}
           keyExtractor={(item) => item}
-          keyboardShouldPersistTaps="handled" // or "always"
           renderItem={({ item }) => (
             <Pressable onPress={() => handleSelect(item)}>
               <Text style={{ padding: 10 }}>{item}</Text>
@@ -76,7 +62,7 @@ export default function AutocompleteSearch({
           )}
           style={{
             borderWidth: 1,
-            borderColor: "grey",
+            borderColor: "gray",
             borderTopWidth: 0,
             maxHeight: 150,
           }}

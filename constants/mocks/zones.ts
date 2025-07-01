@@ -24,7 +24,7 @@ export const zones: Zone[] = [
     info: "Venta de bombons",
   },
   {
-    name: "Facturació est",
+    name: "Facturar Maletes 2",
     type: "Facturació",
     positions: [
       [359, 883],
@@ -35,7 +35,7 @@ export const zones: Zone[] = [
     info: "Zona de facturació de maletes",
   },
   {
-    name: "Gate A2",
+    name: "A2",
     type: "Gate A2",
     positions: [
       [626, 883],
@@ -46,7 +46,7 @@ export const zones: Zone[] = [
     info: "Porta embarcament A2",
   },
   {
-    name: "Seguretat nord",
+    name: "Seguretat 1",
     type: "Seguretat nord",
     positions: [
       [626, 880],
@@ -70,7 +70,7 @@ export const zones: Zone[] = [
     info: "Venta de roba",
   },
   {
-    name: "Farmàcia nord",
+    name: "Farmàcia 1",
     type: "Farmàcia",
     positions: [
       [624, 654],
@@ -92,7 +92,7 @@ export const zones: Zone[] = [
     info: "Venta articles alta gama",
   },
   {
-    name: "Serveis nord",
+    name: "Lavabo 1",
     type: "Serveis",
     positions: [
       [624, 507],
@@ -125,7 +125,7 @@ export const zones: Zone[] = [
     info: "Venta de gominoles",
   },
   {
-    name: "Seguretat nord",
+    name: "Seguretat 3",
     type: "Seguretat nord",
     positions: [
       [624, 98],
@@ -136,7 +136,7 @@ export const zones: Zone[] = [
     info: "Control de seguretat de la zona nord",
   },
   {
-    name: "Gate A1",
+    name: "A1",
     type: "Gate A1",
     positions: [
       [624, 7],
@@ -147,7 +147,7 @@ export const zones: Zone[] = [
     info: "Porta embarcament A1",
   },
   {
-    name: "Facturació oest",
+    name: "Facturar Maletes 2",
     type: "Facturació",
     positions: [
       [439, 7],
@@ -158,7 +158,7 @@ export const zones: Zone[] = [
     info: "Zona de facturació de maletes",
   },
   {
-    name: "Caixer 1",
+    name: "ATM 1",
     type: "Caixer",
     positions: [
       [439, 97],
@@ -191,7 +191,7 @@ export const zones: Zone[] = [
     info: "Punt informació aeroport",
   },
   {
-    name: "Venta billets",
+    name: "Billets1",
     type: "Venta bitllets",
     positions: [
       [409, 65],
@@ -219,7 +219,7 @@ export const zones: Zone[] = [
     info: "Parking de la planta 0",
   },
   {
-    name: "Escales accés 1",
+    name: "Escales 1",
     type: "Escales accés",
     positions: [
       [543, 129],
@@ -230,7 +230,7 @@ export const zones: Zone[] = [
     info: "Escales accés 1",
   },
   {
-    name: "Serveis nord-oest",
+    name: "Lavabo 2",
     type: "Serveis",
     positions: [
       [439, 129],
@@ -241,7 +241,7 @@ export const zones: Zone[] = [
     info: "Serveis de la secció nord-oest",
   },
   {
-    name: "Serveis nord-est",
+    name: "Lavabo 3",
     type: "Serveis",
     positions: [
       [492, 855],
@@ -252,7 +252,7 @@ export const zones: Zone[] = [
     info: "Serveis de la secció nord-est",
   },
   {
-    name: "Escales accés 2",
+    name: "Escales 2",
     type: "Escales accés",
     positions: [
       [494, 855],
@@ -263,7 +263,7 @@ export const zones: Zone[] = [
     info: "Escales accés 2",
   },
   {
-    name: "Oficina policial",
+    name: "Policia",
     type: "Oficina policial",
     positions: [
       [520, 655],
@@ -285,7 +285,7 @@ export const zones: Zone[] = [
     info: "Tenda de roba",
   },
   {
-    name: "Coffee house",
+    name: "Coffee Pause",
     type: "Menjar",
     positions: [
       [520, 393],
@@ -329,7 +329,7 @@ export const zones: Zone[] = [
     info: "Tenda cosmetics i perfums",
   },
   {
-    name: "Escales accés 3",
+    name: "Escales 3",
     type: "Escales accés",
     positions: [
       [320, 252],
@@ -340,7 +340,7 @@ export const zones: Zone[] = [
     info: "Escales accés 3",
   },
   {
-    name: "Parking soterrani busos i taxis",
+    name: "Recollida bus i taxi",
     type: "Parking",
     positions: [
       [321, 251],
@@ -350,7 +350,7 @@ export const zones: Zone[] = [
     info: "Parking accedit a traves de: Escales accés 3",
   },
   {
-    name: "Parking soterrani busos i taxis ",
+    name: "Recollida bus i taxi",
     type: "Parking",
     positions: [
       [321, 251],
@@ -366,7 +366,7 @@ export const zones: Zone[] = [
     info: "Parking accedit a traves de: Escales accés 3",
   },
   {
-    name: "McDonald's",
+    name: "Mc Donald's",
     type: "Menjar",
     positions: [
       [416, 515],
@@ -416,7 +416,7 @@ export const zones: Zone[] = [
     info: "Tenda de joies",
   },
   {
-    name: "Escales5",
+    name: "Escales 5",
     type: "Escales accés",
     positions: [
       [179, 597],
@@ -427,7 +427,7 @@ export const zones: Zone[] = [
     info: "Escales accés 5",
   },
   {
-    name: "Gate A4",
+    name: "A4",
     type: "Gate",
     positions: [
       [254, 621],
@@ -440,7 +440,7 @@ export const zones: Zone[] = [
     info: "Porta embarcament A4",
   },
   {
-    name: "Caixer 2",
+    name: "ATM 2",
     type: "Caixer",
     positions: [
       [255, 827],
@@ -451,7 +451,7 @@ export const zones: Zone[] = [
     info: "Caixer ATM",
   },
   {
-    name: "Carrega electrica",
+    name: "Zona d'endolls per cotxes",
     type: "Servei",
     positions: [
       [103, 514],
@@ -519,7 +519,7 @@ export const zones: Zone[] = [
     info: "Entrepans i tapes de pernil",
   },
   {
-    name: "Gate A3",
+    name: "A3",
     type: "Gate",
     positions: [
       [190, 87],
@@ -530,7 +530,7 @@ export const zones: Zone[] = [
     info: "Porta embarcament A3",
   },
   {
-    name: "Escales accés 6",
+    name: "Escales 6",
     type: "Escales accés",
     positions: [
       [93, 87],
@@ -541,7 +541,7 @@ export const zones: Zone[] = [
     info: "Escales accés 6",
   },
   {
-    name: "Seguretat sud-oest",
+    name: "Seguretat 2",
     type: "Seguretat",
     positions: [
       [91, 89],

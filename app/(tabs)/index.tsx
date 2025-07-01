@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -94,13 +95,6 @@ export default function HomeScreen() {
     useState(false);
 
   useEffect(() => {
-    // console.log("services: ", services);
-    // console.log("El servicio: ", gate);
-    // const fakeLocation = {
-    //   x: 0.5,
-    //   y: 0.5
-    // };
-    // console.log("La ubicacion del usuario: ", userLocation);
     if (
       fromNotification === "true" &&
       destinationName &&
@@ -269,12 +263,13 @@ export default function HomeScreen() {
   }
   //console.log("Rendering services:", services?.length); No cal mostrar tantes vegades el rendering services perquè omple el log d'això
   return (
-    <ThemedView style={styles.container}>
-      {reservationMessage && (
-        <View style={styles.messageContainer}>
-          <ThemedText>{reservationMessage}</ThemedText>
-        </View>
-      )}
+    <>
+      <ThemedView style={styles.container}>
+        {reservationMessage && (
+          <View style={styles.messageContainer}>
+            <ThemedText>{reservationMessage}</ThemedText>
+          </View>
+        )}
 
       <MapaUni
         services={services}
