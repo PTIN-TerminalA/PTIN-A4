@@ -70,6 +70,9 @@ export default function EditProfileScreen() {
             Editar Perfil
           </ThemedText>
 
+          <ThemedText>
+            Nom
+          </ThemedText>
           <ThemedTextInput
             placeholder="Nom"
             placeholderTextColor={Colors.input_text}
@@ -79,6 +82,9 @@ export default function EditProfileScreen() {
             style={styles.textInput}
           />
 
+          <ThemedText type='default' style={{ paddingTop: 20}}>
+            Data de naixement
+          </ThemedText>
           <ThemedTextInput
             placeholder="Data de naixement (YYYY-MM-DD)"
             placeholderTextColor={Colors.input_text}
@@ -88,6 +94,9 @@ export default function EditProfileScreen() {
             keyboardType="numeric"
           />
 
+          <ThemedText type='default' style={{ paddingTop: 20}}>
+            Telèfon
+          </ThemedText>
           <ThemedTextInput
             placeholder="Telèfon"
             placeholderTextColor={Colors.input_text}
@@ -97,6 +106,9 @@ export default function EditProfileScreen() {
             style={styles.textInput}
           />
 
+          <ThemedText type='default' style={{ paddingTop: 20}}>
+            Gènere
+          </ThemedText>
           <SelectList
             setSelected={setGender}
             data={genderOptions}
