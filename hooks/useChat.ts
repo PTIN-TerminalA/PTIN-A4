@@ -1,40 +1,42 @@
-//import { useState } from "react";
-//import { sendMessageToBot } from "@/api/chatbot";
-//
-//export function useBotMessage() {
-//  const [loading, setLoading] = useState<boolean>(false);
-//  const [error, setError] = useState<string | null>(null);
-//
-//  const sendMessage = async (text: string): Promise<string> => {
-//    setLoading(true);
-//    setError(null);
-//
-//    try {
-//      const reply = await sendMessageToBot(text);
-//      return reply;
-//    } catch (err: any) {
-//      setError(err.message || "Unknown error");
-//      return "Sorry, something went wrong.";
-//    } finally {
-//      setLoading(false);
-//    }
-//  };
-//
-//  return { sendMessage, loading, error };
-//}
-// hooks/useBotMessage.ts
+import { sendMessageToBot } from "@/api/chatbot";
 import { useState } from "react";
+import { useAuth } from "./useAuth";
+import { getUserId } from "@/api/userId";
+import { useUserLocation } from "@/hooks/useUserLocation";
+import { ChatInfo } from "@/constants/mocks/mockTypes";
 
 export const useBotMessage = () => {
   const [loading, setLoading] = useState(false);
+  const { token } = useAuth();
+  const { location: userLocation } = useUserLocation(4000);
 
   const sendMessage = async (userText: string) => {
+    if (!token){
+      throw new Error("Token not available");
+    }
+
+    if (!userLocation) {
+      throw new Error("Location not available");
+    }
+
     setLoading(true);
-    // Simulate backend call
-    await new Promise((res) => setTimeout(res, 800));
-    setLoading(false);
-    return "¡Mensaje recibido!";
+
+    try {
+      const userId = await getUserId(token);
+      const chatInfo: ChatInfo = {
+        userId,
+        userMessage: userText,
+        location_x: userLocation.x,
+        location_y: userLocation.y,
+      };
+      console.log("ChanInfo: ",chatInfo)
+      const reply = await sendMessageToBot(chatInfo);
+      return reply;
+    } finally {
+      setLoading(false);
+    }
   };
 
   return { sendMessage, loading };
 };
+

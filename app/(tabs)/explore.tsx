@@ -151,7 +151,7 @@ export default function ServiceScreen() {
                   }}
                 >
                   <TouchableOpacity
-                    style={[
+                      style={[
                       styles.serviceBox,
                       { backgroundColor: Colors[colorScheme].box },
                     ]}
@@ -160,7 +160,6 @@ export default function ServiceScreen() {
                     <View
                       style={[
                         styles.serviceImageBox,
-                        { backgroundColor: Colors.primari },
                       ]}
                     >
                       <Image
@@ -329,23 +328,23 @@ const styles = StyleSheet.create({
   },
 
   scrollContent: {
-    marginVertical: 16,
+    marginVertical: 4,
     alignItems: "center",
     alignContent: "center",
-    width: "90%",
+    width: "100%",
   },
 
   serviceBox: {
-    height: 120,
     width: "100%",
+    height: 180,
     flexDirection: "row",
-    borderRadius: 30,
+    borderRadius: 0,
   },
 
   serviceImageBox: {
     flex: 1,
-    borderStartStartRadius: 30,
-    borderBottomStartRadius: 30,
+    borderStartStartRadius: 0,
+    borderBottomStartRadius: 0,
     padding: 4,
     alignItems: "center",
     justifyContent: "center",
@@ -355,12 +354,12 @@ const styles = StyleSheet.create({
   serviceImage: {
     width: "100%",
     height: "100%",
-    borderTopLeftRadius: 30,
-    borderBottomLeftRadius: 30,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
   },
 
   serviceInfo: {
-    flex: 2,
+    flex: 1,
     flexDirection: "column",
     alignItems: "flex-start",
   },
