@@ -36,19 +36,9 @@ export default function ProfileScreen() {
       onPress: () => router.push("/profilescreens/edit-profile"),
     },
     {
-      label: "CORREU ELECTRÒNIC",
-      value: user?.email || "email@gmail.com",
-      onPress: () => router.push("/profilescreens/edit-profile"),
-    },
-    {
       label: "DNI",
       value: user?.dni || "*********",
       onPress: () => router.push("/profilescreens/edit-dni"),
-    },
-    {
-      label: "CONTRASENYA",
-      value: "**************",
-      onPress: () => router.push("/profilescreens/edit-profile"),
     },
     {
       label: "DATA DE NAIXEMENT",
