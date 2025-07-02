@@ -107,6 +107,7 @@ const MapaUni: React.FC<Props> = ({
             style={{ width: displayedWidth, height: screen.height }}
             resizeMode="cover"
           />
+          {/*}
           {services &&
             services.map((service) => (
               <MapMarker
@@ -116,7 +117,7 @@ const MapaUni: React.FC<Props> = ({
                 scale={scale}
                 onPress={() => onServicePress(service)}
               />
-            ))}
+            ))}*/}
 
 
           {/* Puntos coches 
@@ -184,6 +185,7 @@ const MapaUni: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
 });
 

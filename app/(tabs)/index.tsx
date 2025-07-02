@@ -30,6 +30,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useServiceContext } from "@/contexts/ServiceContext";
 import { useTags } from "@/hooks/useTags";
 import { set } from "date-fns";
+import { SearchBar } from "@/components/MapSearchBar";
 
 const localImage = require("@/assets/images/planol.png");
 
@@ -234,6 +235,7 @@ export default function HomeScreen() {
           <ThemedText>{reservationMessage}</ThemedText>
         </View>
       )}
+      <SearchBar options={services} setSelected={setSelectedService} setVisible={setModalVisible}/>
 
       <MapaUni
         services={services}
@@ -343,6 +345,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "white",
     flex: 1,
     position: "relative",
   },
