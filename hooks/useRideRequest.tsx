@@ -257,6 +257,36 @@ export const useRideRequest = () => {
   };
   */
 
+  const endRide = async () => {
+    try {
+      const response = await fetch("https://flysy.software/api/finalitza-trajecte", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      // console.log("Response status:", response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error al finalitzar trajecte: ${errorData.detail || response.statusText}`);
+      }
+
+      const data = await response.json();
+      // console.log("Finalització correcta:", data);
+
+      // Aquí puedes usar setState o similar si usas React
+      // setFinalizationMessage(data.message);
+
+      return data;
+    } catch (error) {
+      // console.error("Error finalitzant el trajecte:", error);
+      // setFinalizationMessage("Error en finalitzar el trajecte.");
+    }
+  };
+
   return {
     // isSetting,
     // status,
@@ -268,6 +298,7 @@ export const useRideRequest = () => {
     nearestService,
     services,
     startRide,
+    endRide,
     // runningRide,
     // requestedRide,
     // cancelRide,

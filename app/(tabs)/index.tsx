@@ -58,7 +58,7 @@ export default function HomeScreen() {
   };
   let userLocation = defaultLocation;
   if (location.location !== null)  userLocation = location.location;
-  // userLocation = defaultLocation;
+  // userLocation = defaultLocation;
   const inversUserLocation = { x: userLocation.x, y: (1 - userLocation.y) }; // Invertim l'origen de coordenades per a que sigui compatible amb altres apis
 
   const { services, loading: servicesLoading } = useServiceContext();
@@ -70,6 +70,7 @@ export default function HomeScreen() {
     nearestService,
     setRide,
     startRide,
+    endRide,
   } = useRideRequest();
 
   const [rideStage, setRideStage] = useState<"select" | "preview" | "confirm" | "inside">("select");
@@ -130,14 +131,48 @@ export default function HomeScreen() {
   }, [rideResponse]);
 
   const carData = useCarLocation((rideStage == "confirm" || rideStage == "inside") ? car : null);
+  const [lastCarPos, setLastCarPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  const [prevCarPos, setPrevCarPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  useEffect(() => {
+    if (carData) {
+      const currentPos = {
+        x: carData.position.x,
+        y: 1 - carData.position.y, // Reversa Y si sigues usando coordenadas invertidas
+      };
+
+      setPrevCarPos(lastCarPos); // La anterior se convierte en "prev"
+      setLastCarPos(currentPos); // La nueva se guarda como "last"
+    }
+  }, [carData]);
+  function calculateRotationAngle(prev: { x: number, y: number }, last: { x: number, y: number }) {
+    const dx = last.x - prev.x;
+    const dy = last.y - prev.y;
+
+    const angleRadians = Math.atan2(dy, dx); // Ángulo en radianes
+    const angleDegrees = angleRadians * (180 / Math.PI); // Convierte a grados
+
+    return angleDegrees;
+  }
+  const rotation = (lastCarPos && prevCarPos)
+  ? calculateRotationAngle(prevCarPos, lastCarPos)
+  : 0;
   const carState = carData?.state; // estats del cotxe: "stopped" o "moving"
-  const carPos = carData // ubicació del cotxe
+  /*const carPos = carData // ubicació del cotxe
   ? {
       id: carData?.car_id,
       x: carData?.position.x,
       y: (1 - carData?.position.y),
       rotation: 0, // o el valor real si ho tenim
       visible: true // o alguna lògica per mostrar/ocultar
+    }
+  : null;*/
+  const carPos = carData
+  ? {
+      id: carData.car_id,
+      x: lastCarPos?.x,
+      y: lastCarPos?.y,
+      rotation: rotation,
+      visible: true,
     }
   : null;
 
@@ -155,16 +190,17 @@ export default function HomeScreen() {
       setDisabled(false); // Habilitem el botó quan el cotxe està aturat (esperant) perque l'usuari pugui confirmar que està a dins
       alert("El cotxe t'espera al punt de recollida.");
     } else if (rideStage === "inside" && carState && carState === "stopped") {
+      endRide(); // Quan el cotxe està aturat i l'usuari està a dins, finalitzem la reserva
       setRatingModalVisible(true); // valorar ruta
       
-      setDisabled(false); // Tornem a habilitar el botó per a que l'usuari pugui seleccionar un nou destí
-      setRideStage("select"); // Tornem a l'estat de selecció de destí
-      setConfirmedService(null); // Reiniciem el servei confirmat per a la propera
-      setPreviewService(null); // Reiniciem el servei previsualitzat per a la propera
-      setSelectedService(null); // Reiniciem el servei seleccionat per a la propera
-      setNearestService(null); // Reiniciem el servei més proper per a la propera
-      setCar(""); // Reiniciem el cotxe per a la propera
-      setRide(userLocation, ""); // Reiniciem la reserva
+      // setDisabled(false); // Tornem a habilitar el botó per a que l'usuari pugui seleccionar un nou destí
+      // setRideStage("select"); // Tornem a l'estat de selecció de destí
+      // setConfirmedService(null); // Reiniciem el servei confirmat per a la propera
+      // setPreviewService(null); // Reiniciem el servei previsualitzat per a la propera
+      // setSelectedService(null); // Reiniciem el servei seleccionat per a la propera
+      // setNearestService(null); // Reiniciem el servei més proper per a la propera
+      // setCar(""); // Reiniciem el cotxe per a la propera
+      // setRide(userLocation, ""); // Reiniciem la reserva
     }
   }, [carState]);
 
@@ -244,7 +280,7 @@ export default function HomeScreen() {
           setModalVisible(true);
         }}
         carPos={carPos}
-        userLocation={inversUserLocation}
+        userLocation={userLocation}
         // no fa falta pintar ruta quan s'apropa el cotxe, només mostrem temps estimat
         routePoints={routeData?.route && (rideStage != "confirm" && rideStage != "select") ? routeData.route : []}     
       />
@@ -276,7 +312,7 @@ export default function HomeScreen() {
             setRideStage("confirm");
 
             if (previewService  && userLocation) {
-              setRide(userLocation, previewService.name);
+              setRide(inversUserLocation, previewService.name);
             }
             // Ocultem el botó 'Confirma que ets a dins' fins que el cotxe arribi al punt de recollida
             // setDisabled(true); 
@@ -318,7 +354,7 @@ export default function HomeScreen() {
         onSelect={async () => {
           try {
             if ((rideStage === "select" || rideStage === "preview") && userLocation) {
-              const { nearest_service_id } = await nearestService(userLocation);
+              const { nearest_service_id } = await nearestService(inversUserLocation);
               const nearest_service = services?.find((service: Service) => service.id === nearest_service_id) ?? null;
               setNearestService(nearest_service);
               setPreviewService(selectedService);
