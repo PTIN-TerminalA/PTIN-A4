@@ -15,7 +15,6 @@ import {
 } from "@/hooks/useNormalizedZones";
 import { ZoneViewer } from "./ZoneOverlays";
 import { useHeading } from "@/hooks/useHeading";
-
 interface Car {
   x: number;
   y: number;
