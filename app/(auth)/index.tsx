@@ -166,7 +166,7 @@ export default function Login() {
           </View>
         </ThemedPressable>
         {/* BOTÓ CONTINUA AMB APPLE */}
-        <ThemedPressable onPress={register} type="button_alt">
+        {/* <ThemedPressable onPress={register} type="button_alt">
           <View
             style={{
               flexDirection: "row",
@@ -189,7 +189,7 @@ export default function Login() {
               Continua amb Apple
             </ThemedText>
           </View>
-        </ThemedPressable>
+        </ThemedPressable> */}
         <ThemedText
           style={{
             textAlign: "center",

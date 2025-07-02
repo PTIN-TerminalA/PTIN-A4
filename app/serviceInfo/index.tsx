@@ -4,12 +4,12 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams, useNavigation } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { Fragment } from "react";
 import { Colors } from "@/constants/Colors";
@@ -19,9 +19,11 @@ import useAverageValoration from "@/hooks/useAverageValoration";
 import PriceDisplay from "@/components/PriceAvg";
 import DirectionButton from "@/components/DirectionButton";
 import ScheduleStatus from "@/components/ScheduleStatus";
+import { IconButton } from "react-native-paper";
 import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function ServiceInfoScreen() {
+  const navigation = useNavigation();
   const colorScheme = useColorScheme() || "light";
   const { id } = useLocalSearchParams<{ id: string }>();
   const { services } = useServiceContext();
@@ -51,59 +53,73 @@ export default function ServiceInfoScreen() {
   return (
     <Fragment>
       {/* Titol de la pantalla */}
-      <Stack.Screen
-        options={{
-          headerShown: true,
-          headerTitle: "",
-          headerStyle: { backgroundColor: Colors[colorScheme].box },
-          headerShadowVisible: false,
-        }}
-      ></Stack.Screen>
-
       <SafeAreaView
-        style={[styles.container, { backgroundColor: Colors[colorScheme].box }]}
+        edges={["top"]}
+        style={[styles.container, {backgroundColor: Colors[colorScheme].box }]}
       >
-        <ThemedText style={[{ fontSize: 40 }, { lineHeight: 40 }]} type="title">
-          {service.name}
-        </ThemedText>
-        <View style={[styles.serviceStyle]}>
-          <StarRating starSize={25} rating={average}></StarRating>
-          <ThemedText type="default" style={styles.ratingCount}>
-            ({count || 0})
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            icon="arrow-left"
+            iconColor={Colors[colorScheme].text}
+            size={24}
+            onPress={() => navigation.goBack()}
+            style={{ marginLeft: 8 }}
+          />
+
+          <ThemedText style={{ fontSize: 20, marginLeft: 8 }} type="bold">
+            Informació Del Servei
           </ThemedText>
-          {service.avg_price && (
-            <PriceDisplay
-              containerStyle={styles.priceStyle}
-              avgPrice={service.avg_price}
-              showCategory={true}
-              intervalStyle={{ fontSize: 20 }}
-              categoryStyle={{ fontSize: 16 }}
-            ></PriceDisplay>
-          )}
+
         </View>
 
-        <View style={[styles.serviceStyle, { paddingTop: 16 }]}>
-          <DirectionButton></DirectionButton>
-          <View style={{ width: 8 }}></View>
-          {service.link && (
-            <DirectionButton
-              label="Visita la Web"
-              buttonStyle={[
-                { borderWidth: 1 },
-                { borderColor: Colors[colorScheme].tint },
-                { backgroundColor: Colors[colorScheme].box },
-              ]}
-              onPress={() => handleGoWebsite(service.link!)}
-              iconSource={
-                colorScheme === "dark"
-                  ? require("@/assets/images/Icons/website_darkmode.png")
-                  : require("@/assets/images/Icons/website_lightmode.png")
-              }
-            ></DirectionButton>
-          )}
+        <View style={[styles.bottomContainer]}>
+          <ThemedText style={[{ fontSize: 40 }, { lineHeight: 40 }]} type="title">
+            {service.name}
+          </ThemedText>
+          <View style={[styles.serviceStyle]}>
+            <StarRating starSize={25} rating={average}></StarRating>
+            <ThemedText type="default" style={styles.ratingCount}>
+              ({count || 0})
+            </ThemedText>
+            {service.avg_price !== 0 && (
+              <PriceDisplay
+                containerStyle={styles.priceStyle}
+                avgPrice={service.avg_price}
+                showCategory={true}
+                intervalStyle={{ fontSize: 20 }}
+                categoryStyle={{ fontSize: 16 }}
+              ></PriceDisplay>
+            )}
+          </View>
+
+          <View style={[styles.serviceStyle, { paddingTop: 16 }]}>
+            <DirectionButton></DirectionButton>
+            <View style={{ width: 8 }}></View>
+            {service.link && (
+              <DirectionButton
+                label="Visita la Web"
+                buttonStyle={[
+                  { borderWidth: 1 },
+                  { borderColor: Colors[colorScheme].tint },
+                  { backgroundColor: Colors[colorScheme].box },
+                ]}
+                onPress={() => handleGoWebsite(service.link!)}
+                iconSource={
+                  colorScheme === "dark"
+                    ? require("@/assets/images/Icons/website_darkmode.png")
+                    : require("@/assets/images/Icons/website_lightmode.png")
+                }
+              ></DirectionButton>
+            )}
+          </View>
         </View>
       </SafeAreaView>
-
+      
       <ScrollView
         style={{ backgroundColor: Colors[colorScheme].background }}
         contentContainerStyle={[styles.scheduleBox]}
@@ -137,10 +153,14 @@ export default function ServiceInfoScreen() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 125,
+    alignItems: "flex-start",
+    paddingBottom: 16,
+    elevation: 5,
+  },
+  bottomContainer: {
+    width: "100%",
     alignItems: "flex-start",
     paddingLeft: 16,
-    elevation: 5,
   },
   serviceStyle: {
     flexDirection: "row",

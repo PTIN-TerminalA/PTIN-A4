@@ -3,11 +3,18 @@ import { View, Image, Dimensions, StyleSheet } from "react-native";
 import ImageZoom from "react-native-image-pan-zoom";
 import MapMarker from "@/components/MapMarker";
 import { Service } from "@/constants/mocks/mockTypes";
+import { zones } from "@/constants/mocks/zones";
 import CarMarker from "@/components/CarMarker";
 import UserMarker from "@/components/UserMarker";
 import { ThemedView } from "@/components/ThemedView";
-import Svg, { Polyline } from "react-native-svg";
-
+import Svg, { G, Polygon, Polyline } from "react-native-svg";
+import { TapGestureHandler } from "react-native-gesture-handler";
+import {
+  normalizeRotatedZones,
+  normalizeZones,
+} from "@/hooks/useNormalizedZones";
+import { ZoneViewer } from "./ZoneOverlays";
+import { useHeading } from "@/hooks/useHeading";
 interface Car {
   x: number;
   y: number;
@@ -32,25 +39,29 @@ type Props = {
   routePoints?: { x: number; y: number }[];
 };
 
-const imageWidth = 1027;
-const imageHeight = 664;
+const mapImage = require("@/assets/images/planol.png");
+const imageInfo = Image.resolveAssetSource(mapImage);
+
+const imageWidth = imageInfo.width;
+const imageHeight = imageInfo.height;
 const NUM_CARS = 10;
 
-const screen = Dimensions.get("window");
-
-//Escala para que la imagen encaje verticalmente
+const screen = Dimensions.get("window"); //Escala para que la imagen encaje verticalmente
 const scale = screen.height / imageHeight;
 const displayedWidth = imageWidth * scale;
+
+const normalizedZones = normalizeRotatedZones(zones);
 
 const MapaUni: React.FC<Props> = ({
   services,
   onServicePress,
   carPos,
   userLocation,
-  routePoints
+  routePoints,
 }) => {
   const [carPositions, setCarPositions] = useState<Car[]>([]);
-  // if (carPos) console.log("carPos -->", carPos);
+  const heading = useHeading();
+
   //Genera coches con posiciones aleatorias alrededor del centro
   const generatePositions = (): Car[] => {
     const cars: Car[] = [];
@@ -82,10 +93,11 @@ const MapaUni: React.FC<Props> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);*/
-  {/*services?.forEach(service => {
+  }, []);
+  {
+    /*services?.forEach(service => {
     console.log('Service position:', service.location_x, service.location_y);
-  });*/} 
+  });*/
   return (
     <ThemedView style={styles.container}>
       <ImageZoom
@@ -117,31 +129,59 @@ const MapaUni: React.FC<Props> = ({
                 onPress={() => onServicePress(service)}
               />
             ))}
-
-
-          {/* Puntos coches 
-          {carPositions.map((car, index) => (
+          {
             <View
-              key={index}
+              pointerEvents="box-none"
               style={{
                 position: "absolute",
-                left: car.x * scale - 7.5,
-                top: car.y * scale - 7.5,
-                width: 15,
-                height: 15,
-                borderRadius: 7.5,
-                backgroundColor: "red",
-                borderColor: "white",
-                borderWidth: 1,
+                top: 0,
+                left: 0,
+                width: displayedWidth,
+                height: screen.height,
               }}
-            />
-          ))}*/}
+            >
+              <Svg
+                pointerEvents="box-none"
+                width={displayedWidth}
+                height={screen.height}
+                style={{ position: "absolute", top: 0, left: 0 }}
+              >
+                {normalizedZones.map((zone, idx) => {
+                  const pointsStr = zone.positions
+                    .map(
+                      ([x, y]) => `${x * displayedWidth},${y * screen.height}`
+                    )
+                    .join(" ");
+
+                  return (
+                    <Polygon
+                      key={idx}
+                      pointerEvents="auto"
+                      points={pointsStr}
+                      fill="rgba(160, 160, 240, 0.05)"
+                      stroke="blue"
+                      strokeWidth={2}
+                      onPress={() => {
+                        console.log("pressed polygon");
+                        const service = services?.find(
+                          (s) => s.name === zone.name
+                        );
+                        if (service) onServicePress(service);
+                      }}
+                    />
+                  );
+                })}
+              </Svg>
+            </View>
+          }
 
           {userLocation && (
             <UserMarker
               x={userLocation.x * imageWidth}
               y={userLocation.y * imageHeight}
               scale={scale}
+              imageHeight={imageHeight}
+              heading={heading}
             />
           )}
 
@@ -156,12 +196,12 @@ const MapaUni: React.FC<Props> = ({
             />
           )}
 
-          { /** Visualització de la ruta en el MapaUni */ }
+          {/** Visualització de la ruta en el MapaUni */}
           {routePoints && routePoints.length > 1 && (
             <Svg
               width={displayedWidth}
               height={screen.height}
-              style={{ position: 'absolute', top: 0, left: 0 }}
+              style={{ position: "absolute", top: 0, left: 0 }}
               pointerEvents="none" // Per poder seleccionar altres Markers del mapa mentre visualitzo la ruta
             >
               <Polyline
@@ -174,7 +214,6 @@ const MapaUni: React.FC<Props> = ({
               />
             </Svg>
           )}
-
         </View>
       </ImageZoom>
     </ThemedView>

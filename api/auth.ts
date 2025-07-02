@@ -103,6 +103,56 @@ export async function getUserProfile(token: string): Promise<User> {
     birthDate: profile.birth_date,
     gender: profile.identity,
     avatar:
-      'https://www.lavanguardia.com/peliculas-series/images/all/movie/posters/2009/12/movie-19995/w1280/yev8cuskZiDfzOPzVjSKPnvBnfk.jpg',
+      'https://cdn0.expertoanimal.com/es/posts/0/1/7/mi_gato_no_crece_causas_y_que_hacer_24710_600_square.jpg',
   };
+}
+
+export async function updateUserProfile(
+  token: string,
+  name: string,
+  birthDate: string,
+  phone: string,
+  gender: string
+): Promise<void> {
+  const response = await fetch(`${API_URL}/api/profile`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      name,
+      birth_date: birthDate,
+      phone_num: phone,
+      identity: gender,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    //console.log(error);
+    if (Array.isArray(error.detail)) {
+      const messages = error.detail.map((e: any) => e.msg).join('\n');
+      throw new Error(messages);
+    }
+    throw new Error(error.detail || 'Error al actualitzar perfil');
+  }
+}
+
+export async function updateDni(token: string, dni: string): Promise<void> {
+  const response = await fetch(`${API_URL}/api/update-dni`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      access_token: token,
+      dni,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Error al actualitzar el DNI');
+  }
 }

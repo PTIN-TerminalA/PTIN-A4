@@ -10,7 +10,11 @@ import {
 
 import { ThemedText } from "@/components/ThemedText";
 import React, { useEffect, useState } from "react";
-import { router, useRootNavigationState, useLocalSearchParams } from "expo-router";
+import {
+  router,
+  useRootNavigationState,
+  useLocalSearchParams,
+} from "expo-router";
 import { useUserLocation } from "@/hooks/useUserLocation";
 import { Colors } from "@/constants/Colors";
 import { ThemedPressable } from "@/components/ThemedPressable";
@@ -82,22 +86,35 @@ export default function HomeScreen() {
   const [car, setCar] = useState("");
 
   const { gate, destinationName, fromNotification } = useLocalSearchParams();
-  const [triggeredFromNotification, setTriggeredFromNotification] = useState(false);
+  const [triggeredFromNotification, setTriggeredFromNotification] =
+    useState(false);
 
   useEffect(() => {
     // console.log("services: ", services);
     // console.log("El servicio: ", gate);
     // const fakeLocation = {
-    //   x: 0.5, 
+    //   x: 0.5,
     //   y: 0.5
     // };
     // console.log("La ubicacion del usuario: ", userLocation);
-    if (fromNotification === 'true' && destinationName && gate && userLocation && !triggeredFromNotification && services && services.length > 0 ) {
+    if (
+      fromNotification === "true" &&
+      destinationName &&
+      gate &&
+      userLocation &&
+      !triggeredFromNotification &&
+      services &&
+      services.length > 0
+    ) {
       // console.log("Iniciant reserva per notificació:", destinationName, gate);
       setTriggeredFromNotification(true);
-      
+
       //Busca un servei amb el mateix nom
-      const matchingService = services.find(s => s.name.toLowerCase() === (typeof gate === 'string' ? gate.toLowerCase() : ''));
+      const matchingService = services.find(
+        (s) =>
+          s.name.toLowerCase() ===
+          (typeof gate === "string" ? gate.toLowerCase() : "")
+      );
       console.log("El servicio: ", matchingService);
       if (matchingService) {
         setSelectedService(matchingService);
@@ -106,7 +123,10 @@ export default function HomeScreen() {
         setRide(userLocation, matchingService.name);
         setModalVisible(true); 
       } else {
-        console.warn("No s'ha trobat un servei coincident per:", destinationName);
+        console.warn(
+          "No s'ha trobat un servei coincident per:",
+          destinationName
+        );
       }
     }
   }, [fromNotification, destinationName, gate, services, userLocation, triggeredFromNotification]);
@@ -220,7 +240,12 @@ export default function HomeScreen() {
   // }, [rideStage, selectedService, previewService]);
 
   if (servicesLoading || tagsLoading) {
-    return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />;
+    return (
+      <ActivityIndicator
+        size="large"
+        style={{ flex: 1, justifyContent: "center" }}
+      />
+    );
   }
 
   if (!services) {
@@ -289,11 +314,23 @@ export default function HomeScreen() {
         disabled={disabled}
         type="button"
       >
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-          <Image 
-            source={require('../../assets/images/Icons/car.png')} 
-            style={{width: 40, height: 40, marginRight: 25, 
-            tintColor: colorScheme == 'dark' ? Colors.dark.text : Colors.light.text}}/>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            source={require("../../assets/images/Icons/car.png")}
+            style={{
+              width: 40,
+              height: 40,
+              marginRight: 25,
+              tintColor:
+                colorScheme == "dark" ? Colors.dark.text : Colors.light.text,
+            }}
+          />
           {/* <ThemedText type="bold">Selecciona un destí</ThemedText> */}
           {rideStage === "select" && <ThemedText type="bold">Selecciona un destí</ThemedText>}
           {rideStage === "preview" && <ThemedText type="bold">Confirma el viatge</ThemedText>}
@@ -328,7 +365,6 @@ export default function HomeScreen() {
             setModalVisible(false);
           }
         }}
-        
         /** Si no s'ha seleccionat un destí el modal canvia */
         imageUrl={selectedService?.ad_path || localImage}
         title={selectedService?.name || "Demana un cotxe"} // Previsualitza ruta nou nom

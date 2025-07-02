@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { Alert } from 'react-native';
-import { registerUser, loginUser, getUserProfile, User } from '@/api/auth';
+import { registerUser, loginUser, getUserProfile, User, updateUserProfile } from '@/api/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -10,6 +10,12 @@ interface AuthContextType {
   login: (email: string, password: string) => void;
   logout: () => void;
   deleteAccount: () => void;
+  updateProfile: (
+    name: string,
+    birthDate: string,
+    phone: string,
+    gender: string
+  ) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -92,8 +98,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }; 
 
+  const updateProfile = async (
+    name: string,
+    birthDate: string,
+    phone: string,
+    gender: string
+  ) => {
+    if (!token) {
+      throw new Error('No autenticat');
+    }
+
+    await updateUserProfile(token, name, birthDate, phone, gender);
+
+    //Actualizar user localmente con los nuevos datos 
+    setUser(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        name,
+        birthDate,
+        phone,
+        gender,
+      };
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, register, login, logout, deleteAccount }}>
+    <AuthContext.Provider value={{ user, token, register, login, logout, deleteAccount, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

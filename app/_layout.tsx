@@ -10,11 +10,18 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { AuthProvider, useAuth } from '@/hooks/useAuth';
-import { useFlightNotifications } from '@/hooks/useFlightNotifications';
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { useFlightNotifications } from "@/hooks/useFlightNotifications";
 import { ServiceProvider } from "@/contexts/ServiceContext";
 import { useRecommendationNotifications } from "@/hooks/useRecommendationNotifications";
-
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider as PaperProvider } from "react-native-paper";
+import * as NavigationBar from "expo-navigation-bar";
+import { setStatusBarHidden } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ChatProvider } from "@/contexts/ChatContext";
+import * as SystemUI from "expo-system-ui";
+import { Colors } from "@/constants/Colors";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -30,6 +37,12 @@ export default function RootLayout() {
     if (loaded) {
       console.log("Fonts carregades");
       SplashScreen.hideAsync();
+      SystemUI.setBackgroundColorAsync("transparent");
+      NavigationBar.setPositionAsync("absolute");
+      NavigationBar.setVisibilityAsync("visible");
+      NavigationBar.setBackgroundColorAsync("transparent");
+      NavigationBar.setBehaviorAsync("inset-touch");
+      setStatusBarHidden(true, "none");
     }
   }, [loaded]);
 
@@ -38,11 +51,19 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <ServiceProvider>
-        <MainLayout />
-      </ServiceProvider>
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <PaperProvider>
+          <AuthProvider>
+            <ServiceProvider>
+              <ChatProvider>
+                <MainLayout />
+              </ChatProvider>
+            </ServiceProvider>
+          </AuthProvider>
+        </PaperProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -55,10 +76,10 @@ function MainLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" options={{ gestureEnabled: false }} />
+        {user ? <Stack.Screen name="(tabs)" /> : <Stack.Screen name="(auth)" />}
+        <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar translucent backgroundColor="transparent" style="auto" />
     </ThemeProvider>
   );
 }

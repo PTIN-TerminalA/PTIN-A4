@@ -54,3 +54,10 @@ export type Service = {
   valorations?: Valoration[];
   tags?: Tag[];
 };
+
+export type ChatInfo = {
+  userId: number;
+  userMessage: string;
+  location_x: number;
+  location_y: number;
+}

@@ -15,19 +15,21 @@ export interface RecommendationResponse {
  * @param requestData Coordenadas y ID de usuario.
  * @returns Texto de la recomendación o null si no hay disponible.
  */
-export async function getRecommendation(requestData: RecommendationRequest): Promise<RecommendationResponse> {
+export async function getRecommendation(
+  requestData: RecommendationRequest
+): Promise<RecommendationResponse> {
   try {
     // console.log("Calling getRecommendation with:", requestData);
     const response = await fetch(`${RECOMMENDATION_API_URL}/recommendation`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(requestData),
     });
-    
+
     if (!response.ok) {
-      throw new Error(`Error en la petició de recomanació (${response.status})`);
+      //throw new Error(`Error en la petició de recomanació (${response.status})`);
     }
 
     const data = await response.json();
@@ -36,7 +38,7 @@ export async function getRecommendation(requestData: RecommendationRequest): Pro
       recommendation: data.recommendation ?? null,
     };
   } catch (error) {
-    console.error('Error obtenint recomanació:', error);
+    //console.error('Error obtenint recomanació:', error);
     return { recommendation: null };
   }
 }

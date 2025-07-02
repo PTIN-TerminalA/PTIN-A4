@@ -4,7 +4,7 @@
     "slug": "ptin-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo/logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -24,7 +24,8 @@
         "android.permission.ACCESS_WIFI_STATE",
         "android.permission.CHANGE_WIFI_STATE",
         "android.permission.ACCESS_FINE_LOCATION"
-      ]
+      ],
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "bundler": "metro",
@@ -34,7 +35,6 @@
     "plugins": [
       "expo-router",
       "react-native-nfc-manager",
-
       [
         "expo-camera",
         {
@@ -46,14 +46,31 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/logo/logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
       ],
+      [
+        "expo-navigation-bar",
+        {
+          "position": "absolute",
+          "visibility": "visible",
+          "backgroundColor": "#00000000"
+        }
+      ],
       "expo-speech-recognition"
     ],
+    "androidStatusBar": {
+      "translucent": true,
+      "backgroundColor": "transparent"
+    },
+    "androidNavigationBar": {
+      "visible": "immersive",
+      "barStyle": "light-content",
+      "backgroundColor": "transparent"
+    },
     "experiments": {
       "typedRoutes": true
     },
@@ -68,3 +85,4 @@
     "owner": "ptin"
   }
 }
+
