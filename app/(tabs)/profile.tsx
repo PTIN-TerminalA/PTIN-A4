@@ -33,38 +33,37 @@ export default function ProfileScreen() {
     {
       label: "NOM",
       value: user?.name || "Nom Usuari",
-      onPress: () => router.push("/profilescreens/edit-name"),
+      onPress: () => router.push("/profilescreens/edit-profile"),
     },
     {
       label: "CORREU ELECTRÒNIC",
       value: user?.email || "email@gmail.com",
-      onPress: () => {
-        /*TODO */
-      },
+      onPress: () => router.push("/profilescreens/edit-profile"),
+    },
+    {
+      label: "DNI",
+      value: user?.dni || "*********",
+      onPress: () => router.push("/profilescreens/edit-dni"),
     },
     {
       label: "CONTRASENYA",
       value: "**************",
-      onPress: () => router.push("/profilescreens/edit-password"),
+      onPress: () => router.push("/profilescreens/edit-profile"),
     },
     {
       label: "DATA DE NAIXEMENT",
       value: user?.birthDate || "2000-12-12",
-      onPress: () => router.push("/profilescreens/edit-birthdate"),
+      onPress: () => router.push("/profilescreens/edit-profile"),
     },
     {
       label: "TELÈFON",
       value: user?.phone || "+34645108922",
-      onPress: () => {
-        /*TODO */
-      },
+      onPress: () => router.push("/profilescreens/edit-profile"),
     },
     {
       label: "GÈNERE",
       value: user?.gender || "(Desconegut)",
-      onPress: () => {
-        /*TODO */
-      },
+      onPress: () => router.push("/profilescreens/edit-profile"),
     },
   ];
 
