@@ -1,6 +1,11 @@
 import React, { useState, useRef } from "react";
 import { View, TextInput, FlatList, Text, Pressable, StyleSheet, Keyboard } from "react-native";
 import { Service } from "@/constants/mocks/mockTypes";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Text strings must be rendered within a <Text>component',
+]);
 
 type SearchBarProps = {
   options: Service[];

@@ -58,7 +58,7 @@ export default function HomeScreen() {
   };
   let userLocation = defaultLocation; // NOMÉS PER PROVES: comentar quan estiguem a la uni i es vulgui fer servir la ubicació real
   if (location.location !== null)  userLocation = location.location;
-  userLocation = defaultLocation;
+  // userLocation = defaultLocation;
   const inversUserLocation = { x: userLocation.x, y: (1 - userLocation.y) }; // Invertim l'origen de coordenades per a que sigui compatible amb altres apis
 
   const { services, loading: servicesLoading } = useServiceContext();

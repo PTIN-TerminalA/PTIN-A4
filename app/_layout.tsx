@@ -14,7 +14,8 @@ import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { useFlightNotifications } from '@/hooks/useFlightNotifications';
 import { ServiceProvider } from "@/contexts/ServiceContext";
 import { useRecommendationNotifications } from "@/hooks/useRecommendationNotifications";
-
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs(); // Ignore all log messages
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
