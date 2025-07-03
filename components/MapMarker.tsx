@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   icon: {
     width: ICON_SIZE,
     height: ICON_SIZE,
+    tintColor: "blue",
   },
 });
 

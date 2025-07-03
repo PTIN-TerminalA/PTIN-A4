@@ -19,7 +19,7 @@ const CarMarker: React.FC<Props> = ({
   y,
   scale,
   visible = true,
-  rotation = 0,
+  rotation,
   onPress,
 }) => {
   if (!visible) return null;

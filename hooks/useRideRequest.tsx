@@ -47,20 +47,6 @@ function adjustCoordinates(location: Location): Location {
 }
 
 export const useRideRequest = () => {
-  /*
-  const [isSetting, setIsSetting] = useState(false);
-  const [destination, setDestination] = useState<Service | null>(null);
-  const [origin, setOrigin] = useState<RoutePoint | null>(null);
-  const [status, setStatus] = useState<RideStatus>("idle");
-  const [route, setRoute] = useState<RoutePoint[] | null>(null);
-  const [newBooking, setNewBooking] = useState({
-    user_email: "a4@gmail.com",
-    start_location: "Porta A1",
-    end_location: "McDonald's",
-    scheduled_time: "2025-05-04T14:00:00Z",
-    state: "En curs"
-  });
-  */
   const { token } = useAuth();
   const [reservationMessage, setReservationMessage] = useState<string | null>(null); //useState<string | null>(null)
   const [rideResponse, setRideResponse] = useState<RideResponse | null>(null);
@@ -147,26 +133,6 @@ export const useRideRequest = () => {
     }
   };
 
-
-  /*
-  const releaseRide = async (cotxe_id: String) => {
-    try {
-      const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/disponible`, {
-        method: "PUT",
-      });
-  
-      if (!response.ok) throw new Error("Error al alliberar el cotxe");
-  
-      const data = await response.json();
-      console.log("Cotxe alliberat:", data);
-      return data;
-    } catch (error) {
-      console.error("Error a releaseRide:", error);
-      return null;
-    }
-  }
-  */
-
   const nearestService = async (location: Location) => {
     try {
       console.log("Original location on nearest analysis:", location);
@@ -210,52 +176,10 @@ export const useRideRequest = () => {
     }
   };
 
-  /*
-  const runningRide = async (cotxe_id: String) => {
-    try {
-      const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/en_curs`, {
-        method: "PUT",
-      });
-  
-      if (!response.ok) throw new Error("Error al correr el cotxe");
-  
-      const data = await response.json();
-      console.log("Cotxe en curs:", data);
-      return data;
-    } catch (error) {
-      console.error("Error a runningRide:", error);
-      return null;
-    }
-  }
-  */
-
-  /*
-  const requestedRide = async (cotxe_id: String) => {
-    try {
-      const response = await fetch(`${API_URL}/cotxe/${cotxe_id}/solicitat`, {
-        method: "PUT",
-      });
-  
-      if (!response.ok) throw new Error("Error al solicitar el cotxe");
-  
-      const data = await response.json();
-      console.log("Cotxe solicitat:", data);
-      return data;
-    } catch (error) {
-      console.error("Error a requestedRide:", error);
-      return null;
-    }
-  }
-  */
-
-  /*
-  const cancelRide = () => {
-    setDestination(null);
-    setOrigin(null);
-    setStatus("idle");
-    setRoute(null);
+  const clearRideResponse = () => {
+    setRideResponse(null);
+    setReservationMessage(null);
   };
-  */
 
   const endRide = async () => {
     try {
@@ -288,20 +212,12 @@ export const useRideRequest = () => {
   };
 
   return {
-    // isSetting,
-    // status,
-    // destination,
-    // origin,
-    // route,
     setRide,
-    // releaseRide,
     nearestService,
     services,
     startRide,
     endRide,
-    // runningRide,
-    // requestedRide,
-    // cancelRide,
+    clearRideResponse,
     reservationMessage,
     rideResponse,
   };

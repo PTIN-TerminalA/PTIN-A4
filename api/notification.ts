@@ -36,7 +36,7 @@ export async function getRecommendation(requestData: RecommendationRequest): Pro
       recommendation: data.recommendation ?? null,
     };
   } catch (error) {
-    console.error('Error obtenint recomanació:', error);
+    // console.error('Error obtenint recomanació:', error);
     return { recommendation: null };
   }
 }
