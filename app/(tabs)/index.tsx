@@ -34,6 +34,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useServiceContext } from "@/contexts/ServiceContext";
 import { useTags } from "@/hooks/useTags";
 import { set } from "date-fns";
+import { SearchBar } from "@/components/MapSearchBar";
 
 const localImage = require("@/assets/images/planol.png");
 
@@ -59,9 +60,9 @@ export default function HomeScreen() {
     x: 0.21,
     y: 0.8
   };
-  let userLocation = defaultLocation;
+  let userLocation = defaultLocation; // NOMÉS PER PROVES: comentar quan estiguem a la uni i es vulgui fer servir la ubicació real
   if (location.location !== null)  userLocation = location.location;
-  // userLocation = defaultLocation;
+  // userLocation = defaultLocation;
   const inversUserLocation = { x: userLocation.x, y: (1 - userLocation.y) }; // Invertim l'origen de coordenades per a que sigui compatible amb altres apis
 
   const { services, loading: servicesLoading } = useServiceContext();
@@ -73,6 +74,8 @@ export default function HomeScreen() {
     nearestService,
     setRide,
     startRide,
+    endRide,
+    clearRideResponse,
   } = useRideRequest();
 
   const [rideStage, setRideStage] = useState<"select" | "preview" | "confirm" | "inside">("select");
@@ -89,7 +92,7 @@ export default function HomeScreen() {
   const [triggeredFromNotification, setTriggeredFromNotification] =
     useState(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     // console.log("services: ", services);
     // console.log("El servicio: ", gate);
     // const fakeLocation = {
@@ -129,7 +132,7 @@ export default function HomeScreen() {
         );
       }
     }
-  }, [fromNotification, destinationName, gate, services, userLocation, triggeredFromNotification]);
+  }, [fromNotification, destinationName, gate, services, userLocation, triggeredFromNotification]);*/
 
   const { token } = useAuth();
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
@@ -149,41 +152,71 @@ export default function HomeScreen() {
   }, [rideResponse]);
 
   const carData = useCarLocation((rideStage == "confirm" || rideStage == "inside") ? car : null);
+  const [lastCarPos, setLastCarPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  const [prevCarPos, setPrevCarPos] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  useEffect(() => {
+    if (carData) {
+      const currentPos = {
+        x: carData.position.x,
+        y: 1 - carData.position.y, 
+      };
+
+      setPrevCarPos(lastCarPos);
+      setLastCarPos(currentPos);
+    }
+  }, [carData]);
+  function calculateRotationAngle(prev: { x: number, y: number }, last: { x: number, y: number }) {
+    const dx = last.x - prev.x;
+    const dy = last.y - prev.y;
+
+    const angleRadians = Math.atan2(dy, dx);
+    const angleDegrees = angleRadians * (180 / Math.PI) + 90;
+
+    return angleDegrees;
+  }
+  const rotation = (lastCarPos && prevCarPos) ? 
+    calculateRotationAngle(prevCarPos, lastCarPos) : 0;
   const carState = carData?.state; // estats del cotxe: "stopped" o "moving"
-  const carPos = carData // ubicació del cotxe
+  const carPos = carData
   ? {
-      id: carData?.car_id,
-      x: carData?.position.x,
-      y: (1 - carData?.position.y),
-      rotation: 0, // o el valor real si ho tenim
-      visible: true // o alguna lògica per mostrar/ocultar
+      id: carData.car_id,
+      x: lastCarPos?.x,
+      y: lastCarPos?.y,
+      rotation: rotation,
+      visible: true,
     }
   : null;
 
   const [disabled, setDisabled] = useState(true); // Controla la usabilitat del botó per evitar confirmacions múltiples o prematures
-  
-  // Enable button in select and preview stages
-  useEffect(() => {
-    if (rideStage != "inside") {
-      setDisabled(false);
-    }
-  }, [rideStage]);
 
+
+  // El cotxe pot estar "stopped" no perquè ha finalitzat un trajecte donat
+  // sinò que pot haver trobat un obstacle. Per tant, mirem si el punt on
+  // s'ha aturat és el mateix o similar al punt on finalitza el seu trajecte.
+  function sonPuntsSimilars(p1: { x: number, y: number }, p2: { x: number, y: number }): boolean {
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const distancia = Math.sqrt(dx * dx + dy * dy);
+    return distancia < 0.05; // Marge d'error trobat a les proves, es pot ajustar
+  }
   useEffect(() => {
-    if (rideStage === "confirm" && carState && carState === "stopped") {
+    if (rideStage === "confirm" && carState && carState === "stopped" && 
+      nearest && sonPuntsSimilars(lastCarPos, { x: nearest.location_x, y: nearest.location_y })) {
       setDisabled(false); // Habilitem el botó quan el cotxe està aturat (esperant) perque l'usuari pugui confirmar que està a dins
       alert("El cotxe t'espera al punt de recollida.");
-    } else if (rideStage === "inside" && carState && carState === "stopped") {
+
+    } else if (rideStage === "inside" && carState && carState === "stopped" &&
+      confirmedService && sonPuntsSimilars(lastCarPos, { x: confirmedService.location_x, y: confirmedService.location_y })) {
+      endRide(); // Quan el cotxe està aturat i l'usuari està a dins, finalitzem la reserva
       setRatingModalVisible(true); // valorar ruta
-      
-      setDisabled(false); // Tornem a habilitar el botó per a que l'usuari pugui seleccionar un nou destí
-      setRideStage("select"); // Tornem a l'estat de selecció de destí
-      setConfirmedService(null); // Reiniciem el servei confirmat per a la propera
-      setPreviewService(null); // Reiniciem el servei previsualitzat per a la propera
-      setSelectedService(null); // Reiniciem el servei seleccionat per a la propera
-      setNearestService(null); // Reiniciem el servei més proper per a la propera
-      setCar(""); // Reiniciem el cotxe per a la propera
-      setRide(userLocation, ""); // Reiniciem la reserva
+      // Reiniciem els estats per a la propera reserva
+      setDisabled(false);
+      setRideStage("select");
+      setConfirmedService(null);
+      setPreviewService(null);
+      setSelectedService(null);
+      setNearestService(null);
+      setCar("");
     }
   }, [carState]);
 
@@ -196,11 +229,10 @@ export default function HomeScreen() {
       origen = { x: nearest.location_x, y: nearest.location_y };
       desti = { x: previewService.location_x, y: previewService.location_y };
     } else if (rideStage === "confirm" && carData && nearest) {
-      // origen = { x: carData.position.x, y: (1-carData.position.y) }; // Per anular l'efecte de la inversió de coordenades de route.ts ja que carData té coordenades normals
-      origen = { x: carData.position.x, y: carData.position.y };
+      origen = { x: carData.position.x, y: (1-carData.position.y) }; // Per anular l'efecte de la inversió de coordenades de route.ts ja que carData té coordenades normals
       desti = { x: nearest.location_x, y: nearest.location_y };
     } else if (rideStage === "inside" && carData && confirmedService) {
-      origen = { x: carData.position.x, y: carData.position.y };
+      origen = { x: carData.position.x, y: (1-carData.position.y) };
       desti = { x: confirmedService.location_x, y: confirmedService.location_y };
     }
 
@@ -211,6 +243,18 @@ export default function HomeScreen() {
     rideStage == "select" ? null : origen, 
     rideStage == "select" ? null : desti
   );
+
+  // Gestió dels markers del mapa per veure origen i destí
+  const markedServices: Service[] | null = (() => {
+    if (rideStage === "preview") {
+      return [nearest, previewService].filter((s): s is Service => Boolean(s));
+    } else if (rideStage === "confirm") {
+      return [nearest].filter((s): s is Service => Boolean(s));
+    } else if (rideStage === "inside") {
+      return [confirmedService].filter((s): s is Service => Boolean(s));
+    }
+    return null;
+  })();
 
   const handlerScannerPress = () => {
     {
@@ -259,21 +303,22 @@ export default function HomeScreen() {
           <ThemedText>{reservationMessage}</ThemedText>
         </View>
       )}
+      <SearchBar options={services} setSelected={setSelectedService} setVisible={setModalVisible}/>
 
       <MapaUni
-        services={services}
+        services={markedServices}
         onServicePress={(service) => {
           setSelectedService(service);
           setModalVisible(true);
         }}
         carPos={carPos}
-        userLocation={inversUserLocation}
+        userLocation={(rideStage == "inside") ? null : userLocation}
         // no fa falta pintar ruta quan s'apropa el cotxe, només mostrem temps estimat
         routePoints={routeData?.route && (rideStage != "confirm" && rideStage != "select") ? routeData.route : []}     
       />
 
       {/* Mostrem el temps estimat si hi ha */}
-      {routeData?.temps && (rideStage != "select") && 
+      {routeData?.temps && (rideStage === "preview" || (rideStage === "confirm") || rideStage === "inside") && 
       (<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
           <ThemedText>
             {routeData.temps}
@@ -299,11 +344,10 @@ export default function HomeScreen() {
             setRideStage("confirm");
 
             if (previewService  && userLocation) {
-              setRide(userLocation, previewService.name);
+              // Ocultem el botó 'Confirma que ets a dins' fins que el cotxe arribi al punt de recollida
+              setDisabled(true);
+              setRide(inversUserLocation, previewService.name);
             }
-            // Ocultem el botó 'Confirma que ets a dins' fins que el cotxe arribi al punt de recollida
-            // setDisabled(true); 
-            setDisabled(false);
           } else if (rideStage === "confirm") {
             console.log("Has confirmat el viatge a:", confirmedService?.name);
             setRideStage("inside");
@@ -341,7 +385,10 @@ export default function HomeScreen() {
       {/* Modal de valoració */}
       <RatingModal
         visible={ratingModalVisible}
-        onClose={() => setRatingModalVisible(false)}
+        onClose={() => {
+          setRatingModalVisible(false);
+          clearRideResponse(); // netegem la resposta de la reserva
+        }}
         token={token? token : ""}
         scheduledTime={rideResponse?.reservation?.scheduled_time ?? ""}
       />
@@ -353,7 +400,7 @@ export default function HomeScreen() {
         onSelect={async () => {
           try {
             if ((rideStage === "select" || rideStage === "preview") && userLocation) {
-              const { nearest_service_id } = await nearestService(userLocation);
+              const { nearest_service_id } = await nearestService(inversUserLocation);
               const nearest_service = services?.find((service: Service) => service.id === nearest_service_id) ?? null;
               setNearestService(nearest_service);
               setPreviewService(selectedService);
@@ -363,6 +410,7 @@ export default function HomeScreen() {
             console.error("Error al seleccionar servei: ", error);
           } finally {
             setModalVisible(false);
+            setDisabled(false);
           }
         }}
         /** Si no s'ha seleccionat un destí el modal canvia */
@@ -379,6 +427,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "white",
     flex: 1,
     position: "relative",
   },

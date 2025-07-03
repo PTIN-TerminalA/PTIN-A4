@@ -38,7 +38,7 @@ export async function getRecommendation(
       recommendation: data.recommendation ?? null,
     };
   } catch (error) {
-    //console.error('Error obtenint recomanació:', error);
+    // console.error('Error obtenint recomanació:', error);
     return { recommendation: null };
   }
 }

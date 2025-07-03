@@ -119,6 +119,7 @@ const MapaUni: React.FC<Props> = ({
             style={{ width: displayedWidth, height: screen.height }}
             resizeMode="cover"
           />
+          
           {services &&
             services.map((service) => (
               <MapMarker
@@ -185,17 +186,6 @@ const MapaUni: React.FC<Props> = ({
             />
           )}
 
-          {carPos && carPos.visible && (
-            // console.log("car: ", carPos),
-            <CarMarker
-              x={carPos.x * imageWidth}
-              y={carPos.y * imageHeight}
-              rotation={carPos.rotation}
-              scale={scale}
-              onPress={() => console.log("Cotxe clicat")}
-            />
-          )}
-
           {/** Visualització de la ruta en el MapaUni */}
           {routePoints && routePoints.length > 1 && (
             <Svg
@@ -214,6 +204,20 @@ const MapaUni: React.FC<Props> = ({
               />
             </Svg>
           )}
+
+          { /** Visualització del cotxe en el MapaUni */ }
+          { /** Es renderitza després de la polyline per tal de que el cotxe quedi a sobre de la ruta pintada */ }
+          {carPos && carPos.visible && (
+            // console.log("car: ", carPos),
+            <CarMarker
+              x={carPos.x * imageWidth}
+              y={carPos.y * imageHeight}
+              rotation={carPos.rotation}
+              scale={scale}
+              onPress={() => console.log("Cotxe clicat")}
+            />
+          )}
+
         </View>
       </ImageZoom>
     </ThemedView>
@@ -223,6 +227,7 @@ const MapaUni: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
 });
 

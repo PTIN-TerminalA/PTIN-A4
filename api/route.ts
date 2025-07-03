@@ -30,7 +30,7 @@ export async function getRoutePoints(
     if (!response.ok) {
       // console.error("Error del servidor:", response.status);
       const errorData = await response.json();
-      console.error("Error del servidor:", response.status, errorData.detail);
+      // console.error("Error del servidor:", response.status, errorData.detail);
       return null;
     }
 
